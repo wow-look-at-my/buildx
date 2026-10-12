@@ -23,7 +23,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: ${{ vars.CI_RUNNER_DIND || 'ubuntu-24.04' }}
+    runs-on: ubuntu-24.04
     outputs:
       includes: ${{ steps.generate.outputs.matrix }}
     steps:
@@ -41,7 +41,7 @@ jobs:
           GOLANGCI_LINT_MULTIPLATFORM: ${{ github.repository == 'docker/buildx' && '1' || '' }}
 
   validate:
-    runs-on: ${{ vars.CI_RUNNER_DIND || 'ubuntu-24.04' }}
+    runs-on: ubuntu-24.04
     needs:
       - prepare
     strategy:

@@ -12,7 +12,7 @@ on:
 
 jobs:
   labeler:
-    runs-on: ${{ vars.CI_RUNNER || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read # same as global permission
       pull-requests: write # required for writing labels

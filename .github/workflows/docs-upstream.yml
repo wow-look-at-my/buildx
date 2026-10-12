@@ -29,7 +29,7 @@ env:
 
 jobs:
   docs-yaml:
-    runs-on: ${{ github.event.repository.visibility == 'public' && 'ubuntu-24.04' || vars.CI_RUNNER_DIND || 'ubuntu-24.04' }}
+    runs-on: ubuntu-24.04
     steps:
       -
         name: Set up Docker Buildx

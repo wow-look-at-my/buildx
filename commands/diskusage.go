@@ -1,7 +1,10 @@
+// MarshalJSON writes the record as data for a program to read: the size in bytes, times in RFC 3339 and InUse.
+
 package commands
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"text/tabwriter"
@@ -215,8 +218,38 @@ type diskusageContext struct {
 	du     *client.UsageInfo
 }
 
+// MarshalJSON writes the record as data for a program to read: the size in
+// bytes, times in RFC 3339 and InUse. The template methods format these for a
+// person, so the JSON does not go through them.
 func (d *diskusageContext) MarshalJSON() ([]byte, error) {
-	return formatter.MarshalJSON(d)
+	type record struct {
+		ID          string     `json:"ID"`
+		Parents     []string   `json:"Parents"`
+		CreatedAt   time.Time  `json:"CreatedAt"`
+		Mutable     bool       `json:"Mutable"`
+		InUse       bool       `json:"InUse"`
+		Reclaimable bool       `json:"Reclaimable"`
+		Shared      bool       `json:"Shared"`
+		Size        int64      `json:"Size"`
+		Description string     `json:"Description"`
+		UsageCount  int        `json:"UsageCount"`
+		LastUsedAt  *time.Time `json:"LastUsedAt"`
+		Type        string     `json:"Type"`
+	}
+	return json.Marshal(record{
+		ID:          d.du.ID,
+		Parents:     d.du.Parents,
+		CreatedAt:   d.du.CreatedAt,
+		Mutable:     d.du.Mutable,
+		InUse:       d.du.InUse,
+		Reclaimable: !d.du.InUse,
+		Shared:      d.du.Shared,
+		Size:        d.du.Size,
+		Description: d.du.Description,
+		UsageCount:  d.du.UsageCount,
+		LastUsedAt:  d.du.LastUsedAt,
+		Type:        string(d.du.RecordType),
+	})
 }
 
 func (d *diskusageContext) ID() string {

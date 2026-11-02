@@ -1,8 +1,7 @@
 package builder
 
-import _ "embed"
-
 import (
+	_ "embed"
 	"os"
 	"path"
 	"testing"

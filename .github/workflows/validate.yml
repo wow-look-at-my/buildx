@@ -1,7 +1,7 @@
 name: validate
 
 permissions:
-  id-token: write
+  id-token: write # zizmor: ignore[excessive-permissions] the org workflow template keeps it at workflow level
   contents: read
 
 concurrency:

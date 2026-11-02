@@ -1,12 +1,11 @@
 package tests
 
-import _ "embed"
-
 import (
 	"bytes"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
+	_ "embed"
 	"encoding/json"
 	"encoding/pem"
 	"fmt"

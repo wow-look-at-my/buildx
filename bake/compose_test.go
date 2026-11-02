@@ -1,8 +1,7 @@
 package bake
 
-import _ "embed"
-
 import (
+	_ "embed"
 	"os"
 	"path/filepath"
 	"sort"

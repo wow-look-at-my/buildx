@@ -2,9 +2,8 @@
 
 package tests
 
-import _ "embed"
-
 import (
+	_ "embed"
 	"encoding/json"
 	"os"
 	"os/exec"

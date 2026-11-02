@@ -1,8 +1,7 @@
 package tests
 
-import _ "embed"
-
 import (
+	_ "embed"
 	"fmt"
 	"os"
 	"testing"

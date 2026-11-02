@@ -1,9 +1,8 @@
 package bake
 
-import _ "embed"
-
 import (
 	"context"
+	_ "embed"
 	"fmt"
 	"os"
 	"path/filepath"

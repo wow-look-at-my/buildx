@@ -1,8 +1,7 @@
 package confutil
 
-import _ "embed"
-
 import (
+	_ "embed"
 	"os"
 	"path/filepath"
 	"testing"

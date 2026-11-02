@@ -1,11 +1,10 @@
 package tests
 
-import _ "embed"
-
 import (
 	"archive/tar"
 	"bytes"
 	"context"
+	_ "embed"
 	"encoding/json"
 	"errors"
 	"fmt"

@@ -1,9 +1,8 @@
 package imagetools
 
-import _ "embed"
-
 import (
 	"context"
+	_ "embed"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"

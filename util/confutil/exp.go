@@ -1,3 +1,5 @@
+// exp.go holds the exp code.
+
 package confutil
 
 import (

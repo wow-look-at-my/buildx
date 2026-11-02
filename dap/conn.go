@@ -1,3 +1,5 @@
+// conn.go holds the conn code.
+
 package dap
 
 import (
@@ -30,12 +32,9 @@ func NewConn(rd io.Reader, wr io.Writer) Conn {
 	sendCh := make(chan dap.Message, 100)
 	errCh := make(chan error, 1)
 
-	// Reader input may never close so this is an orphaned goroutine.
-	// It's ok if it does actually close but not necessary for the
-	// proper functioning of this connection.
-	//
-	// The reason this might not close is because stdin close is controlled
-	// by the OS and can't be closed from within the program.
+	// Reader input may never close so this is an orphaned goroutine. It's ok if
+	// it does close but not necessary for the proper functioning of this
+	// connection.
 	go func() {
 		defer close(errCh)
 		defer close(recvCh)
@@ -45,7 +44,6 @@ func NewConn(rd io.Reader, wr io.Writer) Conn {
 			m, err := dap.ReadProtocolMessage(rd)
 			if err != nil {
 				if !errors.Is(err, io.EOF) {
-					// TODO: not actually using this yet
 					errCh <- err
 				}
 				return

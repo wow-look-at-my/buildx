@@ -1,3 +1,5 @@
+// main.go holds the main code.
+
 package main
 
 import (
@@ -45,13 +47,8 @@ func runStandalone(cmd *command.DockerCli) error {
 	return rootCmd.Execute()
 }
 
-// flushMetrics will manually flush metrics from the configured
-// meter provider. This is needed when running in standalone mode
-// because the meter provider is initialized by the cli library,
-// but the mechanism for forcing it to report is not presently
-// exposed and not invoked when run in standalone mode.
-// There are plans to fix that in the next release, but this is
-// needed temporarily until the API for this is more thorough.
+// flushMetrics will manually flush metrics from the configured meter
+// provider.
 func flushMetrics(cmd *command.DockerCli) {
 	if mp, ok := cmd.MeterProvider().(command.MeterProvider); ok {
 		if err := mp.ForceFlush(context.Background()); err != nil {
@@ -95,16 +92,13 @@ func main() {
 		if sterr.Status != "" {
 			fmt.Fprintln(cmd.Err(), sterr.Status)
 		}
-		// StatusError should only be used for errors, and all errors should
-		// have a non-zero exit status, so never exit with 0
 		if sterr.StatusCode == 0 {
 			os.Exit(1)
 		}
 		os.Exit(sterr.StatusCode)
 	}
 
-	// Check for ExitCodeError, which is used to exit with a specific code
-	// without printing an error message.
+	// Check for ExitCodeError, which is used to exit with a specific code without printing an error message.
 	var exitCodeErr cobrautil.ExitCodeError
 	if errors.As(err, &exitCodeErr) {
 		os.Exit(int(exitCodeErr))

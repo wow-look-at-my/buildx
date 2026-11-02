@@ -1,3 +1,5 @@
+// dap.go holds the dap code.
+
 package commands
 
 import (

@@ -1,3 +1,5 @@
+// printer.go holds the printer code.
+
 package progress
 
 import (
@@ -42,8 +44,7 @@ type Printer struct {
 	logSourceMap map[digest.Digest]any
 	metrics      *metricWriter
 
-	// TODO: remove once we can use result context to pass build ref
-	//  see https://github.com/docker/buildx/pull/1861
+	// TODO: remove once we can use result context to pass build ref see https://github.com/docker/buildx/pull/1861
 	buildRefsMu sync.Mutex
 	buildRefs   map[string]string
 }
@@ -72,8 +73,7 @@ func (p *Printer) Pause() error {
 		done:         done,
 	}
 
-	// Need to wait for a response to confirm we have control
-	// of the console output.
+	// Need to wait for a response to confirm we have control of the console output.
 	<-done
 	return nil
 }

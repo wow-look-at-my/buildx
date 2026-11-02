@@ -1,3 +1,5 @@
+// uninstall.go holds the uninstall code.
+
 package commands
 
 import (
@@ -21,8 +23,8 @@ func runUninstall(_ command.Cli, _ uninstallOptions) error {
 	if err != nil {
 		return errors.Wrap(err, "could not load docker config to uninstall 'docker builder' alias")
 	}
-	// config.Load does not return an error if config file does not exist
-	// so let's detect that case, to avoid writing an empty config to disk.
+	// config.Load does not return an error. This applies if config file does not
+	// exist so let's detect that case, to avoid writing an empty config to disk.
 	if _, err := os.Stat(cfg.Filename); err != nil {
 		if !os.IsNotExist(err) {
 			// should never happen, already handled in config.Load

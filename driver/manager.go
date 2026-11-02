@@ -1,3 +1,5 @@
+// manager.go holds the manager code.
+
 package driver
 
 import (
@@ -23,8 +25,7 @@ type Factory interface {
 }
 
 type BuildkitConfig struct {
-	// Entitlements []string
-	// Rootless bool
+	// Entitlements []string. Rootless bool
 }
 
 type InitConfig struct {

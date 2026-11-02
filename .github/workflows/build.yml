@@ -1,11 +1,12 @@
 name: build
 
 permissions:
+  id-token: write
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: gha_${{ github.repository }}_${{ github.workflow }}_${{ github.ref != 'refs/heads/master' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
 on:
   workflow_dispatch:
@@ -34,7 +35,7 @@ env:
 
 jobs:
   test-integration:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ github.event.repository.visibility == 'public' && 'ubuntu-24.04' || vars.CI_RUNNER_DIND || 'ubuntu-24.04' }}
     env:
       TESTFLAGS_DOCKER: "-v --parallel=1 --timeout=30m"
       TEST_IMAGE_BUILD: "0"
@@ -171,14 +172,11 @@ jobs:
           path: ./bin/testreports
 
   test-unit:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ (github.event.repository.visibility == 'public' || !contains(fromJSON('["ubuntu-24.04"]'), matrix.os)) && matrix.os || vars.CI_RUNNER || matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-24.04
-          - macos-15
-          - windows-2025
+        os: ${{ github.event.repository.visibility == 'public' && fromJSON('["ubuntu-24.04","macos-15","windows-2025"]') || fromJSON('["ubuntu-24.04"]') }}
     env:
       SKIP_INTEGRATION_TESTS: 1
     steps:
@@ -249,9 +247,10 @@ jobs:
           path: ${{ env.TESTREPORTS_BASEDIR }}
 
   govulncheck:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ github.event.repository.visibility == 'public' && 'ubuntu-24.04' || vars.CI_RUNNER_DIND || 'ubuntu-24.04' }}
     permissions:
       # same as global permission
+      id-token: write
       contents: read
       # required to write sarif report
       security-events: write
@@ -294,7 +293,7 @@ jobs:
       sign: ${{ github.event_name != 'pull_request' }}
 
   binaries-finalize:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ github.event.repository.visibility == 'public' && 'ubuntu-24.04' || vars.CI_RUNNER || 'ubuntu-24.04' }}
     needs:
       - binaries
     steps:
@@ -350,7 +349,7 @@ jobs:
           if-no-files-found: error
 
   bin-image-prepare:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ github.event.repository.visibility == 'public' && 'ubuntu-24.04' || vars.CI_RUNNER || 'ubuntu-24.04' }}
     outputs:
       repo-slug: ${{ env.REPO_SLUG }}
     steps:
@@ -390,10 +389,11 @@ jobs:
           password: ${{ secrets.DOCKERPUBLICBOT_WRITE_PAT }}
 
   scout:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ github.event.repository.visibility == 'public' && 'ubuntu-24.04' || vars.CI_RUNNER_DIND || 'ubuntu-24.04' }}
     if: ${{ github.ref == 'refs/heads/master' && github.repository == 'docker/buildx' }}
     permissions:
       # same as global permission
+      id-token: write
       contents: read
       # required to write sarif report
       security-events: write
@@ -421,9 +421,10 @@ jobs:
           sarif_file: ${{ steps.scout.outputs.result-file }}
 
   release:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ github.event.repository.visibility == 'public' && 'ubuntu-24.04' || vars.CI_RUNNER || 'ubuntu-24.04' }}
     permissions:
       # required to create GitHub release
+      id-token: write
       contents: write
     needs:
       - test-integration

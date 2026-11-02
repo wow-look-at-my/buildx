@@ -1,3 +1,5 @@
+// bake.go holds the bake code.
+
 package bake
 
 import (
@@ -598,7 +600,7 @@ func (c Config) newOverrides(v []string) (map[string]map[string]Override, error)
 
 			override := t[okey]
 
-			// IMPORTANT: if you add more fields here, do not forget to update
+			// IMPORTANT: if you add more fields here, do. Not forget to update
 			// docs/reference/buildx_bake.md (--set) and https://docs.docker.com/build/bake/overrides/
 			switch keys[1] {
 			case "output", "cache-to", "cache-from", "tags", "platform", "secrets", "ssh", "attest", "entitlements", "network", "annotations", "policy":
@@ -1435,9 +1437,7 @@ func toBuildOpt(t *Target, inp *Input) (*build.Options, error) {
 	}
 	updateContext(&bi, inp)
 	if v, ok := strings.CutPrefix(bi.DockerfilePath, "cwd://"); ok {
-		// If Dockerfile is local for a remote invocation, we first check if
-		// it's not outside the working directory and then resolve it to an
-		// absolute path.
+		// If Dockerfile is local for a remote invocation.
 		bi.DockerfilePath = path.Clean(v)
 		var err error
 		bi.DockerfilePath, err = filepath.Abs(bi.DockerfilePath)
@@ -1445,20 +1445,8 @@ func toBuildOpt(t *Target, inp *Input) (*build.Options, error) {
 			return nil, err
 		}
 	} else if !urlutil.IsRemoteURL(bi.DockerfilePath) && strings.HasPrefix(bi.ContextPath, "cwd://") && (inp != nil && urlutil.IsRemoteURL(inp.URL)) {
-		// We don't currently support reading a remote Dockerfile with a local
-		// context when doing a remote invocation because we automatically
-		// derive the dockerfile from the context atm:
-		//
-		// target "default" {
-		//  context = BAKE_CMD_CONTEXT
-		//  dockerfile = "Dockerfile.app"
-		// }
-		//
-		// > docker buildx bake https://github.com/foo/bar.git
-		// failed to solve: failed to read dockerfile: open /var/lib/docker/tmp/buildkit-mount3004544897/Dockerfile.app: no such file or directory
-		//
-		// To avoid mistakenly reading a local Dockerfile, we check if the
-		// Dockerfile exists locally and if so, we error out.
+		// We do not support reading a remote Dockerfile with a local context when
+		// doing a remote invocation.
 		if _, err := os.Stat(filepath.Join(path.Clean(strings.TrimPrefix(bi.ContextPath, "cwd://")), bi.DockerfilePath)); err == nil {
 			return nil, errors.Errorf("reading a dockerfile for a remote build invocation is currently not supported")
 		}
@@ -1699,8 +1687,7 @@ func setLoadOverride(outputs []*buildflags.ExportEntry, load bool) []*buildflags
 		case "image", "registry", "oci":
 			// Ignore
 		default:
-			// if there is any output that is not an image, registry
-			// or oci, don't set "load" similar to push override
+			// if there is any output that is not an image, registry or oci, don't set "load" similar to push override
 			return outputs
 		}
 	}
@@ -1719,9 +1706,7 @@ func validateTargetName(name string) error {
 }
 
 func sanitizeTargetName(target string) string {
-	// as stipulated in compose spec, service name can contain a dot so as
-	// best-effort and to avoid any potential ambiguity, we replace the dot
-	// with an underscore.
+	// as stipulated in compose spec, service name can contain a dot so as best-effort and to avoid any potential ambiguity.
 	return strings.ReplaceAll(target, ".", "_")
 }
 

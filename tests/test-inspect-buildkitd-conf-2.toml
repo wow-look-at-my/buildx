@@ -1,0 +1,5 @@
+debug = true
+insecure-entitlements = ['network.host', 'security.insecure']
+
+[log]
+format = 'text'

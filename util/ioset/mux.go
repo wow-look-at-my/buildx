@@ -1,3 +1,5 @@
+// mux.go holds the mux code.
+
 package ioset
 
 import (
@@ -68,8 +70,7 @@ func NewMuxIO(in In, outs []MuxOut, initIdx int, toggleMessage func(prev int, re
 		for {
 			prevIsControlSequence := false
 			if err := copyToFunc(traceReader(in.Stdin, func(r rune) (bool, error) {
-				// Toggle IO when it detects C-a-c
-				// TODO: make it configurable if needed
+				// Toggle IO when it detects C-a-c. TODO: make it configurable if needed
 				if int(r) == 1 {
 					prevIsControlSequence = true
 					return false, nil

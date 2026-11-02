@@ -1,5 +1,7 @@
 //go:build !windows
 
+// path_unix.go holds the path unix code.
+
 package osutil
 
 import (

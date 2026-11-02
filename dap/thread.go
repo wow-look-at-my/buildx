@@ -1,3 +1,5 @@
+// thread.go holds the thread code.
+
 package dap
 
 import (
@@ -75,8 +77,7 @@ func (t *thread) Evaluate(ctx Context, c gateway.Client, headRef gateway.Referen
 	var next *step
 	action := stepContinue
 	if cfg.StopOnEntry {
-		// If we are stopping on entry, automatically advance to the
-		// entrypoint.
+		// If we are stopping on entry, automatically advance to the entrypoint.
 		action, next = stepNext, t.entrypoint
 	}
 
@@ -115,8 +116,7 @@ func (t *thread) init(ctx Context, c gateway.Client, ref gateway.Reference, meta
 	t.sourceInfoMap = func(s *pb.Source) *pb.Source {
 		s = s.CloneVT()
 		for _, sinfo := range s.Infos {
-			// Map the filename from the source info from the frontend location to the
-			// client location.
+			// Map the filename from the source info from the frontend location to the client location.
 			fname := strings.Replace(sinfo.Filename, inputs.DockerfileMappingDst, inputs.DockerfileMappingSrc, 1)
 
 			// Convert to an absolute path.
@@ -135,13 +135,10 @@ func (t *thread) init(ctx Context, c gateway.Client, ref gateway.Reference, meta
 }
 
 type step struct {
-	// dgst holds the digest associated with this step. This is used for
-	// breakpoint resolution.
+	// dgst holds the digest associated with this step. This is used for breakpoint resolution.
 	dgst digest.Digest
 
 	// deferred holds the inputs that should have its evaluation deferred.
-	// These inputs are still included in the references but will only be
-	// evaluated when needed.
 	deferred map[int]bool
 
 	// in holds the next target when step in is used.
@@ -163,17 +160,14 @@ type step struct {
 func (t *thread) createProgram() error {
 	t.frames = make(map[int32]*frame)
 
-	// Create the entrypoint by using the last node.
-	// We will build on top of that.
+	// Create the entrypoint by using the last node. We will build on top of that.
 	t.entrypoint = t.createBranch(t.head, nil)
 	return nil
 }
 
 func (t *thread) createBranch(dgst digest.Digest, exitpoint *step) (entrypoint *step) {
-	// Construct the final two steps in this branch. The final steps
-	// both point to the same line. The difference between them is one
-	// step is before the execution of the digest and the other is
-	// after the execution of that digest.
+	// Construct the final steps in this branch. The final steps both point to
+	// the same line.
 	returnpoint := &step{
 		in:     exitpoint,
 		next:   exitpoint,
@@ -190,18 +184,13 @@ func (t *thread) createBranch(dgst digest.Digest, exitpoint *step) (entrypoint *
 		parent: -1,
 	}
 
-	// The entrypoint doesn't have a source entry. Just skip this
-	// branch.
+	// The entrypoint doesn't have a source entry. skip this branch.
 	if entrypoint.frame.Source == nil {
 		return nil
 	}
 
-	// Create a pseudo-frame and attach it to the return point.
-	// This is mostly used for getting the correct inputs utilized
-	// by this frame.
-	//
-	// We don't save this frame or assign it a unique ID as it should
-	// never be returned.
+	// Create a pseudo-frame and attach it to the return point. This is mostly
+	// used for getting the correct inputs utilized by this frame.
 	returnpoint.frame = &frame{
 		StackFrame: entrypoint.frame.StackFrame,
 		op: &pb.Op{
@@ -225,27 +214,15 @@ func (t *thread) createBranch(dgst digest.Digest, exitpoint *step) (entrypoint *
 				continue
 			}
 
-			// When we find inputs that aren't the direct parent,
-			// we want to add them as a step before the current step.
-			// We have to do a few things when inserting this.
-			//
-			// 1. We move the digest from the old entrypoint to this node.
-			// 		This is so the breakpoint happens before these inputs
-			// 		are evaluated.
-			// 2. We keep the next/out pointers the same but redirect in
-			// 		to point to the new branch.
-			// 3. The direct parent is excluded from this logic. We handle
-			// 		that later.
+			// When we find inputs that aren't the direct parent, we want to add them as a step before the current step.
 			inp := op.Inputs[i]
 
 			head := *entrypoint
 
-			// Create the routine associated with this input.
-			// Associate it with the entrypoint in step.
+			// Create the routine associated with this input. Associate it with the entrypoint in step.
 			head.in = t.createBranch(digest.Digest(inp.Digest), entrypoint)
 
-			// If this branch is empty (signified by a nil return value) then
-			// skip it.
+			// If this branch is empty (signified by a nil return value) then skip it.
 			if head.in == nil {
 				// Always mark this input as deferred since it doesn't have
 				// an associated branch.
@@ -257,8 +234,7 @@ func (t *thread) createBranch(dgst digest.Digest, exitpoint *step) (entrypoint *
 			}
 			entrypoint.dgst = ""
 
-			// Filter this input from the target so it doesn't get solved
-			// when moving to this step.
+			// Filter this input from the target so it doesn't get solved when moving to this step.
 			head.deferred = make(map[int]bool)
 			maps.Copy(head.deferred, entrypoint.deferred)
 			head.deferred[i] = true
@@ -301,10 +277,7 @@ func (t *thread) getStackFrame(dgst digest.Digest, next *step) *frame {
 }
 
 func (t *thread) determineParent(op *pb.Op) int {
-	// Another section should have already checked this but
-	// double check here just in case we forget somewhere else.
-	// The rest of this method assumes there's at least one parent
-	// at index zero.
+	// Another section should have already checked this but double check here in case we forget somewhere else.
 	n := len(op.Inputs)
 	if n == 0 {
 		return -1
@@ -389,8 +362,7 @@ func (t *thread) prepareResultHandle(c Context, k string, refs map[string]gatewa
 		}
 	}
 
-	// Create a context for cancellations and make the cancel function
-	// block on the wait group.
+	// Create a context for cancellations and make the cancel function block on the wait group.
 	var wg sync.WaitGroup
 	ctx, cancel := context.WithCancelCause(c)
 	t.cancel = func(cause error) {
@@ -404,9 +376,9 @@ func (t *thread) prepareResultHandle(c Context, k string, refs map[string]gatewa
 		gwcaps := t.c.BuildOpts().Caps
 
 		var solveErr *errdefs.SolveError
-		// If we had a solve error and the exec filesystem capability, we can
-		// get the filesystem mounts used in the actual build rather than only the input
-		// mounts.
+		// We can get the filesystem mounts used in the actual build rather than only
+		// the input mounts. This happens if we had a solve error and the exec
+		// filesystem capability.
 		if gwcaps.Supports(gwpb.CapGatewayExecFilesystem) == nil && errors.As(err, &solveErr) {
 			if exec, ok := solveErr.Op.Op.(*pb.Op_Exec); ok {
 				rCtx := t.rCtx
@@ -425,8 +397,8 @@ func (t *thread) prepareResultHandle(c Context, k string, refs map[string]gatewa
 		}
 	}
 
-	// Start the attach. Use the context we created and perform it in
-	// a goroutine. We aren't necessarily assuming this will actually work.
+	// Start the attach. Use the context we created and perform it in a
+	// goroutine. We aren't necessarily assuming this will work.
 	wg.Go(func() {
 		t.sh.Attach(ctx, t)
 	})
@@ -467,9 +439,7 @@ func (t *thread) StackTrace() []dap.StackFrame {
 	defer t.mu.Unlock()
 
 	if t.paused == nil {
-		// Cannot compute stack trace when not paused.
-		// This should never happen, but protect ourself in
-		// case it does.
+		// Cannot compute stack trace when not paused. This should never happen, but protect ourself in case it does.
 		return []dap.StackFrame{}
 	}
 
@@ -575,8 +545,8 @@ func (t *thread) seek(ctx Context, target *step) (k string, result *step, mounts
 }
 
 func (t *thread) continueDigest(from *step, limit func(*step) *step) *step {
-	// First chance to exit early. If there's no function for limiting
-	// the until step and no breakpoints then just go directly to the end step.
+	// First chance to exit early. If there's no function for limiting the until
+	// step and no breakpoints then go directly to the end step.
 	if len(t.bps) == 0 && limit == nil {
 		return nil
 	}
@@ -590,9 +560,8 @@ func (t *thread) continueDigest(from *step, limit func(*step) *step) *step {
 		return ok
 	}
 
-	// Special case. When we aren't coming from any step we consider
-	// whether the entrypoint itself is a breakpoint. If it is, we stop
-	// there. Otherwise, we treat the entrypoint as the from location.
+	// Special case. When we aren't coming from any step we consider whether the
+	// entrypoint itself is a breakpoint. If it is, we stop there.
 	if from == nil {
 		if isBreakpoint(t.entrypoint.dgst) {
 			return t.entrypoint
@@ -605,8 +574,8 @@ func (t *thread) continueDigest(from *step, limit func(*step) *step) *step {
 		until = limit(from)
 	}
 
-	// Second chance to exit early. If we've fully resolved from and the
-	// limit function doesn't return an end step, just go directly to the end.
+	// Second chance to exit early. If we've fully resolved from and the limit
+	// function doesn't return an end step, go directly to the end.
 	if len(t.bps) == 0 && until == nil {
 		return nil
 	}
@@ -758,8 +727,7 @@ func (t *thread) hasFrame(id int) bool {
 func (t *thread) rewind(ctx Context, inErr error) (k string, result *step, mounts map[string]gateway.Reference, retErr error) {
 	var solveErr *errdefs.SolveError
 	if !errors.As(inErr, &solveErr) {
-		// If this is not a solve error, do not return the
-		// reference and target step.
+		// If this is not a solve error, do not return the reference and target step.
 		return "", nil, nil, inErr
 	}
 
@@ -769,8 +737,7 @@ func (t *thread) rewind(ctx Context, inErr error) (k string, result *step, mount
 		digests = append(digests, digest.FromBytes(dt))
 	}
 
-	// Include a version of the digest without the platform
-	// if this is a file op.
+	// Include a version of the digest without the platform if this is a file op.
 	if _, ok := solveErr.Op.Op.(*pb.Op_File); ok && solveErr.Op.Platform != nil {
 		op := solveErr.Op.CloneVT()
 		op.Platform = nil
@@ -790,8 +757,7 @@ func (t *thread) rewind(ctx Context, inErr error) (k string, result *step, mount
 		result = result.in
 	}
 
-	// Seek to this step. This should succeed because otherwise
-	// we wouldn't have been able to even fail on it to begin with.
+	// Seek to this step.
 	k, result, mounts, retErr = t.seek(ctx, result)
 	if retErr != nil {
 		return k, result, mounts, retErr

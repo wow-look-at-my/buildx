@@ -1,5 +1,7 @@
 package bake
 
+import _ "embed"
+
 import (
 	"context"
 	"fmt"
@@ -237,7 +239,7 @@ target "webapp" {
 
 	t.Run("PatternOverride", func(t *testing.T) {
 		t.Parallel()
-		// same check for two cases
+		// same check for cases
 		multiTargetCheck := func(t *testing.T, m map[string]*Target, g map[string]*Group, err error) {
 			require.NoError(t, err)
 			require.Equal(t, 2, len(m))
@@ -286,9 +288,7 @@ target "webapp" {
 				targets:   []string{"webapp"},
 				overrides: []string{"nomatch*.dockerfile=foo"},
 				check: func(t *testing.T, m map[string]*Target, g map[string]*Group, err error) {
-					// NOTE: I am unsure whether failing to match should always error out
-					// instead of simply skipping that override.
-					// Let's enforce the error and we can relax it later if users complain.
+					// NOTE: I am unsure whether failing to match should always error out instead of skipping that override.
 					require.Error(t, err)
 					require.Equal(t, "could not find any target matching 'nomatch*'", err.Error())
 				},
@@ -555,42 +555,19 @@ func TestReadTargetsCompose(t *testing.T) {
 	fp := File{
 		Name: "docker-compose.yml",
 		Data: []byte(
-			`version: "3"
-services:
-  db:
-    build: .
-    command: ./entrypoint.sh
-    image: docker.io/tonistiigi/db
-  webapp:
-    build:
-      dockerfile: Dockerfile.webapp
-      args:
-        buildno: 1
-`),
+			testReadTargetsComposeYml),
 	}
 
 	fp2 := File{
 		Name: "docker-compose2.yml",
 		Data: []byte(
-			`version: "3"
-services:
-  newservice:
-    build: .
-  webapp:
-    build:
-      args:
-        buildno2: 12
-`),
+			testReadTargetsComposeYml2),
 	}
 
 	fp3 := File{
 		Name: "docker-compose3.yml",
 		Data: []byte(
-			`version: "3"
-services:
-  webapp:
-    entrypoint: echo 1
-`),
+			testReadTargetsComposeYml3),
 	}
 
 	ctx := context.TODO()
@@ -618,26 +595,13 @@ func TestReadTargetsWithDotCompose(t *testing.T) {
 	fp := File{
 		Name: "docker-compose.yml",
 		Data: []byte(
-			`version: "3"
-services:
-  web.app:
-    build:
-      dockerfile: Dockerfile.webapp
-      args:
-        buildno: 1
-`),
+			testReadTargetsWithDotComposeYml),
 	}
 
 	fp2 := File{
 		Name: "docker-compose2.yml",
 		Data: []byte(
-			`version: "3"
-services:
-  web_app:
-    build:
-      args:
-        buildno2: 12
-`),
+			testReadTargetsWithDotComposeYml2),
 	}
 
 	ctx := context.TODO()
@@ -864,11 +828,7 @@ func TestReadEmptyTargets(t *testing.T) {
 
 	fp2 := File{
 		Name: "docker-compose.yml",
-		Data: []byte(`
-services:
-  app2:
-    build: {}
-`),
+		Data: []byte(testReadEmptyTargetsYml),
 	}
 
 	ctx := context.TODO()
@@ -1149,49 +1109,12 @@ target "image-release" {
 
 	fyml := File{
 		Name: "docker-compose.yml",
-		Data: []byte(`
-services:
-  addon:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      args:
-        CT_ECR: foo
-        CT_TAG: bar
-    image: ct-addon:bar
-    environment:
-      - NODE_ENV=test
-      - AWS_ACCESS_KEY_ID=dummy
-      - AWS_SECRET_ACCESS_KEY=dummy
-  aws:
-    build:
-      dockerfile: ./aws.Dockerfile
-      args:
-        CT_ECR: foo
-        CT_TAG: bar
-    image: ct-fake-aws:bar`),
+		Data: []byte(testReadTargetsMixedYml),
 	}
 
 	fjson := File{
 		Name: "docker-bake.json",
-		Data: []byte(`{
-	 "group": {
-	   "default": {
-	     "targets": [
-	       "image"
-	     ]
-	   }
-	 },
-	 "target": {
-	   "image": {
-	     "context": ".",
-	     "dockerfile": "Dockerfile",
-	     "output": [
-	       "type=docker"
-	     ]
-	   }
-	 }
-	}`),
+		Data: []byte(testReadTargetsMixedJson),
 	}
 
 	m, g, err := ReadTargets(ctx, []File{fhcl}, []string{"default"}, nil, nil, nil, &EntitlementConf{})
@@ -1633,14 +1556,7 @@ func TestUnknownExt(t *testing.T) {
 			}
 		}
 		`)
-	dt2 := []byte(`
-services:
-  app:
-    build:
-      dockerfile: Dockerfile-alternate
-      args:
-        v2: "bar"
-`)
+	dt2 := []byte(testUnknownExtYml)
 
 	c, _, err := ParseFiles([]File{
 		{Data: dt, Name: "c1.foo"},
@@ -1696,21 +1612,7 @@ func TestJSONNullVars(t *testing.T) {
 	fp := File{
 		Name: "docker-bake.json",
 		Data: []byte(
-			`{
-				"variable": {
-					"FOO": {
-						"default": null
-					}
-				},
-				"target": {
-					"default": {
-						"args": {
-							"foo": "${FOO}",
-							"bar": "baz"
-						}
-					}
-				}
-			}`),
+			testJSONNullVarsJson),
 	}
 
 	ctx := context.TODO()
@@ -1924,11 +1826,7 @@ func TestEntitlementsForNetHostCompose(t *testing.T) {
 	fp2 := File{
 		Name: "docker-compose.yml",
 		Data: []byte(
-			`services:
-  app:
-    build:
-      network: "host"
-`),
+			testEntitlementsForNetHostComposeYml),
 	}
 
 	ctx := context.TODO()
@@ -2491,3 +2389,36 @@ func stringify[V fmt.Stringer](values []V) []string {
 	sort.Strings(s)
 	return s
 }
+
+//go:embed testdata/test-read-targets-compose.yml
+var testReadTargetsComposeYml string
+
+//go:embed testdata/test-read-targets-compose-2.yml
+var testReadTargetsComposeYml2 string
+
+//go:embed testdata/test-read-targets-compose-3.yml
+var testReadTargetsComposeYml3 string
+
+//go:embed testdata/test-read-targets-with-dot-compose.yml
+var testReadTargetsWithDotComposeYml string
+
+//go:embed testdata/test-read-targets-with-dot-compose-2.yml
+var testReadTargetsWithDotComposeYml2 string
+
+//go:embed testdata/test-read-empty-targets.yml
+var testReadEmptyTargetsYml string
+
+//go:embed testdata/test-read-targets-mixed.yml
+var testReadTargetsMixedYml string
+
+//go:embed testdata/test-read-targets-mixed.json
+var testReadTargetsMixedJson string
+
+//go:embed testdata/test-unknown-ext.yml
+var testUnknownExtYml string
+
+//go:embed testdata/test-json-null-vars.json
+var testJSONNullVarsJson string
+
+//go:embed testdata/test-entitlements-for-net-host-compose.yml
+var testEntitlementsForNetHostComposeYml string

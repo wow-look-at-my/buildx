@@ -1,3 +1,5 @@
+// variables.go holds the variables code.
+
 package dap
 
 import (
@@ -60,9 +62,7 @@ func (f *frame) fillLocation(def *llb.Definition, loc *pb.Locations, next *step)
 				Path: info.Filename,
 			}
 
-			// If we do not have a next operation, then we don't have
-			// any information to make a determination about the "best" fit
-			// that happens at the beginning of this section. Exit early.
+			// If we do not have a next operation.
 			if next == nil {
 				return
 			}

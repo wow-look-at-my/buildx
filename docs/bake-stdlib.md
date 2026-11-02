@@ -551,8 +551,7 @@ target "webapp-dev" {
 
 ## `formattimestamp`
 
-Formats either an RFC3339 timestamp string or a unix timestamp integer.
-The special format `X` returns the unix timestamp in seconds.
+Formats either an RFC3339 timestamp string or a unix timestamp integer. The special format `X` returns the unix timestamp in seconds.
 
 ```hcl
 # docker-bake.hcl
@@ -1097,9 +1096,7 @@ target "webapp-dev" {
 
 ## `semvercmp`
 
-This function checks if a semantic version fits within a set of constraints.
-See [Checking Version Constraints](https://github.com/Masterminds/semver?tab=readme-ov-file#checking-version-constraints)
-for details.
+This function checks if a semantic version fits within a set of constraints. See [Checking Version Constraints](https://github.com/Masterminds/semver?tab=readme-ov-file#checking-version-constraints) for details.
 
 ```hcl
 # docker-bake.hcl

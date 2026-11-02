@@ -1,3 +1,5 @@
+// factory.go holds the factory code.
+
 package kubernetes
 
 import (
@@ -76,9 +78,7 @@ func (f *factory) New(ctx context.Context, cfg driver.InitConfig) (driver.Driver
 	} else {
 		cc, err = ctxkube.ConfigFromEndpoint(cfg.EndpointAddr, cfg.ContextStore)
 		if err != nil {
-			// err is returned if cfg.EndpointAddr is non-context name like "unix:///var/run/docker.sock".
-			// try again with name="default".
-			// FIXME(@AkihiroSuda): cfg should retain real context name.
+			// err is returned if cfg.EndpointAddr is non-context name like "unix:///var/run/docker.sock". try again with name="default".
 			cc, err = ctxkube.ConfigFromEndpoint("default", cfg.ContextStore)
 			if err != nil {
 				logrus.Error(err)

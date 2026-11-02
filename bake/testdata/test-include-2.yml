@@ -1,0 +1,9 @@
+
+include:
+  - compose-foo.yml
+
+services:
+  bar:
+    build:
+     context: .
+     target: buildbar

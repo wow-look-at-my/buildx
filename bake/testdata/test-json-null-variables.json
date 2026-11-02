@@ -1,0 +1,14 @@
+{
+		"variable": {
+			"FOO": {
+				"default": null
+			}
+		},
+		"target": {
+			"default": {
+				"args": {
+					"foo": "${FOO}"
+				}
+			}
+		}
+	}

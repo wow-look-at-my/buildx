@@ -1,0 +1,6 @@
+
+services:
+  scratch:
+    build:
+     context: ./webapp
+    cgroup: private

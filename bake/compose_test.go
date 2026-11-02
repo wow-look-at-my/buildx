@@ -1,5 +1,7 @@
 package bake
 
+import _ "embed"
+
 import (
 	"os"
 	"path/filepath"
@@ -12,49 +14,7 @@ import (
 )
 
 func TestParseCompose(t *testing.T) {
-	dt := []byte(`
-services:
-  db:
-    build: ./db
-    command: ./entrypoint.sh
-    image: docker.io/tonistiigi/db
-  webapp:
-    build:
-      context: ./dir
-      additional_contexts:
-        foo: ./bar
-      dockerfile: Dockerfile-alternate
-      network:
-        none
-      args:
-        buildno: 123
-      cache_from:
-        - type=local,src=path/to/cache
-      cache_to:
-        - type=local,dest=path/to/cache
-      extra_hosts:
-        - "somehost:162.242.195.82"
-        - "somehost:162.242.195.83"
-        - "myhostv6:::1"
-      ssh:
-        - key=/path/to/key
-        - default
-      secrets:
-        - token
-        - aws
-  webapp2:
-    profiles:
-      - test
-    build:
-      context: ./dir
-      dockerfile_inline: |
-        FROM alpine
-secrets:
-  token:
-    environment: ENV_TOKEN
-  aws:
-    file: /root/.aws/credentials
-`)
+	dt := []byte(testParseComposeYml)
 
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
@@ -94,14 +54,7 @@ secrets:
 }
 
 func TestParseComposeEmptyCacheLists(t *testing.T) {
-	dt := []byte(`
-services:
-  webapp:
-    build:
-      context: ./dir
-      cache_from: []
-      cache_to: []
-`)
+	dt := []byte(testParseComposeEmptyCacheListsYml)
 
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
@@ -111,13 +64,7 @@ services:
 }
 
 func TestNoBuildOutOfTreeService(t *testing.T) {
-	dt := []byte(`
-services:
-    external:
-        image: "verycooldb:1337"
-    webapp:
-        build: ./db
-`)
+	dt := []byte(testNoBuildOutOfTreeServiceYml)
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
 	require.Equal(t, 1, len(c.Groups))
@@ -125,17 +72,7 @@ services:
 }
 
 func TestParseComposeTarget(t *testing.T) {
-	dt := []byte(`
-services:
-  db:
-    build:
-      context: ./db
-      target: db
-  webapp:
-    build:
-      context: .
-      target: webapp
-`)
+	dt := []byte(testParseComposeTargetYml)
 
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
@@ -151,16 +88,7 @@ services:
 }
 
 func TestComposeBuildWithoutContext(t *testing.T) {
-	dt := []byte(`
-services:
-  db:
-    build:
-      target: db
-  webapp:
-    build:
-      context: .
-      target: webapp
-`)
+	dt := []byte(testComposeBuildWithoutContextYml)
 
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
@@ -175,19 +103,7 @@ services:
 }
 
 func TestBuildArgEnvCompose(t *testing.T) {
-	dt := []byte(`
-version: "3.8"
-services:
-  example:
-    image: example
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        FOO:
-        BAR: $ZZZ_BAR
-        BRB: FOO
-`)
+	dt := []byte(testBuildArgEnvComposeYml)
 
 	t.Setenv("FOO", "bar")
 	t.Setenv("BAR", "foo")
@@ -201,11 +117,7 @@ services:
 }
 
 func TestInconsistentComposeFile(t *testing.T) {
-	dt := []byte(`
-services:
-  webapp:
-    entrypoint: echo 1
-`)
+	dt := []byte(testInconsistentComposeFileYml)
 
 	_, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.Error(t, err)
@@ -213,42 +125,14 @@ services:
 }
 
 func TestAdvancedNetwork(t *testing.T) {
-	dt := []byte(`
-services:
-  db:
-    networks:
-      - example.com
-    build:
-      context: ./db
-      target: db
-
-networks:
-  example.com:
-    name: example.com
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.5.0.0/24
-          ip_range: 10.5.0.0/24
-          gateway: 10.5.0.254
-`)
+	dt := []byte(testAdvancedNetworkYml)
 
 	_, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
 }
 
 func TestTags(t *testing.T) {
-	dt := []byte(`
-services:
-  example:
-    image: example
-    build:
-      context: .
-      dockerfile: Dockerfile
-      tags:
-        - foo
-        - bar
-`)
+	dt := []byte(testTagsYml)
 
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
@@ -256,99 +140,14 @@ services:
 }
 
 func TestDependsOnList(t *testing.T) {
-	dt := []byte(`
-version: "3.8"
-
-services:
-  example-container:
-    image: example/fails:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      other-container:
-        condition: service_healthy
-    networks:
-      default:
-        aliases:
-          - integration-tests
-
-  other-container:
-    image: example/other:latest
-    healthcheck:
-      test: ["CMD", "echo", "success"]
-      retries: 5
-      interval: 5s
-      timeout: 10s
-      start_period: 5s
-
-networks:
-  default:
-    name: test-net
-`)
+	dt := []byte(testDependsOnListYml)
 
 	_, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
 }
 
 func TestComposeExt(t *testing.T) {
-	dt := []byte(`
-services:
-  addon:
-    image: ct-addon:bar
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      cache_from:
-        - user/app:cache
-      cache_to:
-        - user/app:cache
-      tags:
-        - ct-addon:baz
-      ssh:
-        key: /path/to/key
-      args:
-        CT_ECR: foo
-        CT_TAG: bar
-      x-bake:
-        contexts:
-          alpine: docker-image://alpine:3.13
-        tags:
-          - ct-addon:foo
-          - ct-addon:alp
-        ssh:
-          - default
-          - other=path/to/otherkey
-        platforms:
-          - linux/amd64
-          - linux/arm64
-        cache-from:
-          - type=local,src=path/to/cache
-        cache-to:
-          - type=local,dest=path/to/cache
-        pull: true
-
-  aws:
-    image: ct-fake-aws:bar
-    build:
-      dockerfile: ./aws.Dockerfile
-      args:
-        CT_ECR: foo
-        CT_TAG: bar
-      shm_size: 128m
-      ulimits:
-        nofile:
-          soft: 1024
-          hard: 1024
-      x-bake:
-        secret:
-          - id=mysecret,src=/local/secret
-          - id=mysecret2,src=/local/secret2
-        ssh: default
-        platforms: linux/arm64
-        output: type=docker
-        no-cache: true
-`)
+	dt := []byte(testComposeExtYml)
 
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
@@ -375,32 +174,7 @@ services:
 }
 
 func TestComposeExtDedup(t *testing.T) {
-	dt := []byte(`
-services:
-  webapp:
-    image: app:bar
-    build:
-      cache_from:
-        - user/app:cache
-      cache_to:
-        - user/app:cache
-      tags:
-        - ct-addon:foo
-      ssh:
-        - default
-      x-bake:
-        tags:
-          - ct-addon:foo
-          - ct-addon:baz
-        cache-from:
-          - user/app:cache
-          - type=local,src=path/to/cache
-        cache-to:
-          - type=local,dest=path/to/cache
-        ssh:
-          - default
-          - key=path/to/key
-`)
+	dt := []byte(testComposeExtDedupYml)
 
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
@@ -419,21 +193,7 @@ func TestEnv(t *testing.T) {
 	_, err = envf.WriteString("FOO=bsdf -csdf\n")
 	require.NoError(t, err)
 
-	dt := []byte(`
-services:
-  scratch:
-    build:
-     context: .
-     args:
-        CT_ECR: foo
-        FOO:
-        NODE_ENV:
-    environment:
-      - NODE_ENV=test
-      - AWS_ACCESS_KEY_ID=dummy
-      - AWS_SECRET_ACCESS_KEY=dummy
-    env_file:
-      - ` + envf.Name() + `
+	dt := []byte(testEnvYml + envf.Name() + `
 `)
 
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
@@ -447,14 +207,7 @@ func TestDotEnv(t *testing.T) {
 	err := os.WriteFile(filepath.Join(tmpdir, ".env"), []byte("FOO=bar"), 0644)
 	require.NoError(t, err)
 
-	dt := []byte(`
-services:
-  scratch:
-    build:
-     context: .
-     args:
-        FOO:
-`)
+	dt := []byte(testDotEnvYml)
 
 	chdir(t, tmpdir)
 	c, err := ParseComposeFiles([]File{{
@@ -466,36 +219,13 @@ services:
 }
 
 func TestPorts(t *testing.T) {
-	dt := []byte(`
-services:
-  foo:
-    build:
-     context: .
-    ports:
-      - 3306:3306
-  bar:
-    build:
-     context: .
-    ports:
-      - mode: ingress
-        target: 3306
-        published: "3306"
-        protocol: tcp
-`)
+	dt := []byte(testPortsYml)
 	_, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
 }
 
 func TestPlatforms(t *testing.T) {
-	dt := []byte(`
-services:
-  foo:
-    build:
-      context: .
-      platforms:
-        - linux/amd64
-        - linux/arm64
-`)
+	dt := []byte(testPlatformsYml)
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
 	require.Equal(t, []string{"linux/amd64", "linux/arm64"}, c.Targets[0].Platforms)
@@ -564,30 +294,18 @@ func TestValidateComposeSecret(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "secret set by file",
-			dt: []byte(`
-secrets:
-  foo:
-    file: .secret
-`),
+			name:    "secret set by file",
+			dt:      []byte(testValidateComposeSecretYml),
 			wantErr: false,
 		},
 		{
-			name: "secret set by environment",
-			dt: []byte(`
-secrets:
-  foo:
-    environment: TOKEN
-`),
+			name:    "secret set by environment",
+			dt:      []byte(testValidateComposeSecretYml2),
 			wantErr: false,
 		},
 		{
-			name: "external secret",
-			dt: []byte(`
-secrets:
-  foo:
-    external: true
-`),
+			name:    "external secret",
+			dt:      []byte(testValidateComposeSecretYml3),
 			wantErr: false,
 		},
 		{
@@ -599,14 +317,8 @@ secrets:
 			wantErr: true,
 		},
 		{
-			name: "undefined secret",
-			dt: []byte(`
-services:
-  foo:
-    build:
-      secrets:
-        - token
-`),
+			name:    "undefined secret",
+			dt:      []byte(testValidateComposeSecretYml4),
 			wantErr: true,
 		},
 	}
@@ -641,35 +353,23 @@ services:
 			wantErr:   false,
 		},
 		{
-			name: "build",
-			fn:   "docker-compose.yml",
-			dt: []byte(`
-services:
-  foo:
-    build: .
-`),
+			name:      "build",
+			fn:        "docker-compose.yml",
+			dt:        []byte(testValidateComposeFileYml),
 			isCompose: true,
 			wantErr:   false,
 		},
 		{
-			name: "image",
-			fn:   "docker-compose.yml",
-			dt: []byte(`
-services:
-  simple:
-    image: nginx
-`),
+			name:      "image",
+			fn:        "docker-compose.yml",
+			dt:        []byte(testValidateComposeFileYml2),
 			isCompose: true,
 			wantErr:   false,
 		},
 		{
-			name: "unknown ext",
-			fn:   "docker-compose.foo",
-			dt: []byte(`
-services:
-  simple:
-    image: nginx
-`),
+			name:      "unknown ext",
+			fn:        "docker-compose.foo",
+			dt:        []byte(testValidateComposeFileYml3),
 			isCompose: true,
 			wantErr:   false,
 		},
@@ -685,48 +385,16 @@ target "default" {
 			wantErr:   false,
 		},
 		{
-			name: "json",
-			fn:   "docker-bake.json",
-			dt: []byte(`
-{
-  "group": [
-    {
-      "targets": [
-        "my-service"
-      ]
-    }
-  ],
-  "target": [
-    {
-      "context": ".",
-      "dockerfile": "Dockerfile"
-    }
-  ]
-}
-`),
+			name:      "json",
+			fn:        "docker-bake.json",
+			dt:        []byte(testValidateComposeFileJson),
 			isCompose: false,
 			wantErr:   false,
 		},
 		{
-			name: "json unknown ext",
-			fn:   "docker-bake.foo",
-			dt: []byte(`
-{
-  "group": [
-    {
-      "targets": [
-        "my-service"
-      ]
-    }
-  ],
-  "target": [
-    {
-      "context": ".",
-      "dockerfile": "Dockerfile"
-    }
-  ]
-}
-`),
+			name:      "json unknown ext",
+			fn:        "docker-bake.foo",
+			dt:        []byte(testValidateComposeFileJson2),
 			isCompose: false,
 			wantErr:   true,
 		},
@@ -745,15 +413,7 @@ target "default" {
 }
 
 func TestComposeNullArgs(t *testing.T) {
-	dt := []byte(`
-services:
-  scratch:
-    build:
-     context: .
-     args:
-        FOO: null
-        bar: "baz"
-`)
+	dt := []byte(testComposeNullArgsYml)
 
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
@@ -761,19 +421,7 @@ services:
 }
 
 func TestDependsOn(t *testing.T) {
-	dt := []byte(`
-services:
-  foo:
-    build:
-     context: .
-    ports:
-      - 3306:3306
-    depends_on:
-      - bar
-  bar:
-    build:
-     context: .
-`)
+	dt := []byte(testDependsOnYml)
 	_, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
 }
@@ -781,27 +429,10 @@ services:
 func TestInclude(t *testing.T) {
 	tmpdir := t.TempDir()
 
-	err := os.WriteFile(filepath.Join(tmpdir, "compose-foo.yml"), []byte(`
-services:
-  foo:
-    build:
-     context: .
-     target: buildfoo
-    ports:
-      - 3306:3306
-`), 0644)
+	err := os.WriteFile(filepath.Join(tmpdir, "compose-foo.yml"), []byte(testIncludeYml), 0644)
 	require.NoError(t, err)
 
-	dt := []byte(`
-include:
-  - compose-foo.yml
-
-services:
-  bar:
-    build:
-     context: .
-     target: buildbar
-`)
+	dt := []byte(testIncludeYml2)
 
 	chdir(t, tmpdir)
 	c, err := ParseComposeFiles([]File{{
@@ -821,46 +452,21 @@ services:
 }
 
 func TestDevelop(t *testing.T) {
-	dt := []byte(`
-services:
-  scratch:
-    build:
-     context: ./webapp
-    develop:
-      watch: 
-        - path: ./webapp/html
-          action: sync
-          target: /var/www
-          ignore:
-            - node_modules/
-`)
+	dt := []byte(testDevelopYml)
 
 	_, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
 }
 
 func TestCgroup(t *testing.T) {
-	dt := []byte(`
-services:
-  scratch:
-    build:
-     context: ./webapp
-    cgroup: private
-`)
+	dt := []byte(testCgroupYml)
 
 	_, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
 }
 
 func TestProjectName(t *testing.T) {
-	dt := []byte(`
-services:
-  scratch:
-    build:
-     context: ./webapp
-     args:
-       PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
-`)
+	dt := []byte(testProjectNameYml)
 
 	t.Run("default", func(t *testing.T) {
 		c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
@@ -880,18 +486,7 @@ services:
 }
 
 func TestServiceContext(t *testing.T) {
-	dt := []byte(`
-services:
-  base:
-    build:
-      dockerfile: baseapp.Dockerfile
-    command: ./entrypoint.sh
-  webapp:
-    build:
-      context: ./dir
-      additional_contexts:
-        base: service:base
-`)
+	dt := []byte(testServiceContextYml)
 
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
@@ -911,25 +506,7 @@ services:
 }
 
 func TestServiceContextDot(t *testing.T) {
-	dt := []byte(`
-services:
-  base.1:
-    build:
-      dockerfile: baseapp.Dockerfile
-    command: ./entrypoint.sh
-  foo.1:
-    build:
-      dockerfile: fooapp.Dockerfile
-    command: ./entrypoint.sh
-  webapp:
-    build:
-      context: ./dir
-      additional_contexts:
-        base: service:base.1
-      x-bake:
-        contexts:
-          foo: target:foo.1
-`)
+	dt := []byte(testServiceContextDotYml)
 
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
@@ -952,12 +529,7 @@ func TestDotEnvDir(t *testing.T) {
 	tmpdir := t.TempDir()
 	require.NoError(t, os.Mkdir(filepath.Join(tmpdir, ".env"), 0755))
 
-	dt := []byte(`
-services:
-  foo:
-    build:
-     context: .
-`)
+	dt := []byte(testDotEnvDirYml)
 
 	chdir(t, tmpdir)
 	_, err := ParseComposeFiles([]File{{Name: "compose.yml", Data: dt}}, nil)
@@ -973,14 +545,7 @@ FOO_VALUE=${TEST_VALUE:?test_value_not_set}
 `), 0644)
 	require.NoError(t, err)
 
-	dt := []byte(`
-services:
-  test:
-    build:
-      args:
-        TEST_VALUE:
-        FOO_VALUE:
-`)
+	dt := []byte(testDotEnvEvaluateYml)
 
 	t.Setenv("SYSTEM_VALUE", "abc")
 
@@ -992,16 +557,7 @@ services:
 
 func TestUnknownField(t *testing.T) {
 	tmpdir := t.TempDir()
-	dt := []byte(`
-services:
-  webapp:
-    bar: baz
-    build:
-     context: .
-
-foo:
-  - bar.baz
-`)
+	dt := []byte(testUnknownFieldYml)
 
 	chdir(t, tmpdir)
 	_, err := ParseComposeFiles([]File{{Name: "compose.yml", Data: dt}}, nil)
@@ -1010,13 +566,7 @@ foo:
 
 func TestUnknownBuildField(t *testing.T) {
 	tmpdir := t.TempDir()
-	dt := []byte(`
-services:
-  webapp:
-    build:
-     context: .
-     foo: bar
-`)
+	dt := []byte(testUnknownBuildFieldYml)
 
 	chdir(t, tmpdir)
 	_, err := ParseComposeFiles([]File{{Name: "compose.yml", Data: dt}}, nil)
@@ -1033,14 +583,7 @@ func TestEmptyComposeFile(t *testing.T) {
 }
 
 func TestParseComposeAttests(t *testing.T) {
-	dt := []byte(`
-services:
-  app:
-    build:
-      context: .
-      sbom: true
-      provenance: mode=max
-`)
+	dt := []byte(testParseComposeAttestsYml)
 
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
@@ -1062,14 +605,7 @@ services:
 }
 
 func TestParseComposeAttestsDisabled(t *testing.T) {
-	dt := []byte(`
-services:
-  app:
-    build:
-      context: .
-      sbom: false
-      provenance: false
-`)
+	dt := []byte(testParseComposeAttestsDisabledYml)
 
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
@@ -1091,13 +627,7 @@ services:
 }
 
 func TestParseComposePull(t *testing.T) {
-	dt := []byte(`
-services:
-  app:
-    build:
-      context: .
-      pull: true
-`)
+	dt := []byte(testParseComposePullYml)
 
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
@@ -1109,13 +639,7 @@ services:
 }
 
 func TestParseComposeNoCache(t *testing.T) {
-	dt := []byte(`
-services:
-  app:
-    build:
-      context: .
-      no_cache: true
-`)
+	dt := []byte(testParseComposeNoCacheYml)
 
 	c, err := ParseCompose([]composetypes.ConfigFile{{Content: dt}}, nil)
 	require.NoError(t, err)
@@ -1143,3 +667,129 @@ func chdir(t *testing.T, dir string) {
 		}
 	})
 }
+
+//go:embed testdata/test-parse-compose.yml
+var testParseComposeYml string
+
+//go:embed testdata/test-parse-compose-empty-cache-lists.yml
+var testParseComposeEmptyCacheListsYml string
+
+//go:embed testdata/test-no-build-out-of-tree-service.yml
+var testNoBuildOutOfTreeServiceYml string
+
+//go:embed testdata/test-parse-compose-target.yml
+var testParseComposeTargetYml string
+
+//go:embed testdata/test-compose-build-without-context.yml
+var testComposeBuildWithoutContextYml string
+
+//go:embed testdata/test-build-arg-env-compose.yml
+var testBuildArgEnvComposeYml string
+
+//go:embed testdata/test-inconsistent-compose-file.yml
+var testInconsistentComposeFileYml string
+
+//go:embed testdata/test-advanced-network.yml
+var testAdvancedNetworkYml string
+
+//go:embed testdata/test-tags.yml
+var testTagsYml string
+
+//go:embed testdata/test-depends-on-list.yml
+var testDependsOnListYml string
+
+//go:embed testdata/test-compose-ext.yml
+var testComposeExtYml string
+
+//go:embed testdata/test-compose-ext-dedup.yml
+var testComposeExtDedupYml string
+
+//go:embed testdata/test-env.yml
+var testEnvYml string
+
+//go:embed testdata/test-dot-env.yml
+var testDotEnvYml string
+
+//go:embed testdata/test-ports.yml
+var testPortsYml string
+
+//go:embed testdata/test-platforms.yml
+var testPlatformsYml string
+
+//go:embed testdata/test-validate-compose-secret.yml
+var testValidateComposeSecretYml string
+
+//go:embed testdata/test-validate-compose-secret-2.yml
+var testValidateComposeSecretYml2 string
+
+//go:embed testdata/test-validate-compose-secret-3.yml
+var testValidateComposeSecretYml3 string
+
+//go:embed testdata/test-validate-compose-secret-4.yml
+var testValidateComposeSecretYml4 string
+
+//go:embed testdata/test-validate-compose-file.yml
+var testValidateComposeFileYml string
+
+//go:embed testdata/test-validate-compose-file-2.yml
+var testValidateComposeFileYml2 string
+
+//go:embed testdata/test-validate-compose-file-3.yml
+var testValidateComposeFileYml3 string
+
+//go:embed testdata/test-validate-compose-file.json
+var testValidateComposeFileJson string
+
+//go:embed testdata/test-validate-compose-file-2.json
+var testValidateComposeFileJson2 string
+
+//go:embed testdata/test-compose-null-args.yml
+var testComposeNullArgsYml string
+
+//go:embed testdata/test-depends-on.yml
+var testDependsOnYml string
+
+//go:embed testdata/test-include.yml
+var testIncludeYml string
+
+//go:embed testdata/test-include-2.yml
+var testIncludeYml2 string
+
+//go:embed testdata/test-develop.yml
+var testDevelopYml string
+
+//go:embed testdata/test-cgroup.yml
+var testCgroupYml string
+
+//go:embed testdata/test-project-name.yml
+var testProjectNameYml string
+
+//go:embed testdata/test-service-context.yml
+var testServiceContextYml string
+
+//go:embed testdata/test-service-context-dot.yml
+var testServiceContextDotYml string
+
+//go:embed testdata/test-dot-env-dir.yml
+var testDotEnvDirYml string
+
+//go:embed testdata/test-dot-env-evaluate.yml
+var testDotEnvEvaluateYml string
+
+//go:embed testdata/test-unknown-field.yml
+var testUnknownFieldYml string
+
+//go:embed testdata/test-unknown-build-field.yml
+var testUnknownBuildFieldYml string
+
+//go:embed testdata/test-parse-compose-attests.yml
+var testParseComposeAttestsYml string
+
+//go:embed testdata/test-parse-compose-attests-disabled.yml
+var testParseComposeAttestsDisabledYml string
+
+//go:embed testdata/test-parse-compose-pull.yml
+var testParseComposePullYml string
+
+//go:embed testdata/test-parse-compose-no-cache.yml
+var testParseComposeNoCacheYml string

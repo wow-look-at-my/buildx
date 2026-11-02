@@ -1,0 +1,25 @@
+
+services:
+  webapp:
+    image: app:bar
+    build:
+      cache_from:
+        - user/app:cache
+      cache_to:
+        - user/app:cache
+      tags:
+        - ct-addon:foo
+      ssh:
+        - default
+      x-bake:
+        tags:
+          - ct-addon:foo
+          - ct-addon:baz
+        cache-from:
+          - user/app:cache
+          - type=local,src=path/to/cache
+        cache-to:
+          - type=local,dest=path/to/cache
+        ssh:
+          - default
+          - key=path/to/key

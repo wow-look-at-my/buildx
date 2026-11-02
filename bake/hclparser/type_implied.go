@@ -1,24 +1,19 @@
-// MIT License
+// MIT License.
 //
-// Copyright (c) 2017-2018 Martin Atkins
+// Copyright (c) Martin Atkins.
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software. It associated documentation files (the "Software").
+// It also associated to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense. And/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:.
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+
+// type_implied.go holds the type implied code.
 
 package hclparser
 
@@ -28,21 +23,9 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
-// ImpliedType takes an arbitrary Go value (as an interface{}) and attempts
-// to find a suitable cty.Type instance that could be used for a conversion
-// with ToCtyValue.
-//
-// This allows -- for simple situations at least -- types to be defined just
-// once in Go and the cty types derived from the Go types, but in the process
-// it makes some assumptions that may be undesirable so applications are
-// encouraged to build their cty types directly if exacting control is
-// required.
-//
-// Not all Go types can be represented as cty types, so an error may be
-// returned which is usually considered to be a bug in the calling program.
-// In particular, ImpliedType will never use capsule types in its returned
-// type, because it cannot know the capsule types supported by the calling
-// program.
+// ImpliedType takes an arbitrary Go value (as an interface{}) and attempts to
+// find a suitable cty.Type instance that could be used for a conversion with
+// ToCtyValue.
 func ImpliedType(gv any) (cty.Type, error) {
 	rt := reflect.TypeOf(gv)
 	var path cty.Path
@@ -100,8 +83,7 @@ func impliedType(rt reflect.Type, path cty.Path) (cty.Type, error) {
 
 func impliedStructType(rt reflect.Type, path cty.Path) (cty.Type, error) {
 	if valueType.AssignableTo(rt) {
-		// Special case: cty.Value represents cty.DynamicPseudoType, for
-		// type conformance checking.
+		// Special case: cty.Value represents cty.DynamicPseudoType, for type conformance checking.
 		return cty.DynamicPseudoType, nil
 	}
 
@@ -137,13 +119,8 @@ var (
 	stringType = reflect.TypeFor[string]()
 )
 
-// structTagIndices interrogates the fields of the given type (which must
-// be a struct type, or we'll panic) and returns a map from the cty
-// attribute names declared via struct tags to the indices of the
-// fields holding those tags.
-//
-// This function will panic if two fields within the struct are tagged with
-// the same cty attribute name.
+// structTagIndices interrogates the fields of the given type (which must be a struct type. Otherwise, we'll panic) and returns a map from the cty attribute names declared via struct tags to the
+// indices of the fields holding those tags.
 func structTagIndices(st reflect.Type) map[string]int {
 	ct := st.NumField()
 	ret := make(map[string]int, ct)

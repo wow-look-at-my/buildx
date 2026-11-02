@@ -1,3 +1,5 @@
+// root.go holds the root code.
+
 package policy
 
 import (

@@ -1,3 +1,5 @@
+// localstate.go holds the localstate code.
+
 package localstate
 
 import (
@@ -25,10 +27,9 @@ type State struct {
 	Target string
 	// LocalPath is the absolute path to the context or remote context
 	LocalPath string
-	// DockerfilePath is the absolute path to the Dockerfile or relative if
-	// context is remote
+	// DockerfilePath is the absolute path to the Dockerfile or relative if context is remote
 	DockerfilePath string
-	// GroupRef is the ref of the state group that this ref belongs to
+	// GroupRef is the ref of the state group that this ref belongs.
 	GroupRef string `json:",omitempty"`
 }
 

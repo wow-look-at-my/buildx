@@ -220,7 +220,7 @@ func (c EntitlementConf) Prompt(ctx context.Context, isRemote bool, out io.Write
 	var msgs []string
 	var flags []string
 
-	// these warnings are currently disabled to give users time to update
+	// these warnings are disabled to give users time to update
 	var msgsFS []string
 	var flagsFS []string
 

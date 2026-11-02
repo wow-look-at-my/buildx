@@ -55,8 +55,7 @@ Start a build
 
 <!---MARKER_GEN_END-->
 
-Flags marked with `[experimental]` need to be explicitly enabled by setting the
-`BUILDX_EXPERIMENTAL=1` environment variable.
+Flags marked with `[experimental]` need to be explicitly enabled by setting the `BUILDX_EXPERIMENTAL=1` environment variable.
 
 ## Description
 
@@ -66,25 +65,19 @@ The `docker buildx build` command starts a build using BuildKit.
 
 ### <a name="add-host"></a> Add entries to container hosts file (--add-host)
 
-You can add other hosts into a build container's `/etc/hosts` file by using one
-or more `--add-host` flags. This example adds static addresses for hosts named
-`my-hostname` and `my_hostname_v6`:
+You can add other hosts into a build container's `/etc/hosts` file by using one or more `--add-host` flags. This example adds static addresses for hosts named `my-hostname` and `my_hostname_v6`:
 
 ```console
 $ docker buildx build --add-host my_hostname=8.8.8.8 --add-host my_hostname_v6=2001:4860:4860::8888 .
 ```
 
-If you need your build to connect to services running on the host, you can use
-the special `host-gateway` value for `--add-host`. In the following example,
-build containers resolve `host.docker.internal` to the host's gateway IP.
+If you need your build to connect to services running on the host, you can use the special `host-gateway` value for `--add-host`. In the following example, build containers resolve `host.docker.internal` to the host's gateway IP.
 
 ```console
 $ docker buildx build --add-host host.docker.internal=host-gateway .
 ```
 
-You can wrap an IPv6 address in square brackets.
-`=` and `:` are both valid separators.
-Both formats in the following example are valid:
+You can wrap an IPv6 address in square brackets. `=` and `:` are both valid separators. Both formats in the following example are valid:
 
 ```console
 $ docker buildx build --add-host my-hostname:10.180.0.1 --add-host my-hostname_v6=[2001:4860:4860::8888] .
@@ -97,44 +90,33 @@ $ docker buildx build --add-host my-hostname:10.180.0.1 --add-host my-hostname_v
 --annotation="[type:]key=value"
 ```
 
-Add OCI annotations to the image index, manifest, or descriptor.
-The following example adds the `foo=bar` annotation to the image manifests:
+Add OCI annotations to the image index, manifest, or descriptor. The following example adds the `foo=bar` annotation to the image manifests:
 
 ```console
 $ docker buildx build -t TAG --annotation "foo=bar" --push .
 ```
 
-You can optionally add a type prefix to specify the level of the annotation. By
-default, the image manifest is annotated. The following example adds the
-`foo=bar` annotation the image index instead of the manifests:
+You can optionally add a type prefix to specify the level of the annotation. By default, the image manifest is annotated. The following example adds the `foo=bar` annotation the image index instead of the manifests:
 
 ```console
 $ docker buildx build -t TAG --annotation "index:foo=bar" --push .
 ```
 
-You can specify multiple types, separated by a comma (,) to add the annotation
-to multiple image components. The following example adds the `foo=bar`
-annotation to image index, descriptors, manifests:
+You can specify multiple types, separated by a comma (,) to add the annotation to multiple image components. The following example adds the `foo=bar` annotation to image index, descriptors, manifests:
 
 ```console
 $ docker buildx build -t TAG --annotation "index,manifest,manifest-descriptor:foo=bar" --push .
 ```
 
-You can also specify a platform qualifier in square brackets (`[os/arch]`) in
-the type prefix, to apply the annotation to a subset of manifests with the
-matching platform. The following example adds the `foo=bar` annotation only to
-the manifest with the `linux/amd64` platform:
+You can also specify a platform qualifier in square brackets (`[os/arch]`) in the type. Prefix, to apply the annotation to a subset of manifests with the matching platform. The following example adds the `foo=bar` annotation only to the manifest with the `linux/amd64` platform:
 
 ```console
 $ docker buildx build -t TAG --annotation "manifest[linux/amd64]:foo=bar" --push .
 ```
 
-Wildcards are not supported in the platform qualifier; you can't specify a type
-prefix like `manifest[linux/*]` to add annotations only to manifests which has
-`linux` as the OS platform.
+Wildcards are not supported in the platform qualifier. You cannot specify a type prefix like `manifest[linux/*]` to add annotations only to manifests which has `linux` as the OS platform.
 
-For more information about annotations, see
-[Annotations](https://docs.docker.com/build/building/annotations/).
+For more information about annotations, see [Annotations](https://docs.docker.com/build/building/annotations/).
 
 ### <a name="attest"></a> Create attestations (--attest)
 
@@ -143,23 +125,19 @@ For more information about annotations, see
 --attest=type=provenance,...
 ```
 
-Create [image attestations](https://docs.docker.com/build/metadata/attestations/).
-BuildKit currently supports:
+Create [image attestations](https://docs.docker.com/build/metadata/attestations/). BuildKit supports:
 
 - `sbom` - Software Bill of Materials.
 
-  Use `--attest=type=sbom` to generate an SBOM for an image at build-time.
-  Alternatively, you can use the [`--sbom` shorthand](#sbom).
+  Use `--attest=type=sbom` to generate an SBOM for an image at build-time. Alternatively, you can use the [`--sbom` shorthand](#sbom).
 
   For more information, see [here](https://docs.docker.com/build/metadata/attestations/sbom/).
 
 - `provenance` - SLSA Provenance
 
-  Use `--attest=type=provenance` to generate provenance for an image at
-  build-time. Alternatively, you can use the [`--provenance` shorthand](#provenance).
+  Use `--attest=type=provenance` to generate provenance for an image at build-time. Alternatively, you can use the [`--provenance` shorthand](#provenance).
 
-  By default, a minimal provenance attestation will be created for the build
-  result, which will only be attached for images pushed to registries.
+  By default, a minimal provenance attestation will be created for the build result, which will only be attached for images pushed to registries.
 
   For more information, see [here](https://docs.docker.com/build/metadata/attestations/slsa-provenance/).
 
@@ -172,15 +150,13 @@ BuildKit currently supports:
 Allow extra privileged entitlement. List of entitlements:
 
 - `network.host` - Allows executions with host networking.
-- `security.insecure` - Allows executions without sandbox. See
-  [related Dockerfile extensions](https://docs.docker.com/reference/dockerfile/#run---security).
+- `security.insecure` - Allows executions without sandbox. See [related Dockerfile extensions](https://docs.docker.com/reference/dockerfile/#run---security).
 - `device` - Allows access to Container Device Interface (CDI) devices.
    - `--allow device` - Grants access to all devices.
    - `--allow device=kind|name` - Grants access to a specific device.
    - `--allow device=kind|name,alias=kind|name` - Grants access to a specific device, with optional aliasing.
 
-For entitlements to be enabled, the BuildKit daemon also needs to allow them
-with `--allow-insecure-entitlement` (see [`create --buildkitd-flags`](buildx_create.md#buildkitd-flags)).
+For entitlements to be enabled, the BuildKit daemon also needs to allow them with `--allow-insecure-entitlement` (see [`create --buildkitd-flags`](buildx_create.md#buildkitd-flags)).
 
 ```console
 $ docker buildx create --use --name insecure-builder --buildkitd-flags '--allow-insecure-entitlement security.insecure'
@@ -189,40 +165,28 @@ $ docker buildx build --allow security.insecure .
 
 ### <a name="build-arg"></a> Set build-time variables (--build-arg)
 
-You can use `ENV` instructions in a Dockerfile to define variable values. These
-values persist in the built image. Often persistence isn't what you want. Users
-want to specify variables differently depending on which host they build an
-image on.
+You can use `ENV` instructions in a Dockerfile to define variable values. These values persist in the built image. Frequently persistence is not what you want. Users want to specify variables differently depending on which host they build an image on.
 
-A good example is `http_proxy` or source versions for pulling intermediate
-files. The `ARG` instruction lets Dockerfile authors define values that users
-can set at build-time using the  `--build-arg` flag:
+A good example is `http_proxy` or source versions for pulling intermediate files. The `ARG` instruction lets Dockerfile authors define values that users can set at build-time using the  `--build-arg` flag:
 
 ```console
 $ docker buildx build --build-arg HTTP_PROXY=http://10.20.30.2:1234 --build-arg FTP_PROXY=http://40.50.60.5:4567 .
 ```
 
-This flag allows you to pass the build-time variables that are
-accessed like regular environment variables in the `RUN` instruction of the
-Dockerfile. These values don't persist in the intermediate or final images
-like `ENV` values do. You must add `--build-arg` for each build argument.
+This flag allows you to pass the build-time variables that are accessed like regular environment variables in the `RUN` instruction of the Dockerfile. These values do not persist in the intermediate or last images like `ENV` values do. You must add `--build-arg` for each build argument.
 
-Using this flag doesn't alter the output you see when the build process echoes the`ARG` lines from the
-Dockerfile.
+Using this flag does not change the output you see when the build process echoes the`ARG` lines from the Dockerfile.
 
-For detailed information on using `ARG` and `ENV` instructions, see the
-[Dockerfile reference](https://docs.docker.com/reference/dockerfile/).
+For detailed information on using `ARG` and `ENV` instructions, see the [Dockerfile reference](https://docs.docker.com/reference/dockerfile/).
 
-You can also use the `--build-arg` flag without a value, in which case the daemon
-propagates the value from the local environment into the Docker container it's building:
+You can also use the `--build-arg` flag without a value, in which case the daemon propagates the value from the local environment. Into the Docker container it is building:
 
 ```console
 $ export HTTP_PROXY=http://10.20.30.2:1234
 $ docker buildx build --build-arg HTTP_PROXY .
 ```
 
-This example is similar to how `docker run -e` works. Refer to the [`docker run` documentation](container_run.md#env)
-for more information.
+This example is similar to how `docker run -e` works. Refer to the [`docker run` documentation](container_run.md#env) for more information.
 
 There are also useful built-in build arguments, such as:
 
@@ -242,7 +206,7 @@ Learn more about the built-in build arguments in the [Dockerfile reference docs]
 --build-context=name=VALUE
 ```
 
-Define additional build context with specified contents.
+Define more build context with specified contents.
 
 In a Dockerfile:
 
@@ -287,9 +251,7 @@ COPY --from=project myfile /
 
 Use the `oci-layout:///` scheme.
 
-Source an image from a local
-[OCI layout compliant directory](https://github.com/opencontainers/image-spec/blob/main/image-layout.md),
-either by tag, or by digest:
+Source an image from a local [OCI layout compliant directory](https://github.com/opencontainers/image-spec/blob/main/image-layout.md), either by tag, or by digest:
 
 ```console
 $ docker buildx build --build-context foo=oci-layout:///path/to/local/layout:<tag>
@@ -319,20 +281,11 @@ Same as [`buildx --builder`](buildx.md#builder).
 
 Use an external cache source for a build. Supported types are:
 
-- [`registry`](https://docs.docker.com/build/cache/backends/registry/)
-  can import cache from a cache manifest or (special) image configuration on the
-  registry.
-- [`local`](https://docs.docker.com/build/cache/backends/local/) can
-  import cache from local files previously exported with `--cache-to`.
-- [`gha`](https://docs.docker.com/build/cache/backends/gha/)
-  can import cache from a previously exported cache with `--cache-to` in your
-  GitHub repository.
-- [`s3`](https://docs.docker.com/build/cache/backends/s3/)
-  can import cache from a previously exported cache with `--cache-to` in your
-  S3 bucket.
-- [`azblob`](https://docs.docker.com/build/cache/backends/azblob/)
-  can import cache from a previously exported cache with `--cache-to` in your
-  Azure bucket.
+- [`registry`](https://docs.docker.com/build/cache/backends/registry/) can import cache from a cache manifest or (special) image configuration on the registry.
+- [`local`](https://docs.docker.com/build/cache/backends/local/) can import cache from local files previously exported with `--cache-to`.
+- [`gha`](https://docs.docker.com/build/cache/backends/gha/) can import cache from a previously exported cache with `--cache-to` in your GitHub repository.
+- [`s3`](https://docs.docker.com/build/cache/backends/s3/) can import cache from a previously exported cache with `--cache-to` in your S3 bucket.
+- [`azblob`](https://docs.docker.com/build/cache/backends/azblob/) can import cache from a previously exported cache with `--cache-to` in your Azure bucket.
 
 If no type is specified, `registry` exporter is used with a specified reference.
 
@@ -357,18 +310,12 @@ $ docker buildx build --cache-from=type=s3,region=eu-west-1,bucket=mybucket .
 
 Export build cache to an external cache destination. Supported types are:
 
-- [`registry`](https://docs.docker.com/build/cache/backends/registry/) exports
-  build cache to a cache manifest in the registry.
-- [`local`](https://docs.docker.com/build/cache/backends/local/) exports
-  cache to a local directory on the client.
-- [`inline`](https://docs.docker.com/build/cache/backends/inline/) writes the
-  cache metadata into the image configuration.
-- [`gha`](https://docs.docker.com/build/cache/backends/gha/) exports cache
-  through the GitHub Actions Cache service API.
-- [`s3`](https://docs.docker.com/build/cache/backends/s3/) exports cache to a
-  S3 bucket.
-- [`azblob`](https://docs.docker.com/build/cache/backends/azblob/) exports
-  cache to an Azure bucket.
+- [`registry`](https://docs.docker.com/build/cache/backends/registry/) exports build cache to a cache manifest in the registry.
+- [`local`](https://docs.docker.com/build/cache/backends/local/) exports cache to a local directory on the client.
+- [`inline`](https://docs.docker.com/build/cache/backends/inline/) writes the cache metadata into the image configuration.
+- [`gha`](https://docs.docker.com/build/cache/backends/gha/) exports cache through the API of the Actions Cache service (GitHub).
+- [`s3`](https://docs.docker.com/build/cache/backends/s3/) exports cache to a S3 bucket.
+- [`azblob`](https://docs.docker.com/build/cache/backends/azblob/) exports cache to an Azure bucket.
 
 ```console
 $ docker buildx build --cache-to=user/app:cache .
@@ -389,14 +336,9 @@ $ docker buildx build --cache-to=type=s3,region=eu-west-1,bucket=mybucket .
 --call=[build|check|outline|targets]
 ```
 
-BuildKit frontends can support alternative modes of executions for builds,
-using frontend methods. Frontend methods are a way to change or extend the
-behavior of a build invocation, which lets you, for example, inspect, validate,
-or generate alternative outputs from a build.
+BuildKit frontends can support alternative modes of executions for builds, using frontend methods. Frontend methods are a way to change or extend the behavior of a build invocation. This lets you, for example, inspect, validate, or generate alternative outputs from a build.
 
-The `--call` flag for `docker buildx build` lets you specify the frontend
-method that you want to execute. If this flag is unspecified, it defaults to
-executing the build and evaluating [build checks](https://docs.docker.com/reference/build-checks/).
+The `--call` flag for `docker buildx build` lets you specify the frontend method that you want to execute. If this flag is unspecified, it defaults to executing the build and evaluating [build checks](https://docs.docker.com/reference/build-checks/).
 
 For Dockerfiles, the available methods are:
 
@@ -408,9 +350,7 @@ For Dockerfiles, the available methods are:
 | `targets`                      | List all the build targets in the Dockerfile.                                                                       |
 | `subrequests.describe`         | List all the frontend methods that the current frontend supports.                                                   |
 
-Note that other frontends may implement these or other methods.
-To see the list of available methods for the frontend you're using,
-use `--call=subrequests.describe`.
+Note that other frontends may implement these or other methods. To see the list of available methods for the frontend you use, use `--call=subrequests.describe`.
 
 ```console
 $ docker buildx build -q --call=subrequests.describe .
@@ -423,12 +363,7 @@ subrequests.describe 1.0.0   List available subrequest types
 
 #### Descriptions
 
-The [`--call=targets`](#call-targets) and [`--call=outline`](#call-outline)
-methods include descriptions for build targets and arguments, if available.
-Descriptions are generated from comments in the Dockerfile. A comment on the
-line before a `FROM` instruction becomes the description of a build target, and
-a comment before an `ARG` instruction the description of a build argument. The
-comment must lead with the name of the stage or argument, for example:
+The [`--call=targets`](#call-targets) and [`--call=outline`](#call-outline) methods include descriptions for build targets and arguments, if available. Descriptions are generated from comments in the Dockerfile. Consider a comment on the line before a `FROM` instruction. That comment becomes the description of a build target, and a comment before an `ARG` instruction the description of a build argument. The comment must lead with the name of the stage or argument, for example:
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -440,8 +375,7 @@ ARG GO_VERSION=1.22
 FROM golang:${GO_VERSION} AS base-builder
 ```
 
-When you run `docker buildx build --call=outline`, the output includes the
-descriptions, as follows:
+When you run `docker buildx build --call=outline`, the output includes the descriptions, as follows:
 
 ```console
 $ docker buildx build -q --call=outline .
@@ -453,14 +387,11 @@ BUILD ARG    VALUE   DESCRIPTION
 GO_VERSION   1.22    sets the Go version for the build
 ```
 
-For more examples on how to write Dockerfile docstrings,
-check out [the Dockerfile for Docker docs](https://github.com/docker/docs/blob/main/Dockerfile).
+For more examples on how to write Dockerfile docstrings, check out [the Dockerfile for Docker docs](https://github.com/docker/docs/blob/main/Dockerfile).
 
 #### <a name="check"></a> Call: check (--check)
 
-The `check` method evaluates build checks without executing the build. The
-`--check` flag is a convenient shorthand for `--call=check`. Use the `check`
-method to validate the build configuration before starting the build.
+The `check` method evaluates build checks without executing the build. The `--check` flag is a convenient shorthand for `--call=check`. Use the `check` method to validate the build configuration before starting the build.
 
 ```console
 $ docker buildx build -q --check https://github.com/docker/docs.git
@@ -477,14 +408,11 @@ Dockerfile:43
 --------------------
 ```
 
-Using `--check` without specifying a target evaluates the entire Dockerfile.
-If you want to evaluate a specific target, use the `--target` flag.
+Using `--check` without specifying a target evaluates the entire Dockerfile. If you want to evaluate a specific target, use the `--target` flag.
 
 #### Call: outline
 
-The `outline` method prints the name of the specified target (or the default
-target, if `--target` isn't specified), and the build arguments that the target
-consumes, along with their default values, if set.
+The `outline` method prints the name of the specified target (or the default target, if `--target` is not specified), and the build arguments that the target consumes. Along with their default values, if set.
 
 The following example shows the default target `release` and its build arguments:
 
@@ -516,10 +444,7 @@ $ docker buildx build \
 
 #### Call: targets
 
-The `targets` method lists all the build targets in the Dockerfile. These are
-the stages that you can build using the `--target` flag. It also indicates the
-default target, which is the target that will be built when you don't specify a
-target.
+The `targets` method lists all the build targets in the Dockerfile. These are the stages that you can build using the `--target` flag. It also indicates the default target, which is the target that will be built when you do not specify a target.
 
 ```console
 $ docker buildx build -q --call=targets https://github.com/docker/docs.git
@@ -546,9 +471,7 @@ release (default) is an empty scratch image with only compiled assets
 
 ### <a name="cgroup-parent"></a> Use a custom parent cgroup (--cgroup-parent)
 
-When you run `docker buildx build` with the `--cgroup-parent` option,
-the daemon runs the containers used in the build with the
-[corresponding `docker run` flag](container_run.md#cgroup-parent).
+When you run `docker buildx build` with the `--cgroup-parent` option, the daemon runs the containers used in the build with the [corresponding `docker run` flag](container_run.md#cgroup-parent).
 
 ### <a name="file"></a> Specify a Dockerfile (-f, --file)
 
@@ -556,8 +479,7 @@ the daemon runs the containers used in the build with the
 $ docker buildx build -f [PATH|URL|-] .
 ```
 
-Specifies the location of the Dockerfile to use.
-If unspecified, a file named `Dockerfile` at the root of the build context is used by default.
+Specifies the location of the Dockerfile to use. By default, if unspecified, a file named `Dockerfile` at the root of the build context is used.
 
 The supported inputs formats are:
 
@@ -591,14 +513,11 @@ $ cat Dockerfile | docker buildx build -f - .
 
 ### <a name="load"></a> Load the single-platform build result to `docker images` (--load)
 
-Shorthand for [`--output=type=docker`](#docker). Will automatically load the
-single-platform build result to `docker images`.
+Shorthand for [`--output=type=docker`](#docker). Will automatically load the single-platform build result to `docker images`.
 
 ### <a name="metadata-file"></a> Write build result metadata to a file (--metadata-file)
 
-To output build metadata such as the image digest, pass the `--metadata-file` flag.
-The metadata will be written as a JSON object to the specified file. The
-directory of the specified file must already exist and be writable.
+To output build metadata such as the image digest, pass the `--metadata-file` flag. The metadata will be written as a JSON object to the specified file. The directory of the specified file must already exist and be writable.
 
 ```console
 $ docker buildx build --load --metadata-file metadata.json .
@@ -650,15 +569,13 @@ Find more details in the [Dockerfile reference](https://docs.docker.com/referenc
 
 ### <a name="no-cache-filter"></a> Ignore build cache for specific stages (--no-cache-filter)
 
-The `--no-cache-filter` lets you specify one or more stages of a multi-stage
-Dockerfile for which build cache should be ignored. To specify multiple stages,
-use a comma-separated syntax:
+The `--no-cache-filter` lets you specify one or more stages of a multi-stage Dockerfile for which build cache must be ignored. To specify multiple stages, use a comma-separated syntax:
 
 ```console
 $ docker buildx build --no-cache-filter stage1,stage2,stage3 .
 ```
 
-For example, the following Dockerfile contains four stages:
+For example, the following Dockerfile contains stages:
 
 - `base`
 - `install`
@@ -709,19 +626,11 @@ The arguments for the `--no-cache-filter` flag must be names of stages.
 -o, --output=[PATH,-,type=TYPE[,KEY=VALUE]
 ```
 
-Sets the export action for the build result. The default output, when using the
-`docker` [build driver](https://docs.docker.com/build/builders/drivers/), is a container
-image exported to the local image store. The `--output` flag makes this step
-configurable allows export of results directly to the client's filesystem, an
-OCI image tarball, a registry, and more.
+Sets the export action for the build result. The default output, when using the `docker` [build driver](https://docs.docker.com/build/builders/drivers/), is a container image exported to the local image store. The `--output` flag makes this step configurable allows export of results directly to the client's filesystem, an OCI image tarball, a registry, and more.
 
-Buildx with `docker` driver only supports the local, tarball, and image
-[exporters](https://docs.docker.com/build/exporters/). The `docker-container`
-driver supports all exporters.
+Buildx with `docker` driver only supports the local, tarball, and image [exporters](https://docs.docker.com/build/exporters/). The `docker-container` driver supports all exporters.
 
-If you only specify a filepath as the argument to `--output`, Buildx uses the
-local exporter. If the value is `-`, Buildx uses the `tar` exporter and writes
-the output to stdout.
+If you only specify a filepath as the argument to `--output`, Buildx uses the local exporter. If the value is `-`, Buildx uses the `tar` exporter and writes the output to stdout.
 
 ```console
 $ docker buildx build -o . .
@@ -745,81 +654,63 @@ Supported exported types are:
 
 #### `local`
 
-The `local` export type writes all result files to a directory on the client. The
-new files will be owned by the current user. On multi-platform builds, all results
-will be put in subdirectories by their platform.
+The `local` export type writes all result files to a directory on the client. The current user will own the new files. On multi-platform builds, their platform will put all results.
 
 Attribute key:
 
 - `dest` - destination directory where files will be written
 
-For more information, see
-[Local and tar exporters](https://docs.docker.com/build/exporters/local-tar/).
+For more information, see [Local and tar exporters](https://docs.docker.com/build/exporters/local-tar/).
 
 #### `tar`
 
-The `tar` export type writes all result files as a single tarball on the client.
-On multi-platform builds all results will be put in subdirectories by their platform.
+The `tar` export type writes all result files as a single tarball on the client. Their platform will put on multi-platform builds all results.
 
 Attribute key:
 
 - `dest` - destination path where tarball will be written. “-” writes to stdout.
 
-For more information, see
-[Local and tar exporters](https://docs.docker.com/build/exporters/local-tar/).
+For more information, see [Local and tar exporters](https://docs.docker.com/build/exporters/local-tar/).
 
 #### `oci`
 
-The `oci` export type writes the result image or manifest list as an [OCI image
-layout](https://github.com/opencontainers/image-spec/blob/v1.0.1/image-layout.md)
-tarball on the client.
+The `oci` export type writes the result image or manifest list as an [OCI image layout](https://github.com/opencontainers/image-spec/blob/v1.0.1/image-layout.md) tarball on the client.
 
 Attribute key:
 
 - `dest` - destination path where tarball will be written. “-” writes to stdout.
 
-For more information, see
-[OCI and Docker exporters](https://docs.docker.com/build/exporters/oci-docker/).
+For more information, see [OCI and Docker exporters](https://docs.docker.com/build/exporters/oci-docker/).
 
 #### `docker`
 
-The `docker` export type writes the single-platform result image as a [Docker image
-specification](https://github.com/docker/docker/blob/v20.10.2/image/spec/v1.2.md)
-tarball on the client. Tarballs created by this exporter are also OCI compatible.
+The `docker` export type writes the single-platform result image as a [Docker image specification](https://github.com/docker/docker/blob/v20.10.2/image/spec/v1.2.md) tarball on the client. Tarballs created by this exporter are also OCI compatible.
 
-The default image store in Docker Engine doesn't support loading multi-platform
-images. You can enable the containerd image store, or push multi-platform images
-is to directly push to a registry, see [`registry`](#registry).
+The default image store in Docker Engine does not support loading multi-platform images. You can enable the containerd image store, or push multi-platform images is to directly push to a registry, see [`registry`](#registry).
 
 Attribute keys:
 
-- `dest` - destination path where tarball will be written. If not specified,
-  the tar will be loaded automatically to the local image store.
+- `dest` - destination path where tarball will be written. If not specified, the tar will be loaded automatically to the local image store.
 - `context` - name for the Docker context where to import the result
 
-For more information, see
-[OCI and Docker exporters](https://docs.docker.com/build/exporters/oci-docker/).
+For more information, see [OCI and Docker exporters](https://docs.docker.com/build/exporters/oci-docker/).
 
 #### `image`
 
-The `image` exporter writes the build result as an image or a manifest list. When
-using `docker` driver the image will appear in `docker images`. Optionally, image
-can be automatically pushed to a registry by specifying attributes.
+The `image` exporter writes the build result as an image or a manifest list. When using `docker` driver the image will appear in `docker images`. Optionally, image can be automatically pushed to a registry by specifying attributes.
 
 Attribute keys:
 
 - `name` - name (references) for the new image.
 - `push` - Boolean to automatically push the image.
 
-For more information, see
-[Image and registry exporters](https://docs.docker.com/build/exporters/image-registry/).
+For more information, see [Image and registry exporters](https://docs.docker.com/build/exporters/image-registry/).
 
 #### `registry`
 
 The `registry` exporter is a shortcut for `type=image,push=true`.
 
-For more information, see
-[Image and registry exporters](https://docs.docker.com/build/exporters/image-registry/).
+For more information, see [Image and registry exporters](https://docs.docker.com/build/exporters/image-registry/).
 
 ### <a name="platform"></a> Set the target platforms for the build (--platform)
 
@@ -827,36 +718,19 @@ For more information, see
 --platform=value[,value]
 ```
 
-Set the target platform for the build. All `FROM` commands inside the Dockerfile
-without their own `--platform` flag will pull base images for this platform and
-this value will also be the platform of the resulting image.
+Set the target platform for the build. All `FROM` commands inside the Dockerfile without their own `--platform` flag will pull base images for this platform. This value will also be the platform of the resulting image.
 
-The default value is the platform of the BuildKit daemon where the build runs.
-The value takes the form of `os/arch` or `os/arch/variant`. For example,
-`linux/amd64` or `linux/arm/v7`. Additionally, the `--platform` flag also supports
-a special `local` value, which tells BuildKit to use the platform of the BuildKit
-client that invokes the build.
+The default value is the platform of the BuildKit daemon where the build runs. The value takes the form of `os/arch` or `os/arch/variant`. For example, `linux/amd64` or `linux/arm/v7`. Additionally, the `--platform` flag also supports a special `local` value, which tells BuildKit to use the platform of the BuildKit client that invokes the build.
 
-When using `docker-container` driver with `buildx`, this flag can accept multiple
-values as an input separated by a comma. With multiple values the result will be
-built for all of the specified platforms and joined together into a single manifest
-list.
+When using `docker-container` driver with `buildx`, this flag can accept multiple values as an input separated by a comma. With multiple values the result will be built for all of the specified platforms and joined together into a single manifest list.
 
-If the `Dockerfile` needs to invoke the `RUN` command, the builder needs runtime
-support for the specified platform. In a clean setup, you can only execute `RUN`
-commands for your system architecture.
-If your kernel supports [`binfmt_misc`](https://en.wikipedia.org/wiki/Binfmt_misc)
-launchers for secondary architectures, buildx will pick them up automatically.
-Docker Desktop releases come with `binfmt_misc` automatically configured for `arm64`
-and `arm` architectures. You can see what runtime platforms your current builder
-instance supports by running `docker buildx inspect --bootstrap`.
+If the `Dockerfile` needs to invoke the `RUN` command, the builder needs runtime support for the specified platform. In a clean setup, you can only execute `RUN` commands for your system architecture.
 
-Inside a `Dockerfile`, you can access the current platform value through
-`TARGETPLATFORM` build argument. Refer to the [Dockerfile reference](https://docs.docker.com/reference/dockerfile/#automatic-platform-args-in-the-global-scope)
-for the full description of automatic platform argument variants .
+launchers for secondary architectures, buildx will pick them up automatically. Docker Desktop releases come with `binfmt_misc` automatically configured for `arm64` and `arm` architectures. You can see what runtime platforms your current builder instance supports by running `docker buildx inspect --bootstrap`.
 
-You can find the formatting definition for the platform specifier in the
-[containerd source code](https://github.com/containerd/containerd/blob/v1.4.3/platforms/platforms.go#L63).
+Inside a `Dockerfile`, you can access the current platform value through `TARGETPLATFORM` build argument. Refer to the [Dockerfile reference](https://docs.docker.com/reference/dockerfile/#automatic-platform-args-in-the-global-scope) for the full description of automatic platform argument variants .
+
+You can find the formatting definition for the platform specifier in the [containerd source code](https://github.com/containerd/containerd/blob/v1.4.3/platforms/platforms.go#L63).
 
 ```console
 $ docker buildx build --platform=linux/arm64 .
@@ -899,48 +773,29 @@ $ docker buildx build --load --progress=plain .
 > Check also the [`BUILDKIT_COLORS`](https://docs.docker.com/build/building/variables/#buildkit_colors)
 > environment variable for modifying the colors of the terminal output.
 
-The `rawjson` output marshals the solve status events from BuildKit to JSON lines.
-This mode is designed to be read by an external program.
+The `rawjson` output marshals the solve status events from BuildKit to JSON lines. An external program designs this mode.
 
 ### <a name="provenance"></a> Create provenance attestations (--provenance)
 
-Shorthand for [`--attest=type=provenance`](#attest), used to configure
-provenance attestations for the build result. For example,
-`--provenance=mode=max` can be used as an abbreviation for
-`--attest=type=provenance,mode=max`.
+Shorthand for [`--attest=type=provenance`](#attest), used to configure provenance attestations for the build result. For example, `--provenance=mode=max` can be used as an abbreviation for `--attest=type=provenance,mode=max`.
 
-Additionally, `--provenance` can be used with Boolean values to enable or disable
-provenance attestations. For example, `--provenance=false` disables all provenance attestations,
-while `--provenance=true` enables all provenance attestations.
+Additionally, `--provenance` can be used with Boolean values to enable or disable provenance attestations. For example, `--provenance=false` disables all provenance attestations, while `--provenance=true` enables all provenance attestations.
 
-By default, a minimal provenance attestation will be created for the build
-result. Note that the default image store in Docker Engine doesn't support
-attestations. Provenance attestations only persist for images pushed directly
-to a registry if you use the default image store. Alternatively, you can switch
-to using the containerd image store.
+By default, a minimal provenance attestation will be created for the build result. the default image store in Docker Engine does not support attestations. Provenance attestations only persist for images pushed directly to a registry if you use the default image store. Alternatively, you can switch to using the containerd image store.
 
-For more information about provenance attestations, see
-[here](https://docs.docker.com/build/metadata/attestations/slsa-provenance/).
+For more information about provenance attestations, see [here](https://docs.docker.com/build/metadata/attestations/slsa-provenance/).
 
 ### <a name="push"></a> Push the build result to a registry (--push)
 
-Shorthand for [`--output=type=registry`](#registry). Will automatically push the
-build result to registry.
+Shorthand for [`--output=type=registry`](#registry). Will automatically push the build result to registry.
 
 ### <a name="sbom"></a> Create SBOM attestations (--sbom)
 
-Shorthand for [`--attest=type=sbom`](#attest), used to configure SBOM
-attestations for the build result. For example,
-`--sbom=generator=<user>/<generator-image>` can be used as an abbreviation for
-`--attest=type=sbom,generator=<user>/<generator-image>`.
+Shorthand for [`--attest=type=sbom`](#attest), used to configure SBOM attestations for the build result. For example, `--sbom=generator=<user>/<generator-image>` can be used as an abbreviation for `--attest=type=sbom,generator=<user>/<generator-image>`.
 
-Additionally, `--sbom` can be used with Boolean values to enable or disable
-SBOM attestations. For example, `--sbom=false` disables all SBOM attestations.
+Additionally, `--sbom` can be used with Boolean values to enable or disable SBOM attestations. For example, `--sbom=false` disables all SBOM attestations.
 
-Note that the default image store in Docker Engine doesn't support
-attestations. Provenance attestations only persist for images pushed directly
-to a registry if you use the default image store. Alternatively, you can switch
-to using the containerd image store.
+The default image store in Docker Engine does not support attestations. Provenance attestations only persist for images pushed directly to a registry if you use the default image store. Alternatively, you can switch to using the containerd image store.
 
 For more information, see [here](https://docs.docker.com/build/metadata/attestations/sbom/).
 
@@ -950,21 +805,14 @@ For more information, see [here](https://docs.docker.com/build/metadata/attestat
 --secret=[type=TYPE[,KEY=VALUE]
 ```
 
-Exposes secrets (authentication credentials, tokens) to the build.
-A secret can be mounted into the build using a `RUN --mount=type=secret` mount in the
-[Dockerfile](https://docs.docker.com/reference/dockerfile/#run---mounttypesecret).
-For more information about how to use build secrets, see
-[Build secrets](https://docs.docker.com/build/building/secrets/).
+Exposes secrets (authentication credentials, tokens) to the build. A secret can be mounted into the build using a `RUN --mount=type=secret` mount in the [Dockerfile](https://docs.docker.com/reference/dockerfile/#run---mounttypesecret). For more information about how to use build secrets, see [Build secrets](https://docs.docker.com/build/building/secrets/).
 
 Supported types are:
 
 - [`type=file`](#typefile)
 - [`type=env`](#typeenv)
 
-Buildx attempts to detect the `type` automatically if unset. If an environment
-variable with the same key as `id` is set, then Buildx uses `type=env` and the
-variable value becomes the secret. If no such environment variable is set, and
-`type` is not set, then Buildx falls back to `type=file`.
+Buildx attempts to detect the `type` automatically if unset. If an environment variable with the same key as `id` is set, then Buildx uses `type=env` and the variable value becomes the secret. If no such environment variable is set, and `type` is not set, then Buildx falls back to `type=file`.
 
 #### `type=file`
 
@@ -985,8 +833,7 @@ $ docker buildx build --secret [type=file,]id=<ID>[,src=<FILEPATH>] .
 
 ###### `type=file` usage
 
-In the following example, `type=file` is automatically detected because no
-environment variable matching `aws` (the ID) is set.
+In the following example, `type=file` is automatically detected because no environment variable matching `aws` (the ID) is set.
 
 ```console
 $ docker buildx build --secret id=aws,src=$HOME/.aws/credentials .
@@ -1019,8 +866,7 @@ $ docker buildx build --secret [type=env,]id=<ID>[,env=<VARIABLE>] .
 
 ##### `type=env` usage
 
-In the following example, `type=env` is automatically detected because an
-environment variable matching `id` is set.
+In the following example, `type=env` is automatically detected because an environment variable matching `id` is set.
 
 ```console
 $ SECRET_TOKEN=token docker buildx build --secret id=SECRET_TOKEN .
@@ -1034,8 +880,7 @@ RUN --mount=type=bind,target=. \
   yarn run test
 ```
 
-In the following example, the build argument `SECRET_TOKEN` is set to contain
-the value of the environment variable `API_KEY`.
+In the following example, the build argument `SECRET_TOKEN` is set to contain the value of the environment variable `API_KEY`.
 
 ```console
 $ API_KEY=token docker buildx build --secret id=SECRET_TOKEN,env=API_KEY .
@@ -1056,12 +901,9 @@ $ API_KEY=token docker buildx build --secret type=env,id=SECRET_TOKEN,src=API_KE
 
 ### <a name="shm-size"></a> Shared memory size for build containers (--shm-size)
 
-Sets the size of the shared memory allocated for build containers when using
-`RUN` instructions.
+Sets the size of the shared memory allocated for build containers when using `RUN` instructions.
 
-The format is `<number><unit>`. `number` must be greater than `0`. Unit is
-optional and can be `b` (bytes), `k` (kilobytes), `m` (megabytes), or `g`
-(gigabytes). If you omit the unit, the system uses bytes.
+The format is `<number><unit>`. `number` must be greater than `0`. Unit is optional and can be `b` (bytes), `k` (kilobytes), `m` (megabytes), or `g` (gigabytes). If you omit the unit, the system uses bytes.
 
 > [!NOTE]
 > In most cases, it is recommended to let the builder automatically determine
@@ -1074,11 +916,9 @@ optional and can be `b` (bytes), `k` (kilobytes), `m` (megabytes), or `g`
 --ssh=default|<id>[=<socket>|<key>[,<key>]]
 ```
 
-This can be useful when some commands in your Dockerfile need specific SSH
-authentication (e.g., cloning a private repository).
+This can be useful when some commands in your Dockerfile need specific SSH authentication (e.g., cloning a private repository).
 
-`--ssh` exposes SSH agent socket or keys to the build and can be used with the
-[`RUN --mount=type=ssh` mount](https://docs.docker.com/reference/dockerfile/#run---mounttypessh).
+`--ssh` exposes SSH agent socket or keys to the build and can be used with the [`RUN --mount=type=ssh` mount](https://docs.docker.com/reference/dockerfile/#run---mounttypessh).
 
 Example to access Gitlab using an SSH agent socket:
 
@@ -1105,17 +945,13 @@ $ docker buildx build --ssh default=$SSH_AUTH_SOCK .
 $ docker buildx build -t docker/apache:2.0 .
 ```
 
-This examples builds in the same way as the previous example, but it then tags the resulting
-image. The repository name will be `docker/apache` and the tag `2.0`.
+This examples builds in the same way as the previous example, but it then tags the resulting image. The repository name will be `docker/apache` and the tag `2.0`.
 
 [Read more about valid tags](https://docs.docker.com/reference/cli/docker/image/tag/).
 
-You can apply multiple tags to an image. For example, you can apply the `latest`
-tag to a newly built image and add another tag that references a specific
-version.
+You can apply multiple tags to an image. For example, you can apply the `latest` tag to a newly built image and add another tag that references a specific version.
 
-For example, to tag an image both as `docker/fedora-jboss:latest` and
-`docker/fedora-jboss:v2.1`, use the following:
+For example, to tag an image both as `docker/fedora-jboss:latest` and `docker/fedora-jboss:v2.1`, use the following:
 
 ```console
 $ docker buildx build -t docker/fedora-jboss:latest -t docker/fedora-jboss:v2.1 .
@@ -1123,9 +959,7 @@ $ docker buildx build -t docker/fedora-jboss:latest -t docker/fedora-jboss:v2.1 
 
 ### <a name="target"></a> Specifying target build stage (--target)
 
-When building a Dockerfile with multiple build stages, use the `--target`
-option to specify an intermediate build stage by name as a final stage for the
-resulting image. The builder skips commands after the target stage.
+Use the `--target` option to specify an intermediate build stage by name as a last stage for the resulting image. Do this when building a Dockerfile with multiple build stages. The builder skips commands after the target stage.
 
 ```dockerfile
 FROM debian AS build-env
@@ -1141,9 +975,7 @@ $ docker buildx build -t mybuildimage --target build-env .
 
 ### <a name="ulimit"></a> Set ulimits (--ulimit)
 
-`--ulimit` overrides the default ulimits of build's containers when using `RUN`
-instructions and are specified with a soft and hard limit as such:
-`<type>=<soft limit>[:<hard limit>]`, for example:
+`--ulimit` overrides the default ulimits of build's containers. This happens when using `RUN` instructions and are specified with a soft and hard limit as such: `<type>=<soft limit>[:<hard limit>]`, for example:
 
 ```console
 $ docker buildx build --ulimit nofile=1024:1024 .

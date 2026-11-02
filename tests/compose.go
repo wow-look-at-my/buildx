@@ -1,5 +1,7 @@
 package tests
 
+import _ "embed"
+
 import (
 	"fmt"
 	"os"
@@ -126,12 +128,7 @@ COPy --from=base \
   /
 	`)
 
-	composefile := []byte(`
-services:
-  bar:
-    build:
-      context: .
-`)
+	composefile := []byte(testComposeBuildCheckYml)
 
 	dir := tmpdir(
 		t,
@@ -146,14 +143,7 @@ services:
 }
 
 func composeTestProject(imageName string, t *testing.T) string {
-	dockerfile := []byte(`
-FROM busybox:latest AS base
-COPY foo /etc/foo
-RUN cp /etc/foo /etc/bar
-
-FROM scratch
-COPY --from=base /etc/bar /bar
-`)
+	dockerfile := []byte(composeTestProjectDockerfile)
 
 	composefile := fmt.Appendf([]byte{}, `
 services:
@@ -170,3 +160,9 @@ services:
 		fstest.CreateFile("foo", []byte("foo"), 0600),
 	)
 }
+
+//go:embed test-compose-build-check.yml
+var testComposeBuildCheckYml string
+
+//go:embed compose-test-project.dockerfile
+var composeTestProjectDockerfile string

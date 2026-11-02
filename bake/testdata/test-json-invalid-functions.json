@@ -1,0 +1,8 @@
+{
+	"target": {
+		"app": {
+			"args": {
+				"v1": "myfunc(\"foo\")"
+			}
+		}
+	}}

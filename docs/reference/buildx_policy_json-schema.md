@@ -1,7 +1,7 @@
 # docker buildx policy json-schema
 
 <!---MARKER_GEN_START-->
-Print policy JSON schema
+Schema of the print policy JSON
 
 ### Options
 

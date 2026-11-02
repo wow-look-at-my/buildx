@@ -1,0 +1,15 @@
+{
+	"FOO": "abc",
+	"function": {
+		"myfunc": {
+			"params": ["inp"],
+			"result": "<${upper(inp)}-${FOO}>"
+		}
+	},
+	"target": {
+		"app": {
+			"args": {
+				"v1": "pre-${myfunc(\"foo\")}"
+			}
+		}
+	}}

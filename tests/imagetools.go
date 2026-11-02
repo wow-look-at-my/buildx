@@ -1,3 +1,5 @@
+// imagetools.go holds the imagetools code.
+
 package tests
 
 import (
@@ -61,7 +63,8 @@ func testImagetoolsCopyManifest(t *testing.T, sb integration.Sandbox) {
 	require.NoError(t, err)
 	target := registry + "/buildx/imtools-manifest:latest"
 
-	out, err := buildCmd(sb, withArgs("-t", target, "--push", "--platform=linux/amd64", "--provenance=false", dir))
+	// Ask for Docker media types so the assertions below do not depend on the BuildKit daemon's default media type.
+	out, err := buildCmd(sb, withArgs("-t", target, "--push", "--output", "type=image,oci-mediatypes=false", "--platform=linux/amd64", "--provenance=false", dir))
 	require.NoError(t, err, string(out))
 
 	cmd := buildxCmd(sb, withArgs("imagetools", "inspect", target, "--raw"))
@@ -147,7 +150,8 @@ func testImagetoolsCopyIndex(t *testing.T, sb integration.Sandbox) {
 	require.NoError(t, err)
 	target := registry + "/buildx/imtools:latest"
 
-	out, err := buildCmd(sb, withArgs("-t", target, "--push", "--platform=linux/amd64,linux/arm64", "--provenance=false", dir))
+	// Ask for Docker media types so the assertions below do not depend on the BuildKit daemon's default media type.
+	out, err := buildCmd(sb, withArgs("-t", target, "--push", "--output", "type=image,oci-mediatypes=false", "--platform=linux/amd64,linux/arm64", "--provenance=false", dir))
 	require.NoError(t, err, string(out))
 
 	cmd := buildxCmd(sb, withArgs("imagetools", "inspect", target, "--raw"))
@@ -753,7 +757,8 @@ func testImagetoolsAppend(t *testing.T, sb integration.Sandbox) {
 	require.NoError(t, err)
 
 	target := registry + "/buildx/imtools-append-target:latest"
-	out, err := buildCmd(sb, withArgs("-t", target, "--push", "--platform=linux/amd64", "--provenance=false", dir))
+	// Ask for Docker media types so the assertions below do not depend on the BuildKit daemon's default media type.
+	out, err := buildCmd(sb, withArgs("-t", target, "--push", "--output", "type=image,oci-mediatypes=false", "--platform=linux/amd64", "--provenance=false", dir))
 	require.NoError(t, err, string(out))
 
 	cmd := buildxCmd(sb, withArgs("imagetools", "inspect", target, "--raw"))
@@ -767,7 +772,7 @@ func testImagetoolsAppend(t *testing.T, sb integration.Sandbox) {
 	amd64Digest := digest.FromBytes(dt)
 
 	source := registry + "/buildx/imtools-append-source:latest"
-	out, err = buildCmd(sb, withArgs("-t", source, "--push", "--platform=linux/arm64", "--provenance=false", dir))
+	out, err = buildCmd(sb, withArgs("-t", source, "--push", "--output", "type=image,oci-mediatypes=false", "--platform=linux/arm64", "--provenance=false", dir))
 	require.NoError(t, err, string(out))
 
 	cmd = buildxCmd(sb, withArgs("imagetools", "inspect", source, "--raw"))
@@ -818,7 +823,8 @@ func testImagetoolsFile(t *testing.T, sb integration.Sandbox) {
 	require.NoError(t, err)
 
 	source := registry + "/buildx/imtools-file:latest"
-	out, err := buildCmd(sb, withArgs("-t", source, "--push", "--platform=linux/amd64", "--provenance=false", dir))
+	// Ask for Docker media types so the assertions below do not depend on the BuildKit daemon's default media type.
+	out, err := buildCmd(sb, withArgs("-t", source, "--push", "--output", "type=image,oci-mediatypes=false", "--platform=linux/amd64", "--provenance=false", dir))
 	require.NoError(t, err, string(out))
 
 	cmd := buildxCmd(sb, withArgs("imagetools", "inspect", source, "--raw"))
@@ -1002,8 +1008,7 @@ func testImagetoolsCopyAttestationWithSignature(t *testing.T, sb integration.San
 	require.Len(t, platformManifests, 2)
 	require.Len(t, attestations, 2)
 
-	// Negative controls: signatures on image manifests, and unsupported
-	// artifact types, should not be copied by imagetools create.
+	// Negative controls: signatures on image manifests, and unsupported artifact types.
 	platformSignatures := make(map[digest.Digest]ocispecs.Descriptor, len(platformManifests))
 	platformUnsupportedReferrers := make(map[digest.Digest]ocispecs.Descriptor, len(platformManifests))
 	for platformDigest, platformDesc := range platformManifests {

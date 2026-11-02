@@ -1,3 +1,5 @@
+// funcs.go holds the funcs code.
+
 package policy
 
 import (

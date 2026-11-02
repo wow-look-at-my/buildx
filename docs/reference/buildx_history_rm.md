@@ -20,9 +20,7 @@ Remove build records
 
 ## Description
 
-Remove one or more build records from the current builder’s history. You can
-remove specific builds by ID or offset, or delete all records at once using
-the `--all` flag.
+Remove one or more build records from the current builder’s history. You can remove specific builds by ID or offset, or delete all records at once using the `--all` flag.
 
 ## Examples
 

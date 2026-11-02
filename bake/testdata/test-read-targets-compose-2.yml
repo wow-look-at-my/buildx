@@ -1,0 +1,8 @@
+version: "3"
+services:
+  newservice:
+    build: .
+  webapp:
+    build:
+      args:
+        buildno2: 12

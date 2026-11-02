@@ -1,3 +1,5 @@
+// convert.go holds the convert code.
+
 package jaeger
 
 import (
@@ -95,8 +97,7 @@ func ConvertSpan(ss tracesdk.ReadOnlySpan) Span {
 		}
 		fields := make([]KeyValue, 0, nTags)
 		if a.Name != "" {
-			// If an event contains an attribute with the same key, it needs
-			// to be given precedence and overwrite this.
+			// If an event contains an attribute with the same key, it needs to be given precedence and overwrite this.
 			fields = append(fields, getStringTag(keyEventName, a.Name))
 		}
 		for _, kv := range a.Attributes {

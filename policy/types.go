@@ -193,21 +193,21 @@ type SignerInfo struct {
 	// certificate.Summary with deprecated fields removed
 	CertificateIssuer                   string `json:"certificateIssuer"`
 	SubjectAlternativeName              string `json:"subjectAlternativeName"`
-	Issuer                              string `json:"issuer,omitempty"`                              // OID 1.3.6.1.4.1.57264.1.8 and 1.3.6.1.4.1.57264.1.1 (Deprecated)
-	BuildSignerURI                      string `json:"buildSignerURI,omitempty"`                      //nolint:tagliatelle // 1.3.6.1.4.1.57264.1.9
-	BuildSignerDigest                   string `json:"buildSignerDigest,omitempty"`                   // 1.3.6.1.4.1.57264.1.10
-	RunnerEnvironment                   string `json:"runnerEnvironment,omitempty"`                   // 1.3.6.1.4.1.57264.1.11
-	SourceRepositoryURI                 string `json:"sourceRepositoryURI,omitempty"`                 //nolint:tagliatelle  // 1.3.6.1.4.1.57264.1.12
-	SourceRepositoryDigest              string `json:"sourceRepositoryDigest,omitempty"`              // 1.3.6.1.4.1.57264.1.13
-	SourceRepositoryRef                 string `json:"sourceRepositoryRef,omitempty"`                 // 1.3.6.1.4.1.57264.1.14
-	SourceRepositoryIdentifier          string `json:"sourceRepositoryIdentifier,omitempty"`          // 1.3.6.1.4.1.57264.1.15
-	SourceRepositoryOwnerURI            string `json:"sourceRepositoryOwnerURI,omitempty"`            //nolint:tagliatelle // 1.3.6.1.4.1.57264.1.16
-	SourceRepositoryOwnerIdentifier     string `json:"sourceRepositoryOwnerIdentifier,omitempty"`     // 1.3.6.1.4.1.57264.1.17
-	BuildConfigURI                      string `json:"buildConfigURI,omitempty"`                      //nolint:tagliatelle // 1.3.6.1.4.1.57264.1.18
-	BuildConfigDigest                   string `json:"buildConfigDigest,omitempty"`                   // 1.3.6.1.4.1.57264.1.19
-	BuildTrigger                        string `json:"buildTrigger,omitempty"`                        // 1.3.6.1.4.1.57264.1.20
-	RunInvocationURI                    string `json:"runInvocationURI,omitempty"`                    //nolint:tagliatelle // 1.3.6.1.4.1.57264.1.21
-	SourceRepositoryVisibilityAtSigning string `json:"sourceRepositoryVisibilityAtSigning,omitempty"` // 1.3.6.1.4.1.57264.1.22
+	Issuer                              string `json:"issuer,omitempty"`
+	BuildSignerURI                      string `json:"buildSignerURI,omitempty"` //nolint:tagliatelle // 1.3.6.1.4.1.57264.1.9
+	BuildSignerDigest                   string `json:"buildSignerDigest,omitempty"`
+	RunnerEnvironment                   string `json:"runnerEnvironment,omitempty"`
+	SourceRepositoryURI                 string `json:"sourceRepositoryURI,omitempty"` //nolint:tagliatelle  // 1.3.6.1.4.1.57264.1.12
+	SourceRepositoryDigest              string `json:"sourceRepositoryDigest,omitempty"`
+	SourceRepositoryRef                 string `json:"sourceRepositoryRef,omitempty"`
+	SourceRepositoryIdentifier          string `json:"sourceRepositoryIdentifier,omitempty"`
+	SourceRepositoryOwnerURI            string `json:"sourceRepositoryOwnerURI,omitempty"` //nolint:tagliatelle // 1.3.6.1.4.1.57264.1.16
+	SourceRepositoryOwnerIdentifier     string `json:"sourceRepositoryOwnerIdentifier,omitempty"`
+	BuildConfigURI                      string `json:"buildConfigURI,omitempty"` //nolint:tagliatelle // 1.3.6.1.4.1.57264.1.18
+	BuildConfigDigest                   string `json:"buildConfigDigest,omitempty"`
+	BuildTrigger                        string `json:"buildTrigger,omitempty"`
+	RunInvocationURI                    string `json:"runInvocationURI,omitempty"` //nolint:tagliatelle // 1.3.6.1.4.1.57264.1.21
+	SourceRepositoryVisibilityAtSigning string `json:"sourceRepositoryVisibilityAtSigning,omitempty"`
 }
 
 type SignatureType string

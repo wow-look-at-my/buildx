@@ -20,10 +20,7 @@ func TestMuxIO(t *testing.T) {
 		outputsNum int
 		wants      []string
 
-		// Everytime string is written to the mux stdin, the output end
-		// that received the string write backs to the string that is masked with
-		// its index number. This is useful to check if writeback is written from the
-		// expected output destination.
+		// Everytime string is written to the mux stdin.
 		wantsMaskedOutput string
 	}{
 		{

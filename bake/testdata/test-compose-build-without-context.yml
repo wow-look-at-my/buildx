@@ -1,0 +1,9 @@
+
+services:
+  db:
+    build:
+      target: db
+  webapp:
+    build:
+      context: .
+      target: webapp

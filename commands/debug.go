@@ -1,3 +1,5 @@
+// debug.go holds the debug code.
+
 package commands
 
 import (
@@ -126,8 +128,6 @@ func parseInvokeConfig(invoke, on string) (*build.InvokeConfig, error) {
 		return cfg, nil
 	case "on-error":
 		// NOTE: we overwrite the command to run because the original one should fail on the failed step.
-		// TODO: make this configurable via flags or restorable from LLB.
-		// Discussion: https://github.com/docker/buildx/pull/1640#discussion_r1113295900
 		cfg.Cmd = []string{"/bin/sh"}
 		cfg.NoCmd = false
 		return cfg, nil

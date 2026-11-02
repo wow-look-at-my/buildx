@@ -1,3 +1,5 @@
+// debug_shell.go holds the debug shell code.
+
 package dap
 
 import (
@@ -20,12 +22,10 @@ import (
 )
 
 type shell struct {
-	// SocketPath is set on the first time Init is invoked
-	// and stays that way.
+	// SocketPath is set on the first time Init is invoked and stays that way.
 	SocketPath string
 
-	// Locks access to the session from the debug adapter.
-	// Only one debug thread can access the shell at a time.
+	// Locks access to the session from the debug adapter. Only one debug thread can access the shell at a time.
 	sem *semaphore.Weighted
 
 	// Initialized once per shell and reused.
@@ -127,10 +127,9 @@ func (s *shell) accept() error {
 	return nil
 }
 
-// Attach will attach the given thread to the shell.
-// Only one container can attach to a shell at any given time.
-// Other attaches will block until the context is canceled or it is
-// able to reserve the shell for its own use.
+// Attach will attach the given thread to the shell. Only one container can
+// attach to a shell at any given time. Other attaches will block until the
+// context is canceled or it can reserve the shell for its own use.
 //
 // This method is intended to be called by paused threads.
 func (s *shell) Attach(ctx context.Context, t *thread) {

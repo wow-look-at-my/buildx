@@ -1,0 +1,7 @@
+
+services:
+  build:
+    build:
+      context: .
+      args:
+        HELLO: ${HELLO:-fallback}

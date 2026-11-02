@@ -1,3 +1,5 @@
+// debug.go holds the debug code.
+
 package main
 
 import (

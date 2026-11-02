@@ -1,3 +1,5 @@
+// root.go holds the root code.
+
 package commands
 
 import (
@@ -49,12 +51,7 @@ func NewRootCmd(name string, isPlugin bool, dockerCli *command.DockerCli) *cobra
 			}
 			cmd.SetContext(appcontext.Context())
 			if !isPlugin {
-				// InstallFlags and SetDefaultOptions are necessary to match
-				// the plugin mode behavior to handle env vars such as
-				// DOCKER_TLS, DOCKER_TLS_VERIFY, ... and we also need to use a
-				// new flagset to avoid conflict with the global debug flag
-				// that we already handle in the root command otherwise it
-				// would panic.
+				// InstallFlags and SetDefaultOptions are necessary to match the plugin mode behavior to handle env vars such as DOCKER_TLS, DOCKER_TLS_VERIFY.
 				nflags := pflag.NewFlagSet(cmd.DisplayName(), pflag.ContinueOnError)
 				options := cliflags.NewClientOptions()
 				options.InstallFlags(nflags)
@@ -77,8 +74,7 @@ func NewRootCmd(name string, isPlugin bool, dockerCli *command.DockerCli) *cobra
 		DisableFlagsInUseLine: true,
 	}
 	if !isPlugin {
-		// match plugin behavior for standalone mode
-		// https://github.com/docker/cli/blob/6c9eb708fa6d17765d71965f90e1c59cea686ee9/cli-plugins/plugin/plugin.go#L117-L127
+		// match plugin behavior for standalone mode https.
 		cmd.SilenceUsage = true
 		cmd.SilenceErrors = true
 		cmd.TraverseChildren = true

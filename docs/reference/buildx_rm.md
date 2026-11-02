@@ -24,8 +24,7 @@ Remove one or more builder instances
 
 ## Description
 
-Removes the specified or current builder. It is a no-op attempting to remove the
-default builder.
+Removes the specified or current builder. It is a no-op attempting to remove the default builder.
 
 ## Examples
 
@@ -52,13 +51,8 @@ $ docker buildx rm --all-inactive --force
 
 ### <a name="keep-daemon"></a> Keep the BuildKit daemon running (--keep-daemon)
 
-Keep the BuildKit daemon running after the buildx context is removed. This is
-useful when you manage BuildKit daemons and buildx contexts independently.
-Only supported by the
-[`docker-container`](https://docs.docker.com/build/drivers/docker-container/)
-and [`kubernetes`](https://docs.docker.com/build/drivers/kubernetes/) drivers.
+Keep the BuildKit daemon running after the buildx context is removed. This is useful when you manage BuildKit daemons and buildx contexts independently. Only supported by the [`docker-container`](https://docs.docker.com/build/drivers/docker-container/) and [`kubernetes`](https://docs.docker.com/build/drivers/kubernetes/) drivers.
 
 ### <a name="keep-state"></a> Keep BuildKit state (--keep-state)
 
-Keep BuildKit state, so it can be reused by a new builder with the same name.
-Currently, only supported by the [`docker-container` driver](https://docs.docker.com/build/drivers/docker-container/).
+Keep BuildKit state, so a new builder with the same name can reuse it. Currently, only supported by the [`docker-container` driver](https://docs.docker.com/build/drivers/docker-container/).

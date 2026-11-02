@@ -1,0 +1,7 @@
+
+services:
+  app:
+    build:
+      context: .
+      sbom: false
+      provenance: false

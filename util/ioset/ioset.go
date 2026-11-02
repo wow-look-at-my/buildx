@@ -1,3 +1,5 @@
+// ioset.go holds the ioset code.
+
 package ioset
 
 import (
@@ -55,9 +57,8 @@ func (s Out) Close() (retErr error) {
 	return
 }
 
-// Forwarder forwards IO between readers and writers contained
-// in In and Out structs.
-// In and Out can be changed during forwarding using SetIn and SetOut methods.
+// Forwarder forwards IO between readers and writers contained in In and Out
+// structs.
 type Forwarder struct {
 	stdin  *SingleForwarder
 	stdout *SingleForwarder
@@ -65,7 +66,6 @@ type Forwarder struct {
 	mu     sync.Mutex
 
 	// PropagateStdinClose indicates whether EOF from Stdin of Out should be propagated.
-	// If this is true, EOF from Stdin (reader) of Out closes Stdin (writer) of In.
 	PropagateStdinClose bool
 }
 

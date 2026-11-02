@@ -1,3 +1,5 @@
+// driver.go holds the driver code.
+
 package docker
 
 import (
@@ -41,8 +43,7 @@ type Driver struct {
 	driver.InitConfig
 	factory driver.Factory
 
-	// if you add fields, remember to update docs:
-	// https://github.com/docker/docs/blob/main/content/build/drivers/docker-container.md
+	// if you add fields, remember to update docs.
 	netMode            string
 	image              string
 	memory             opts.MemBytes
@@ -105,8 +106,7 @@ func (d *Driver) create(ctx context.Context, l progress.SubLogger) error {
 		}
 		return resp.Wait(ctx)
 	}); err != nil {
-		// image pulling failed, check if it exists in local image store.
-		// if not, return pulling error. otherwise log it.
+		// image pulling failed, check if it exists in local image store. if not, return pulling error. otherwise log it.
 		_, errInspect := d.DockerAPI.ImageInspect(ctx, imageName)
 		found := errInspect == nil
 		if !found {
@@ -148,9 +148,9 @@ func (d *Driver) create(ctx context.Context, l progress.SubLogger) error {
 			}
 		}
 
-		// Mount WSL libaries if running in WSL environment and Docker context
-		// is a local socket as requesting GPU on container builder creation
-		// is not enough when generating the CDI specification for GPU devices.
+		// Mount WSL libaries if running in WSL environment. Docker context is
+		// a local socket as requesting GPU on container builder creation is
+		// not enough when generating the CDI specification for GPU devices.
 		// https://github.com/docker/buildx/pull/3320
 		if os.Getenv("WSL_DISTRO_NAME") != "" && hasLocalSocketEndpoint(d.EndpointAddr, d.ContextStore) {
 			wslLibPath := "/usr/lib/wsl"
@@ -194,8 +194,7 @@ func (d *Driver) create(ctx context.Context, l progress.SubLogger) error {
 		}
 		if resp, err := d.DockerAPI.Info(ctx, dockerclient.InfoOptions{}); err == nil {
 			if resp.Info.CgroupDriver == "cgroupfs" {
-				// Place all buildkit containers inside this cgroup by default so limits can be attached
-				// to all build activity on the host.
+				// Place all buildkit containers inside this cgroup by default so limits can be attached to all build activity on the host.
 				hc.CgroupParent = "/docker/buildx"
 				if d.cgroupParent != "" {
 					hc.CgroupParent = d.cgroupParent
@@ -469,8 +468,8 @@ func (d *Driver) HostGatewayIP(ctx context.Context) (net.IP, error) {
 }
 
 // hasGPUCapability checks if docker daemon has GPU capability. We need to run
-// a dummy container with GPU device to check if the daemon has this capability
-// because there is no API to check it yet.
+// a dummy container with GPU device to check if the daemon has this
+// capability. This is because there is no API to check it yet.
 func (d *Driver) hasGPUCapability(ctx context.Context, image string, gpus []container.DeviceRequest) bool {
 	resp, err := d.DockerAPI.ContainerCreate(ctx, dockerclient.ContainerCreateOptions{
 		Config: &container.Config{
@@ -553,15 +552,7 @@ func writeConfigFiles(m map[string][]byte) (_ string, err error) {
 func getBuildkitFlags(initConfig driver.InitConfig) []string {
 	flags := initConfig.BuildkitdFlags
 	if _, ok := initConfig.Files[buildkitdConfigFile]; ok {
-		// There's no way for us to determine the appropriate default configuration
-		// path and the default path can vary depending on if the image is normal
-		// or rootless.
-		//
-		// In order to ensure that --config works, copy to a specific path and
-		// specify the location.
-		//
-		// This should be appended before the user-specified arguments
-		// so that this option could be overwritten by the user.
+		// There's no way for us to determine the appropriate default configuration path.
 		newFlags := make([]string, 0, len(flags)+2)
 		newFlags = append(newFlags, "--config", path.Join("/etc/buildkit", buildkitdConfigFile))
 		flags = append(newFlags, flags...)

@@ -1,0 +1,36 @@
+
+{
+    "_type": "https://in-toto.io/Statement/v0.1",
+    "predicateType": "https://spdx.dev/Document",
+    "predicate": {
+		"name": "sbom",
+		"spdxVersion": "SPDX-2.3",
+		"SPDXID": "SPDXRef-DOCUMENT",
+		"creationInfo": {
+			"created": "2024-01-31T16:09:05Z",
+			"creators": [
+				"Tool: buildkit-v0.11.0"
+			],
+			"licenseListVersion": "3.22"
+		},
+		"dataLicense": "CC0-1.0",
+		"documentNamespace": "https://example.com",
+		"packages": [
+			{
+				"name": "sbom",
+				"SPDXID": "SPDXRef-DocumentRoot-Directory-sbom",
+				"copyrightText": "",
+				"downloadLocation": "NOASSERTION",
+				"primaryPackagePurpose": "FILE",
+				"supplier": "NOASSERTION"
+			}
+		],
+		"relationships": [
+			{
+				"relatedSpdxElement": "SPDXRef-DocumentRoot-Directory-sbom",
+				"relationshipType": "DESCRIBES",
+				"spdxElementId": "SPDXRef-DOCUMENT"
+			}
+		]
+	}
+}

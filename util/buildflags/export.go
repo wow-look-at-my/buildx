@@ -1,3 +1,5 @@
+// export.go holds the export code.
+
 package buildflags
 
 import (

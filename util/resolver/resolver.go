@@ -1,3 +1,5 @@
+// resolver.go holds the resolver code.
+
 package resolver
 
 import (

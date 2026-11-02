@@ -1,0 +1,7 @@
+
+services:
+  webapp:
+    build:
+      context: ./dir
+      cache_from: []
+      cache_to: []

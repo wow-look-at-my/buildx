@@ -1,5 +1,7 @@
 package tests
 
+import _ "embed"
+
 import (
 	"os"
 	"path"
@@ -119,23 +121,9 @@ func testInspectBuildkitdConf(t *testing.T, sb integration.Sandbox) {
 		t.Skip("only testing with docker-container worker")
 	}
 
-	buildkitdConf := `
-# debug enables additional debug logging
-debug = true
-# insecure-entitlements allows insecure entitlements, disabled by default.
-insecure-entitlements = [ "network.host", "security.insecure" ]
+	buildkitdConf := testInspectBuildkitdConfToml
 
-[log]
-  # log formatter: json or text
-  format = "text"
-`
-
-	expectedContent := `debug = true
-insecure-entitlements = ['network.host', 'security.insecure']
-
-[log]
-format = 'text'
-`
+	expectedContent := testInspectBuildkitdConfToml2
 
 	var builderName string
 	t.Cleanup(func() {
@@ -178,3 +166,9 @@ format = 'text'
 	}
 	require.Equal(t, expectedContent, strings.Join(fileLines, "\n"), "File#buildkitd.toml content mismatch")
 }
+
+//go:embed test-inspect-buildkitd-conf.toml
+var testInspectBuildkitdConfToml string
+
+//go:embed test-inspect-buildkitd-conf-2.toml
+var testInspectBuildkitdConfToml2 string

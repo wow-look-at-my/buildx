@@ -1,4 +1,8 @@
+// dap_build.go holds the dap build code.
+
 package tests
+
+import _ "embed"
 
 import (
 	"encoding/json"
@@ -56,8 +60,6 @@ func dapBuildCmd(t *testing.T, sb integration.Sandbox, opts ...cmdOpt) (*daptest
 
 		// Attempt to wait for the process first. In general, we want
 		// the process to exit normally.
-		//
-		// If too much time passes when waiting, kill the command.
 		timer := time.AfterFunc(10*time.Second, func() {
 			t.Logf("killing process %v", cmd.Process.Pid)
 			cmd.Process.Kill()
@@ -160,8 +162,7 @@ func testDapBuildSetBreakpoints(t *testing.T, sb integration.Sandbox) {
 	threads := doThreads(t, client)
 	require.ElementsMatch(t, []int{stopped.Body.ThreadId}, threads)
 
-	// Expect 2 stack frames. We should be stopped at line 2 which is reached
-	// from within the copy.
+	// We should be stopped at a later line which is reached from within the copy.
 	stackFrames := doStackTrace(t, client, stopped.Body.ThreadId)
 	assertStackTrace(t, stackFrames, []stackFrameMatcher{
 		{
@@ -304,14 +305,7 @@ func testDapBuildLoadedSource(t *testing.T, sb integration.Sandbox) {
 	}
 
 	runTest := func(t *testing.T, tt test, abspath bool) string {
-		dockerfile := []byte(`
-FROM busybox:latest AS base
-COPY foo /etc/foo
-RUN cp /etc/foo /etc/bar
-
-FROM scratch
-COPY --from=base /etc/bar /bar
-`)
+		dockerfile := []byte(testDapBuildLoadedSourceDockerfile)
 
 		appliers := []fstest.Applier{}
 		if tt.ContextPath != "" {
@@ -408,7 +402,7 @@ func testDapBuildStepIn(t *testing.T, sb integration.Sandbox) {
 	})
 
 	expected := [][]stackFrameMatcher{
-		// stop point 1
+		// stop one point
 		{
 			{
 				SourceName: "Dockerfile",
@@ -416,7 +410,7 @@ func testDapBuildStepIn(t *testing.T, sb integration.Sandbox) {
 				Name:       `^\[stage-1 .*\] COPY .* /etc/bar`,
 			},
 		},
-		// stop point 2
+		// stop a later point
 		{
 			{
 				SourceName: "Dockerfile",
@@ -429,7 +423,7 @@ func testDapBuildStepIn(t *testing.T, sb integration.Sandbox) {
 				Name:       `^\[stage-1 .*\] COPY .* /etc/bar`,
 			},
 		},
-		// stop point 3
+		// stop a later point
 		{
 			{
 				SourceName: "Dockerfile",
@@ -442,7 +436,7 @@ func testDapBuildStepIn(t *testing.T, sb integration.Sandbox) {
 				Name:       `^\[stage-1 .*\] COPY .* /etc/bar`,
 			},
 		},
-		// stop point 4
+		// stop a later point
 		{
 			{
 				SourceName: "Dockerfile",
@@ -455,9 +449,8 @@ func testDapBuildStepIn(t *testing.T, sb integration.Sandbox) {
 				Name:       `^\[stage-1 .*\] COPY .* /etc/bar`,
 			},
 		},
-		// stop point 5
-		// since we're at the end of a stage, the last stop point
-		// repeats to allow inspecting the return state.
+		// stop a later point since we're at the end of a stage, the last stop
+		// point repeats to allow inspecting the return state.
 		{
 			{
 				SourceName: "Dockerfile",
@@ -470,7 +463,7 @@ func testDapBuildStepIn(t *testing.T, sb integration.Sandbox) {
 				Name:       `^\[stage-1 .*\] COPY .* /etc/bar`,
 			},
 		},
-		// stop point 6
+		// stop a later point
 		{
 			{
 				SourceName: "Dockerfile",
@@ -478,8 +471,7 @@ func testDapBuildStepIn(t *testing.T, sb integration.Sandbox) {
 				Name:       `^\[stage-1 .*\] COPY .* /etc/bar`,
 			},
 		},
-		// stop point 7
-		// repeat of stop point 5 but after the invocation.
+		// stop a later point repeat of stop a later point but after the invocation.
 		{
 			{
 				SourceName: "Dockerfile",
@@ -522,7 +514,7 @@ func testDapBuildStepNext(t *testing.T, sb integration.Sandbox) {
 	)
 
 	expected := [][]stackFrameMatcher{
-		// stop point 1
+		// stop one point
 		{
 			{
 				SourceName: "Dockerfile",
@@ -530,9 +522,8 @@ func testDapBuildStepNext(t *testing.T, sb integration.Sandbox) {
 				Name:       `^\[stage-1 .*\] COPY .* /etc/bar`,
 			},
 		},
-		// stop point 2
-		// next would normally skip over base but we have a breakpoint
-		// on this line and it should not be skipped over.
+		// stop a later point next would normally skip over base but we have a
+		// breakpoint on this line and it should not be skipped over.
 		{
 			{
 				SourceName: "Dockerfile",
@@ -545,7 +536,7 @@ func testDapBuildStepNext(t *testing.T, sb integration.Sandbox) {
 				Name:       `^\[stage-1 .*\] COPY .* /etc/bar`,
 			},
 		},
-		// stop point 3
+		// stop a later point
 		{
 			{
 				SourceName: "Dockerfile",
@@ -558,9 +549,8 @@ func testDapBuildStepNext(t *testing.T, sb integration.Sandbox) {
 				Name:       `^\[stage-1 .*\] COPY .* /etc/bar`,
 			},
 		},
-		// stop point 4
-		// since we're at the end of a stage, the last stop point
-		// repeats to allow inspecting the return state.
+		// stop a later point since we're at the end of a stage, the last stop
+		// point repeats to allow inspecting the return state.
 		{
 			{
 				SourceName: "Dockerfile",
@@ -573,7 +563,7 @@ func testDapBuildStepNext(t *testing.T, sb integration.Sandbox) {
 				Name:       `^\[stage-1 .*\] COPY .* /etc/bar`,
 			},
 		},
-		// stop point 5
+		// stop a later point
 		{
 			{
 				SourceName: "Dockerfile",
@@ -581,8 +571,7 @@ func testDapBuildStepNext(t *testing.T, sb integration.Sandbox) {
 				Name:       `^\[stage-1 .*\] COPY .* /etc/bar`,
 			},
 		},
-		// stop point 6
-		// repeat of stop point 5 but after the invocation.
+		// stop a later point repeat of stop a later point but after the invocation.
 		{
 			{
 				SourceName: "Dockerfile",
@@ -625,7 +614,7 @@ func testDapBuildStepOut(t *testing.T, sb integration.Sandbox) {
 	)
 
 	expected := [][]stackFrameMatcher{
-		// stop point 1
+		// stop one point
 		{
 			{
 				SourceName: "Dockerfile",
@@ -633,9 +622,8 @@ func testDapBuildStepOut(t *testing.T, sb integration.Sandbox) {
 				Name:       `^\[stage-1 .*\] COPY .* /etc/bar`,
 			},
 		},
-		// stop point 2
-		// out would normally skip over base but we have a breakpoint
-		// on this line and it should not be skipped over.
+		// stop a later point out would normally skip over base but we have a
+		// breakpoint on this line and it should not be skipped over.
 		{
 			{
 				SourceName: "Dockerfile",
@@ -648,7 +636,7 @@ func testDapBuildStepOut(t *testing.T, sb integration.Sandbox) {
 				Name:       `^\[stage-1 .*\] COPY .* /etc/bar`,
 			},
 		},
-		// stop point 3
+		// stop a later point
 		{
 			{
 				SourceName: "Dockerfile",
@@ -656,9 +644,7 @@ func testDapBuildStepOut(t *testing.T, sb integration.Sandbox) {
 				Name:       `^\[stage-1 .*\] COPY .* /etc/bar`,
 			},
 		},
-		// stop point 3 should not be repeated unlike the
-		// previous methods because step out will skip
-		// the duplicate last step.
+		// stop a later point should not be repeated unlike the methods because step out will skip the duplicate last step.
 	}
 
 	for _, exp := range expected {
@@ -732,8 +718,7 @@ func testDapBuildVariables(t *testing.T, sb integration.Sandbox) {
 					PresentationHint: "locals",
 					Expensive:        true,
 					Variables: variableSetMatcher{
-						// Do not check the variables in the file explorer since
-						// the underlying image may change.
+						// Do not check the variables in the file explorer since the underlying image may change.
 						NonExhaustive: true,
 					},
 				},
@@ -819,8 +804,7 @@ func testDapBuildVariables(t *testing.T, sb integration.Sandbox) {
 					PresentationHint: "locals",
 					Expensive:        true,
 					Variables: variableSetMatcher{
-						// Do not check the variables in the file explorer since
-						// the underlying image may change.
+						// Do not check the variables in the file explorer since the underlying image may change.
 						NonExhaustive: true,
 					},
 				},
@@ -885,13 +869,11 @@ func testDapBuildDeferredEval(t *testing.T, sb integration.Sandbox) {
 	stopped := waitForInterrupt[*dap.StoppedEvent](t, interruptCh)
 	require.NotNil(t, stopped)
 
-	// The output event is usually immediate but it can sometimes be delayed due to
-	// the multithreading in the printer. Just wait for a little bit.
+	// The output event is usually immediate but it can sometimes be delayed due
+	// to the multithreading in the printer. wait for a little bit.
 	select {
 	case <-seen:
-		// We should not have seen this message since the branch this
-		// message comes from should be deferred because we have
-		// not passed the breakpoint.
+		// We should not have seen this message since the branch this message comes from should be deferred.
 		t.Fatal("step has been invoked before intended")
 	case <-time.After(100 * time.Millisecond):
 	}
@@ -924,7 +906,7 @@ func testDapBuildExitedEvent(t *testing.T, sb integration.Sandbox) {
 			close(ch)
 		})
 
-		// Project should just build normally.
+		// Project should build normally.
 		doLaunch(t, client, commands.LaunchConfig{
 			Dockerfile:  path.Join(dir, "Dockerfile"),
 			ContextPath: dir,
@@ -1138,8 +1120,7 @@ func doVariables(t *testing.T, client *daptest.Client, referenceID int) []dap.Va
 }
 
 func pollInterruptEvents(client *daptest.Client) <-chan dap.EventMessage {
-	// Extra space in the message queue so unread events don't
-	// cause the client to hang.
+	// Extra space in the message queue so unread events don't cause the client to hang.
 	ch := make(chan dap.EventMessage, 10)
 	client.RegisterEvent("stopped", func(em dap.EventMessage) {
 		ch <- em
@@ -1218,14 +1199,10 @@ func assertVariableScopes(t *testing.T, client *daptest.Client, actual []dap.Sco
 }
 
 type variableSetMatcher struct {
-	// Variables covers variables inside this variable set.
-	// Variables can be in any order.
+	// Variables covers variables inside this variable set. Variables can be in any order.
 	Variables []variableMatcher
 
 	// NonExhaustive defines if this matcher is non-exhaustive.
-	// A non-exhaustive matcher will just check for the existence
-	// of the variables listed and won't check if there are extra
-	// variables.
 	NonExhaustive bool
 }
 
@@ -1268,3 +1245,6 @@ func assertVariableSet(t *testing.T, client *daptest.Client, referenceID int, ex
 		expected.AssertMatches(t, client, variables)
 	}
 }
+
+//go:embed test-dap-build-loaded-source.dockerfile
+var testDapBuildLoadedSourceDockerfile string

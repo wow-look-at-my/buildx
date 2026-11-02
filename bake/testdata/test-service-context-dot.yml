@@ -1,0 +1,18 @@
+
+services:
+  base.1:
+    build:
+      dockerfile: baseapp.Dockerfile
+    command: ./entrypoint.sh
+  foo.1:
+    build:
+      dockerfile: fooapp.Dockerfile
+    command: ./entrypoint.sh
+  webapp:
+    build:
+      context: ./dir
+      additional_contexts:
+        base: service:base.1
+      x-bake:
+        contexts:
+          foo: target:foo.1

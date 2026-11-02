@@ -1,3 +1,5 @@
+// jaeger.go holds the jaeger code.
+
 package otelutil
 
 import (

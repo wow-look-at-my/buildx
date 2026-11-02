@@ -1,3 +1,5 @@
+// path_windows.go holds the path windows code.
+
 package osutil
 
 import (
@@ -7,7 +9,6 @@ import (
 )
 
 // GetLongPathName converts Windows short pathnames to full pathnames.
-// For example C:\Users\ADMIN~1 --> C:\Users\Administrator.
 func GetLongPathName(path string) (string, error) {
 	// See https://groups.google.com/forum/#!topic/golang-dev/1tufzkruoTg
 	p, err := windows.UTF16FromString(path)

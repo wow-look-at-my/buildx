@@ -25,8 +25,7 @@ Disk usage
 
 ### Show disk usage
 
-The `docker buildx du` command shows the disk usage for the currently selected
-builder.
+The `docker buildx du` command shows the disk usage for the currently selected builder.
 
 ```console
 $ docker buildx du
@@ -48,20 +47,12 @@ Reclaimable:   10.36GB
 Total:         10.36GB
 ```
 
-If `RECLAIMABLE` is false, the `docker buildx du prune` command won't delete
-the record, even if you use `--all`. That's because the record is actively in
-use by some component of the builder.
+If `RECLAIMABLE` is false, the `docker buildx du prune` command will not delete the record, even if you use `--all`. That is because the record is actively in use by some component of the builder.
 
 The asterisks (\*) in the default output format indicate the following:
 
-- An asterisk next to an ID (`zu7m6evdpebh5h8kfkpw9dlf2*`) indicates that the record
-  is mutable. The size of the record may change, or another build can take ownership of
-  it and change or commit to it. If you run the `du` command again, this item may
-  not be there anymore, or the size might be different.
-- An asterisk next to a size (`8.288kB*`) indicates that the record is shared.
-  Storage of the record is shared with some other resource, typically an image.
-  If you prune such a record then you will lose build cache but only metadata
-  will be deleted as the image still needs to actual storage layers.
+- An asterisk next to an ID (`zu7m6evdpebh5h8kfkpw9dlf2*`) indicates that the record is mutable. The size of the record may change, or another build can take ownership of it and change or commit to it. If you run the `du` command again, this item may not be there anymore, or the size can be different.
+- An asterisk next to a size (`8.288kB*`) indicates that the record is shared. Storage of the record is shared with some other resource, typically an image. You will lose build cache but only metadata will be deleted as the image still needs to actual storage layers. This happens if you prune such a record then.
 
 ### <a name="filter"></a> Provide filter values (--filter)
 
@@ -69,8 +60,7 @@ Same as [`buildx prune --filter`](buildx_prune.md#filter).
 
 ### <a name="format"></a> Format the output (--format)
 
-The formatting options (`--format`) pretty-prints usage information output
-using a Go template.
+The formatting options (`--format`) pretty-prints usage information output using a Go template.
 
 Valid placeholders for the Go template are:
 
@@ -86,13 +76,9 @@ Valid placeholders for the Go template are:
 * `.LastUsedAt`
 * `.Type`
 
-When using the `--format` option, the `du` command will either output the data
-exactly as the template declares or, when using the `table` directive, includes
-column headers as well.
+When using the `--format` option, the `du` command will either output the data exactly as the template declares. When using the `table` directive, it includes column headers as well.
 
-The `pretty` format is useful for inspecting the disk usage records in more
-detail. It shows the mutable and shared states more clearly, as well as
-additional information about the corresponding layer:
+The `pretty` format is useful for inspecting the disk usage records in more detail. It shows the mutable and shared states more clearly, as well as more information about the corresponding layer:
 
 ```console
 $ docker buildx du --format=pretty
@@ -116,8 +102,7 @@ Reclaimable:    131.5GB
 Total:          133.5GB
 ```
 
-The following example uses a template without headers and outputs the
-`ID` and `Size` entries separated by a colon (`:`):
+The following example uses a template without headers and outputs the `ID` and `Size` entries separated by a colon (`:`):
 
 ```console
 $ docker buildx du --format "{{.ID}}: {{.Size}}"
@@ -130,8 +115,7 @@ nmi6asc00aa3ja6xnt6o7wbrr: 2.027GB
 3w9qhzzskq5jc262snfu90bfz: 2.617GB
 ```
 
-The following example uses a `table` template and outputs the `ID` and
-`Description`:
+The following example uses a `table` template and outputs the `ID` and `Description`:
 
 ```console
 $ docker buildx du --format "table {{.ID}}	{{.Description}}"

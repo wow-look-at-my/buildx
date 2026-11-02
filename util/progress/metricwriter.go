@@ -1,3 +1,5 @@
+// metricwriter.go holds the metricwriter code.
+
 package progress
 
 import (
@@ -120,7 +122,7 @@ func (mr *localSourceTransferMetricRecorder) Record(ss *client.SolveStatus) {
 		if !ok {
 			attr := detectLocalSourceType(v.Name)
 			if !attr.Valid() {
-				// Not a context transfer operation so just ignore.
+				// Not a context transfer operation so ignore.
 				continue
 			}
 
@@ -184,9 +186,7 @@ type (
 		// BaseAttributes holds the set of base attributes for all metrics produced.
 		BaseAttributes attribute.Set
 
-		// State holds the state for an individual digest. It is mostly used to check
-		// if a status belongs to an image source since this recorder doesn't maintain
-		// individual digest state.
+		// State holds the state for an individual digest.
 		State map[digest.Digest]struct{}
 
 		// TransferSize holds the counter for the transfer size.
@@ -396,10 +396,6 @@ func (mr *idleMetricRecorder) Record(ss *client.SolveStatus) {
 
 // calculateIdleTime will use the recorded vertices that have been completed to determine the
 // amount of time spent idle.
-//
-// This calculation isn't accurate until the build itself is completed. At the moment,
-// metrics are only ever sent when a build is completed. If that changes, this calculation
-// will likely be inaccurate.
 func (mr *idleMetricRecorder) calculateIdleTime(_ context.Context, o metric.Float64Observer) error {
 	mr.mu.Lock()
 	defer mr.mu.Unlock()
@@ -448,8 +444,7 @@ type lintMetricRecorder struct {
 	// Attributes holds the set of attributes for all metrics produced.
 	Attributes attribute.Set
 
-	// Count holds the metric for the number of times a lint rule has been triggered
-	// within the current build.
+	// Count holds the metric for the number of times a lint rule has been triggered within the current build.
 	Count metric.Int64Counter
 }
 

@@ -1,3 +1,5 @@
+// build.go holds the build code.
+
 package commands
 
 import (
@@ -264,9 +266,8 @@ func buildMetricAttributes(dockerCli command.Cli, driverType string, options *bu
 	return attribute.NewSet(kvs...)
 }
 
-// buildOptionsHash computes a hash for the buildOptions when the String method is invoked.
-// This is done so we can delay the computation of the hash until needed by OTEL using
-// the fmt.Stringer interface.
+// buildOptionsHash computes a hash for the buildOptions when the String
+// method is invoked.
 type buildOptionsHash struct {
 	*buildOptions
 	cfg        *confutil.Config
@@ -464,9 +465,8 @@ func runBuildWithOptions(ctx context.Context, dockerCli command.Cli, opts *Build
 		dockerCli.SetIn(nil)
 	}
 
-	// Ensure messages sent to the printer are flushed before the debugger completes.
-	// This prevents late messages from not being sent because the connection was
-	// terminated before completion of the debugger.
+	// Ensure messages sent to the printer are flushed before the debugger
+	// completes.
 	defer func() {
 		if err := printer.Wait(); retErr == nil {
 			retErr = err
@@ -648,7 +648,7 @@ func buildCmd(dockerCli command.Cli, rootOpts *rootOptions, debugger debuggerOpt
 	return cmd
 }
 
-// comomnFlags is a set of flags commonly shared among subcommands.
+// commonFlags is a set of flags commonly shared among subcommands.
 type commonFlags struct {
 	metadataFile string
 	progress     string
@@ -686,8 +686,7 @@ func writeMetadataFile(filename string, dt any) error {
 func decodeExporterResponse(exporterResponse map[string]string) map[string]any {
 	decFunc := func(k, v string) ([]byte, error) {
 		if k == "result.json" {
-			// result.json is part of metadata response for subrequests which
-			// is already a JSON object: https://github.com/moby/buildkit/blob/f6eb72f2f5db07ddab89ac5e2bd3939a6444f4be/frontend/dockerui/requests.go#L100-L102
+			// result.json is part of metadata response for subrequests which is already a JSON object.
 			return []byte(v), nil
 		}
 		return base64.StdEncoding.DecodeString(v)
@@ -868,12 +867,7 @@ func printResult(w io.Writer, f *buildflags.CallFunc, res map[string]string, tar
 		}
 
 		if lintResults.Error != nil {
-			// Print the error message and the source
-			// Normally, we would use `errdefs.WithSource` to attach the source to the
-			// error and let the error be printed by the handling that's already in place,
-			// but here we want to print the error in a way that's consistent with how
-			// the lint warnings are printed via the `lint.PrintLintViolations` function,
-			// which differs from the default error printing.
+			// Print the error message and the source.
 			if f.Format != "json" && len(lintResults.Warnings) > 0 {
 				fmt.Fprintln(w)
 			}

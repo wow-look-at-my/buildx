@@ -10,13 +10,18 @@ on:
       - 'v[0-9]*'
   pull_request:
 
+concurrency:
+  group: gha_${{ github.repository }}_${{ github.workflow }}_${{ github.ref != 'refs/heads/master' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
 env:
   GO_VERSION: "1.26"
 
 jobs:
   codeql:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ github.event.repository.visibility == 'public' && 'ubuntu-24.04' || vars.CI_RUNNER || 'ubuntu-24.04' }}
     permissions:
+      id-token: write
       contents: read
       actions: read
       security-events: write

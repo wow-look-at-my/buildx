@@ -1,3 +1,5 @@
+// path.go holds the path code.
+
 package osutil
 
 import (

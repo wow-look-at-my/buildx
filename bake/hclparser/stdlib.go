@@ -1,3 +1,5 @@
+// stdlib.go holds the stdlib code.
+
 package hclparser
 
 import (
@@ -224,7 +226,7 @@ func dirnameFunc() function.Function {
 	})
 }
 
-// sanitizyFunc constructs a function that replaces all non-alphanumeric characters with a underscore,
+// sanitizeFunc constructs a function that replaces all non-alphanumeric characters with a underscore,
 // leaving only characters that are valid for a Bake target name.
 func sanitizeFunc() function.Function {
 	return function.New(&function.Spec{
@@ -238,7 +240,6 @@ func sanitizeFunc() function.Function {
 		Type: function.StaticReturnType(cty.String),
 		Impl: func(args []cty.Value, retType cty.Type) (cty.Value, error) {
 			in := args[0].AsString()
-			// only [a-zA-Z0-9_-]+ is allowed
 			var b strings.Builder
 			for _, r := range in {
 				if r >= 'a' && r <= 'z' || r >= 'A' && r <= 'Z' || r >= '0' && r <= '9' || r == '_' || r == '-' {

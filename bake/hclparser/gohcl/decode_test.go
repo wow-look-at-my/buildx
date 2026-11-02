@@ -1,5 +1,4 @@
-// Copyright (c) HashiCorp, Inc.
-// SPDX-License-Identifier: MPL-2.0
+// Copyright (c) HashiCorp, Inc. SPDX-License-Identifier: MPL-2.0
 
 package gohcl
 
@@ -248,7 +247,7 @@ func TestDecodeBody(t *testing.T) {
 				Noodle struct{} `hcl:"noodle,block"`
 			}{}),
 			func(gotI any) bool {
-				// Generating no diagnostics is good enough for this one.
+				// Generating no diagnostics is good enough for this.
 				return true
 			},
 			0,
@@ -261,7 +260,7 @@ func TestDecodeBody(t *testing.T) {
 				Noodle struct{} `hcl:"noodle,block"`
 			}{}),
 			func(gotI any) bool {
-				// Generating no diagnostics is good enough for this one.
+				// Generating no diagnostics is good enough for this.
 				return true
 			},
 			0,
@@ -274,7 +273,7 @@ func TestDecodeBody(t *testing.T) {
 				Noodle struct{} `hcl:"noodle,block"`
 			}{}),
 			func(gotI any) bool {
-				// Generating one diagnostic is good enough for this one.
+				// Generating one diagnostic is good enough for this.
 				return true
 			},
 			1,
@@ -285,7 +284,7 @@ func TestDecodeBody(t *testing.T) {
 				Noodle struct{} `hcl:"noodle,block"`
 			}{}),
 			func(gotI any) bool {
-				// Generating one diagnostic is good enough for this one.
+				// Generating one diagnostic is good enough for this.
 				return true
 			},
 			1,
@@ -298,7 +297,7 @@ func TestDecodeBody(t *testing.T) {
 				Noodle struct{} `hcl:"noodle,block"`
 			}{}),
 			func(gotI any) bool {
-				// Generating one diagnostic is good enough for this one.
+				// Generating one diagnostic is good enough for this.
 				return true
 			},
 			1,
@@ -353,7 +352,7 @@ func TestDecodeBody(t *testing.T) {
 				Noodle *struct{} `hcl:"noodle,block"`
 			}{}),
 			func(gotI any) bool {
-				// Generating one diagnostic is good enough for this one.
+				// Generating one diagnostic is good enough for this.
 				return true
 			},
 			1,
@@ -413,10 +412,7 @@ func TestDecodeBody(t *testing.T) {
 				} `hcl:"noodle,block"`
 			}{}),
 			func(gotI any) bool {
-				// Generating two diagnostics is good enough for this one.
-				// (one for the missing noodle block and the other for
-				// the JSON serialization detecting the missing level of
-				// hierarchy for the label.)
+				// Generating diagnostics is good enough for this.
 				return true
 			},
 			2,
@@ -455,7 +451,7 @@ func TestDecodeBody(t *testing.T) {
 				} `hcl:"noodle,block"`
 			}{}),
 			func(gotI any) bool {
-				// One diagnostic is enough for this one.
+				// One diagnostic is enough for this.
 				return true
 			},
 			1,
@@ -676,8 +672,7 @@ func TestDecodeBody(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		// For convenience here we're going to use the JSON parser
-		// to process the given body.
+		// For convenience here we're going to use the JSON parser to process the given body.
 		buf, err := json.Marshal(test.Body)
 		if err != nil {
 			t.Fatalf("error JSON-encoding body for test %d: %s", i, err)

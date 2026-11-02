@@ -18,9 +18,7 @@ Export build records into Docker Desktop bundle
 
 ## Description
 
-Export one or more build records to `.dockerbuild` archive files. These archives
-contain metadata, logs, and build outputs, and can be imported into Docker
-Desktop or shared across environments.
+Export one or more build records to `.dockerbuild` archive files. These archives contain metadata, logs, and build outputs, and can be imported into Docker Desktop or shared across environments.
 
 ## Examples
 
@@ -52,9 +50,7 @@ docker buildx history export --debug qu2gsuo8ejqrwdfii23xkkckt -o debug-build.do
 
 ### <a name="finalize"></a> Ensure build records are finalized before exporting (--finalize)
 
-Clients can report their own traces concurrently, and not all traces may be
-saved yet by the time of the export. Use the `--finalize` flag to ensure all
-traces are finalized before exporting.
+Clients can report their own traces concurrently, and the time of the export may save not all traces. Use the `--finalize` flag to ensure all traces are finalized before exporting.
 
 ```console
 docker buildx history export --finalize qu2gsuo8ejqrwdfii23xkkckt -o finalized-build.dockerbuild
@@ -72,7 +68,7 @@ You can find build IDs by running:
 docker buildx history ls
 ```
 
-To export two builds to separate files:
+To export builds to separate files:
 
 ```console
 # Using build IDs

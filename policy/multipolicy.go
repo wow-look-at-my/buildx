@@ -1,3 +1,5 @@
+// multipolicy.go holds the multipolicy code.
+
 package policy
 
 import (

@@ -1,3 +1,5 @@
+// manifest.go holds the manifest code.
+
 package manifest
 
 import (
@@ -386,11 +388,7 @@ func toRootless(p *corev1.PodTemplateSpec, buildKitRootVolumeMemory string) erro
 	}
 	p.Annotations["container.apparmor.security.beta.kubernetes.io/"+containerName] = "unconfined"
 
-	// Dockerfile has `VOLUME /home/user/.local/share/buildkit` by default too,
-	// but the default VOLUME does not work with rootless on Google's Container-Optimized OS
-	// as it is mounted with `nosuid,nodev`.
-	// https://github.com/moby/buildkit/issues/879#issuecomment-1240347038
-	// https://github.com/moby/buildkit/pull/3097
+	// Dockerfile has `VOLUME /home/user/.local/share/buildkit` by default too.
 	const emptyDirVolName = persistentVolumeClaimName
 	p.Spec.Containers[0].VolumeMounts = append(p.Spec.Containers[0].VolumeMounts, corev1.VolumeMount{
 		Name:      emptyDirVolName,

@@ -1,3 +1,5 @@
+// load.go holds the load code.
+
 package context
 
 import (
@@ -104,9 +106,7 @@ func (c *EndpointMeta) ResolveDefault() (any, *store.EndpointTLSData, error) {
 	}
 	kubeEP, err := FromKubeConfig(kubeconfig, "", "")
 	if err != nil {
-		// We deliberately quash the error here, returning nil
-		// for the first argument is sufficient to indicate we weren't able to
-		// provide a default
+		// We deliberately quash the error here.
 		return nil, nil, nil
 	}
 	var tls *store.EndpointTLSData
@@ -129,9 +129,8 @@ func EndpointFromContext(metadata store.Metadata) *EndpointMeta {
 	return &typed
 }
 
-// ConfigFromContext resolves a kubernetes client config for the specified context.
-// If kubeconfigOverride is specified, use this config file instead of the context defaults.ConfigFromContext
-// if command.ContextDockerHost is specified as the context name, fallsback to the default user's kubeconfig file
+// ConfigFromContext resolves a kubernetes client config for the specified
+// context.
 func ConfigFromContext(name string, s store.Reader) (clientcmd.ClientConfig, error) {
 	ctxMeta, err := s.GetMetadata(name)
 	if err != nil {
@@ -185,19 +184,6 @@ func ConfigFromEndpoint(endpointName string, s store.Reader) (clientcmd.ClientCo
 
 // getHomeDir returns the home directory of the current user with the help of
 // environment variables depending on the target operating system.
-// Returned path should be used with "path/filepath" to form new paths.
-//
-// On non-Windows platforms, it falls back to nss lookups, if the home
-// directory cannot be obtained from environment-variables.
-//
-// If linking statically with cgo enabled against glibc, ensure the
-// osusergo build tag is used.
-//
-// If needing to do nss lookups, do not disable cgo or set osusergo.
-//
-// It's a local fork of [pkg/homedir].
-//
-// [pkg/homedir]: https://github.com/moby/moby/blob/v28.3.2/pkg/homedir/homedir.go#L9-L28
 func getHomeDir() string {
 	home, _ := os.UserHomeDir()
 	if home == "" && runtime.GOOS != "windows" {

@@ -27,12 +27,7 @@ Shows information about the current or specified builder.
 
 ### <a name="bootstrap"></a> Ensure that the builder is running before inspecting (--bootstrap)
 
-Use the `--bootstrap` option to ensure that the builder is running before
-inspecting it. If the driver is `docker-container`, then `--bootstrap` starts
-the BuildKit container and waits until it's operational. Bootstrapping is
-automatically done during build, and therefore not necessary. The same BuildKit
-container is used during the lifetime of the associated builder node (as
-displayed in `buildx ls`).
+Use the `--bootstrap` option to ensure that the builder runs before inspecting it. If the driver is `docker-container`, then `--bootstrap` starts the BuildKit container and waits until it is operational. Bootstrapping is automatically done during build, and therefore not necessary. The same BuildKit container is used during the lifetime of the associated builder node (as displayed in `buildx ls`).
 
 ### <a name="builder"></a> Override the configured builder instance (--builder)
 
@@ -40,10 +35,7 @@ Same as [`buildx --builder`](buildx.md#builder).
 
 ### Get information about a builder instance
 
-By default, `inspect` shows information about the current builder. Specify the
-name of the builder to inspect to get information about that builder.
-The following example shows information about a builder instance named
-`elated_tesla`:
+By default, `inspect` shows information about the current builder. Specify the name of the builder to inspect to get information about that builder. The following example shows information about a builder instance named `elated_tesla`:
 
 > [!NOTE]
 > The asterisk (`*`) next to node build platform(s) indicate they have been

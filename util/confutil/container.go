@@ -1,3 +1,5 @@
+// container.go holds the container code.
+
 package confutil
 
 import (
@@ -13,10 +15,7 @@ import (
 )
 
 const (
-	// DefaultBuildKitStateDir and DefaultBuildKitConfigDir are the location
-	// where buildkitd inside the container stores its state. Some drivers
-	// create a Linux container, so this should match the location for Linux,
-	// as defined in: https://github.com/moby/buildkit/blob/v0.9.0/util/appdefaults/appdefaults_unix.go#L11-L15
+	// DefaultBuildKitStateDir and DefaultBuildKitConfigDir are the location where buildkitd inside the container stores its state.
 	DefaultBuildKitStateDir  = "/var/lib/buildkit"
 	DefaultBuildKitConfigDir = "/etc/buildkit"
 )
@@ -55,24 +54,16 @@ func LoadConfigFiles(bkconfig string) (map[string][]byte, error) {
 		registry = map[string]any{}
 	}
 
-	// Iterate through registry config to copy certs and update
-	// BuildKit config with the underlying certs' path in the container.
-	//
-	// The following BuildKit config:
-	//
+	// Iterate through registry config to copy certs and update. BuildKit config
+	// with the underlying certs' path in the container. The following BuildKit
+	// config:. [registry."myregistry.io"] ca=["/etc/config/myca.pem"]
+	// [[registry."myregistry.io".keypair]] key="/etc/config/key.pem"
+	// cert="/etc/config/cert.pem". will be translated in the container as:.
 	// [registry."myregistry.io"]
-	//   ca=["/etc/config/myca.pem"]
-	//   [[registry."myregistry.io".keypair]]
-	//     key="/etc/config/key.pem"
-	//     cert="/etc/config/cert.pem"
-	//
-	// will be translated in the container as:
-	//
-	// [registry."myregistry.io"]
-	//   ca=["/etc/buildkit/certs/myregistry.io/myca.pem"]
-	//   [[registry."myregistry.io".keypair]]
-	//     key="/etc/buildkit/certs/myregistry.io/key.pem"
-	//     cert="/etc/buildkit/certs/myregistry.io/cert.pem"
+	// ca=["/etc/buildkit/certs/myregistry.io/myca.pem"]
+	// [[registry."myregistry.io".keypair]]
+	// key="/etc/buildkit/certs/myregistry.io/key.pem"
+	// cert="/etc/buildkit/certs/myregistry.io/cert.pem".
 	if cfg.Registries != nil {
 		for regName, regConf := range cfg.Registries {
 			regOut, ok := registry[regName].(map[string]any)

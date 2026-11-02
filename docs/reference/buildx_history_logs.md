@@ -20,15 +20,14 @@ Print the logs of a build record
 
 ## Description
 
-Print the logs for a completed build. The output appears in the same format as
-`--progress=plain`, showing the full logs for each step.
+Print the logs for a completed build. The output appears in the same format as `--progress=plain`, showing the full logs for each step.
 
 By default, this shows logs for the most recent build on the current builder.
 
 You can also specify an earlier build using an offset. For example:
 
 - `^1` shows logs for the build before the most recent
-- `^2` shows logs for the build two steps back
+- `^2` shows logs for the build multiple steps back
 
 ## Examples
 

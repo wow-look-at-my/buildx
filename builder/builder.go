@@ -1,3 +1,5 @@
+// builder.go holds the builder code.
+
 package builder
 
 import (
@@ -94,8 +96,7 @@ func New(dockerCli command.Cli, opts ...Option) (_ *Builder, err error) {
 	}
 
 	if b.opts.txn == nil {
-		// if store instance is nil we create a short-lived one using the
-		// default store and ensure we release it on completion
+		// if store instance is nil we create a short-lived one using the default store and ensure we release it on completion
 		var release func()
 		b.opts.txn, release, err = storeutil.GetStore(dockerCli)
 		if err != nil {
@@ -237,10 +238,7 @@ func (b *Builder) Factory(ctx context.Context, dialMeta map[string][]string) (_ 
 				return
 			}
 		} else {
-			// empty driver means nodegroup was implicitly created as a default
-			// driver for a docker context and allows falling back to a
-			// docker-container driver for older daemon that doesn't support
-			// buildkit (< 18.06).
+			// empty driver means nodegroup was implicitly created as a default driver for a docker context.
 			ep := b.NodeGroup.Nodes[0].Endpoint
 			var dockerapi *dockerutil.ClientAPI
 			dockerapi, err = dockerutil.NewClientAPI(b.opts.dockerCli, b.NodeGroup.Nodes[0].Endpoint)
@@ -315,9 +313,8 @@ func GetBuilders(dockerCli command.Cli, txn *store.Txn) ([]*Builder, error) {
 	}
 
 	for _, c := range contexts {
-		// if a context has the same name as an instance from the store, do not
-		// add it to the builders list. An instance from the store takes
-		// precedence over context builders.
+		// if a context has the same name as an instance from the store, do not add
+		// it to the builders list.
 		if _, ok := seen[c.Name]; ok {
 			continue
 		}
@@ -460,8 +457,7 @@ func Create(ctx context.Context, txn *store.Txn, dockerCli command.Cli, opts Cre
 		if opts.Endpoint != "" {
 			return nil, errors.Errorf("kubernetes driver does not support endpoint args %q", opts.Endpoint)
 		}
-		// generate node name if not provided to avoid duplicated endpoint
-		// error: https://github.com/docker/setup-buildx-action/issues/215
+		// generate node name if not provided to avoid duplicated endpoint error.
 		nodeName := opts.NodeName
 		if nodeName == "" {
 			nodeName, err = k8sutil.GenerateNodeName(name, txn)
@@ -679,8 +675,7 @@ func parseBuildkitdFlags(inp string, driver string, driverOpts map[string]string
 		// always set network.host entitlement if user has set network=host
 		res = append(res, "--allow-insecure-entitlement=network.host")
 	} else if len(allowInsecureEntitlements) == 0 && !hasNetworkHostEntitlementInConf && (driver == "kubernetes" || driver == "docker-container") {
-		// set network.host entitlement if user does not provide any as
-		// network is isolated for container drivers.
+		// set network.host entitlement if user does not provide any as network is isolated for container drivers.
 		res = append(res, "--allow-insecure-entitlement=network.host")
 	}
 

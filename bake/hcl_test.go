@@ -1,5 +1,7 @@
 package bake
 
+import _ "embed"
+
 import (
 	"fmt"
 	"reflect"
@@ -74,40 +76,7 @@ func TestHCLBasic(t *testing.T) {
 }
 
 func TestHCLBasicInJSON(t *testing.T) {
-	dt := []byte(`
-		{
-			"group": {
-				"default": {
-					"targets": ["db", "webapp"]
-				}
-			},
-			"target": {
-				"db": {
-					"context": "./db",
-					"tags": ["docker.io/tonistiigi/db"]
-				},
-				"webapp": {
-					"context": "./dir",
-					"dockerfile": "Dockerfile-alternate",
-					"args": {
-						"buildno": "123"
-					}
-				},
-				"cross": {
-					"platforms": [
-						"linux/amd64",
-						"linux/arm64"
-					]
-				},
-				"webapp-plus": {
-					"inherits": ["webapp", "cross"],
-					"args": {
-						"IAMCROSS": "true"
-					}
-				}
-			}
-		}
-		`)
+	dt := []byte(testHCLBasicInJSONJson)
 
 	c, err := ParseFile(dt, "docker-bake.json")
 	require.NoError(t, err)
@@ -481,10 +450,8 @@ func TestHCLTypedValuelessVariables(t *testing.T) {
 }
 
 func TestHCLTypedValuelessVariablesUsedAsNull(t *testing.T) {
-	// Omitting complex types since they can't (shouldn't) be used as direct build arg values.
-	// Complex types can be used directly for other bake attributes, but that'll conflate HCL
-	// evaluation with whether the attribute accepts null in lieu of empty list/object, etc.
-	// This usage probably hits the 80/20 rule for usage of null variables.
+	// Omitting complex types since they can't (shouldn't) be used as direct
+	// build arg values.
 	types := []string{
 		"any",
 		"string", "number", "bool",
@@ -554,20 +521,7 @@ func TestHCLTypedValuelessVariablesUsedAsNull(t *testing.T) {
 }
 
 func TestJSONNullVariables(t *testing.T) {
-	dt := []byte(`{
-		"variable": {
-			"FOO": {
-				"default": null
-			}
-		},
-		"target": {
-			"default": {
-				"args": {
-					"foo": "${FOO}"
-				}
-			}
-		}
-	}`)
+	dt := []byte(testJSONNullVariablesJson)
 
 	c, err := ParseFile(dt, "docker-bake.json")
 	require.NoError(t, err)
@@ -1445,21 +1399,7 @@ func TestJSONAttributes(t *testing.T) {
 }
 
 func TestJSONFunctions(t *testing.T) {
-	dt := []byte(`{
-	"FOO": "abc",
-	"function": {
-		"myfunc": {
-			"params": ["inp"],
-			"result": "<${upper(inp)}-${FOO}>"
-		}
-	},
-	"target": {
-		"app": {
-			"args": {
-				"v1": "pre-${myfunc(\"foo\")}"
-			}
-		}
-	}}`)
+	dt := []byte(testJSONFunctionsJson)
 
 	c, err := ParseFile(dt, "docker-bake.json")
 	require.NoError(t, err)
@@ -1470,14 +1410,7 @@ func TestJSONFunctions(t *testing.T) {
 }
 
 func TestJSONInvalidFunctions(t *testing.T) {
-	dt := []byte(`{
-	"target": {
-		"app": {
-			"args": {
-				"v1": "myfunc(\"foo\")"
-			}
-		}
-	}}`)
+	dt := []byte(testJSONInvalidFunctionsJson)
 
 	c, err := ParseFile(dt, "docker-bake.json")
 	require.NoError(t, err)
@@ -1524,16 +1457,7 @@ func TestHCLCombineCompose(t *testing.T) {
 			}
 		}
 		`)
-	dt2 := []byte(`
-version: "3"
-
-services:
-  app:
-    build:
-      dockerfile: Dockerfile-alternate
-      args:
-        v2: "bar"
-`)
+	dt2 := []byte(testHCLCombineComposeYml)
 
 	c, _, err := ParseFiles([]File{
 		{Data: dt, Name: "c1.hcl"},
@@ -1596,31 +1520,11 @@ target "b" {
 		},
 		{
 			Name: "metadata-a.json",
-			Data: []byte(`
-{
-  "target": [{
-    "metadata-a": [{
-      "tags": [
-        "app/a:1.0.0",
-        "app/a:latest"
-      ]
-    }]
-  }]
-}`),
+			Data: []byte(testCombineHCLAndJSONTargetsJson),
 		},
 		{
 			Name: "metadata-b.json",
-			Data: []byte(`
-{
-  "target": [{
-    "metadata-b": [{
-      "tags": [
-        "app/b:1.0.0",
-        "app/b:latest"
-      ]
-    }]
-  }]
-}`),
+			Data: []byte(testCombineHCLAndJSONTargetsJson2),
 		},
 	}, nil, nil)
 	require.NoError(t, err)
@@ -1710,11 +1614,7 @@ func TestEmptyVariable(t *testing.T) {
 }
 
 func TestEmptyVariableJSON(t *testing.T) {
-	dt := []byte(`{
-	  "variable": {
-	    "VAR": {}
-	  }
-	}`)
+	dt := []byte(testEmptyVariableJSONJson)
 	_, err := ParseFile(dt, "docker-bake.json")
 	require.NoError(t, err)
 }
@@ -1821,8 +1721,9 @@ func TestVarTypingSpec(t *testing.T) {
 }
 
 func TestDefaultVarTypeEnforcement(t *testing.T) {
-	// To help prove a given default doesn't just pass the type check, but *is* that type,
-	// we use argValue to provide an expression that would work only on that type.
+	// But *is* that type, we use argValue to provide an expression that would
+	// work only on that type. This holds to help prove a given default doesn't
+	// pass the type check.
 	tests := []struct {
 		name       string
 		varType    string
@@ -2097,10 +1998,7 @@ func TestTypedVarOverrides(t *testing.T) {
 		{
 			name:    "tuple of non-primitives not supported",
 			varType: "tuple([list(number)])",
-			// Intentionally a different override than other similar tests; tuple is unique in that
-			// multiple types are involved and length matters.  In the real world, it's probably more
-			// likely a user would accidentally omit or add an item than trying to use non-primitives,
-			// so the length check comes first.
+			// Intentionally a different override than other similar tests.
 			override:     "1",
 			wantErrorMsg: unsupportedType,
 		},
@@ -2243,10 +2141,9 @@ func TestTypedVarOverrides_JSON(t *testing.T) {
 			wantValue: "1-2",
 		},
 		{
-			name:     "invalid JSON map of numbers",
-			varType:  "map(number)",
-			override: `{"foo": "oops", "bar": 2}`,
-			// in lieu of something like ErrorMatches, this is the best single phrase
+			name:         "invalid JSON map of numbers",
+			varType:      "map(number)",
+			override:     `{"foo": "oops", "bar": 2}`,
 			wantErrorMsg: "from JSON",
 		},
 		{
@@ -2463,3 +2360,27 @@ func ptrstr(s any) *string {
 	}
 	return n
 }
+
+//go:embed testdata/test-hcl-basic-in-json.json
+var testHCLBasicInJSONJson string
+
+//go:embed testdata/test-json-null-variables.json
+var testJSONNullVariablesJson string
+
+//go:embed testdata/test-json-functions.json
+var testJSONFunctionsJson string
+
+//go:embed testdata/test-json-invalid-functions.json
+var testJSONInvalidFunctionsJson string
+
+//go:embed testdata/test-hcl-combine-compose.yml
+var testHCLCombineComposeYml string
+
+//go:embed testdata/test-combine-hcl-and-json-targets.json
+var testCombineHCLAndJSONTargetsJson string
+
+//go:embed testdata/test-combine-hcl-and-json-targets-2.json
+var testCombineHCLAndJSONTargetsJson2 string
+
+//go:embed testdata/test-empty-variable-json.json
+var testEmptyVariableJSONJson string

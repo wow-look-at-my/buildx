@@ -1,3 +1,5 @@
+// generate.go holds the generate code.
+
 package util
 
 import (
@@ -53,12 +55,8 @@ const (
 	maxGeneratedNameLength = maxNameLength - randomLength
 )
 
-// generateName generates the name plus a random suffix of five alphanumerics
-// when a name is requested. The string is guaranteed to not exceed the length
-// of a standard Kubernetes name (63 characters).
-//
-// It's a simplified implementation of k8s.io/apiserver/pkg/storage/names:
-// https://github.com/kubernetes/apiserver/blob/v0.29.2/pkg/storage/names/generate.go#L34-L54
+// generateName generates the name plus a random suffix of alphanumerics when
+// a name is requested.
 func generateName(base string) string {
 	if len(base) > maxGeneratedNameLength {
 		base = base[:maxGeneratedNameLength]

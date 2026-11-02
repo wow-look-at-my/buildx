@@ -1,3 +1,5 @@
+// adapter.go holds the adapter code.
+
 package dap
 
 import (
@@ -96,13 +98,6 @@ func (d *Adapter[C]) Stop(retErr error) error {
 		}
 
 		// Send an exit code based on the returned error.
-		// Any error results in sending an exit code of 1 while
-		// no error sends zero for success.
-		//
-		// The exited event is sent after the terminated event.
-		// See the specification overview diagram on the bottom of the page
-		// for a detailed flowchart.
-		// https://microsoft.github.io/debug-adapter-protocol/overview
 		exitCode := 0
 		if retErr != nil {
 			exitCode = 1
@@ -581,12 +576,10 @@ func (b *breakpointMap) Set(fname string, sbps []dap.SourceBreakpoint) (breakpoi
 	b.mu.Lock()
 	defer b.mu.Unlock()
 
-	// Explicitly initialize breakpoints so that we do not send a
-	// null back in the JSON if there are no breakpoints
+	// Explicitly initialize breakpoints so that we do not send a null back in the JSON if there are no breakpoints
 	breakpoints = []dap.Breakpoint{}
 
-	// Use lowercase paths to normalize the case. We can only know the correct casing after
-	// we intersect the breakpoint map. When we report the pending breakpoint to the editor,
+	// Use lowercase paths to normalize the case.
 	prev := b.getByPath(fname)
 	for _, sbp := range sbps {
 		index := slices.IndexFunc(prev, func(e dap.Breakpoint) bool {
@@ -693,10 +686,7 @@ func (b *breakpointMap) intersect(ctx Context, src *pb.Source, locs *pb.Location
 				bp.Verified = true
 				bp.Reason = ""
 
-				// The path from the source might be different than the path
-				// the editor sent to us just because of different casing.
-				// Prefer the version given to us from buildkit and tell
-				// the editor what the proper casing for this should be.
+				// The path from the source might be different than the path the editor sent to us because of different casing.
 				bp.Source.Name = path.Base(fname)
 				bp.Source.Path = fname
 

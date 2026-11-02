@@ -21,9 +21,7 @@ Inspect a build record attachment
 
 ## Description
 
-Inspect a specific attachment from a build record, such as a provenance file or
-SBOM. Attachments are optional artifacts stored with the build and may be
-platform-specific.
+Inspect a specific attachment from a build record, such as a provenance file or SBOM. Attachments are optional artifacts stored with the build and may be platform-specific.
 
 ## Examples
 
@@ -183,8 +181,7 @@ $ docker buildx history inspect attachment --type provenance
 
 ### Inspect an attachment by digest
 
-You can inspect an attachment directly using its digest, which you can get from
-the `inspect` output:
+You can inspect an attachment directly using its digest, which you can get from the `inspect` output:
 
 ```console
 # Using a build ID
@@ -194,5 +191,4 @@ docker buildx history inspect attachment qu2gsuo8ejqrwdfii23xkkckt sha256:abcdef
 docker buildx history inspect attachment ^0 sha256:abcdef123456...
 ```
 
-Use `--type sbom` or `--type provenance` to filter attachments by type. To
-inspect a specific attachment by digest, omit the `--type` flag.
+Use `--type sbom` or `--type provenance` to filter attachments by type. To inspect a specific attachment by digest, omit the `--type` flag.

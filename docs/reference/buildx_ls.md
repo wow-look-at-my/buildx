@@ -33,16 +33,13 @@ default             docker
  \_ default          \_ default                       running   v0.8.2     linux/amd64
 ```
 
-Each builder has one or more nodes associated with it. The current builder's
-name is marked with a `*` in `NAME/NODE` and explicit node to build against for
-the target platform marked with a `*` in the `PLATFORMS` column.
+Each builder has one or more nodes associated with it. The current builder's name is marked with a `*` in `NAME/NODE` and explicit node to build against for the target platform marked with a `*`. That `*` is in the `PLATFORMS` column.
 
 ## Examples
 
 ### <a name="format"></a> Format the output (--format)
 
-The formatting options (`--format`) pretty-prints builder instances output
-using a Go template.
+The formatting options (`--format`) output of the pretty-prints builder instances using a Go template.
 
 Valid placeholders for the Go template are listed below:
 
@@ -57,12 +54,9 @@ Valid placeholders for the Go template are listed below:
 | `.Error`          | Error                                       |
 | `.Builder`        | Builder object                              |
 
-When using the `--format` option, the `ls` command will either output the data
-exactly as the template declares or, when using the `table` directive, includes
-column headers as well.
+When using the `--format` option, the `ls` command will either output the data exactly as the template declares. When using the `table` directive, it includes column headers as well.
 
-The following example uses a template without headers and outputs the
-`Name` and `DriverEndpoint` entries separated by a colon (`:`):
+The following example uses a template without headers and outputs the `Name` and `DriverEndpoint` entries separated by a colon (`:`):
 
 ```console
 $ docker buildx ls --format "{{.Name}}: {{.DriverEndpoint}}"
@@ -73,9 +67,7 @@ default: docker
 default: default
 ```
 
-The `Builder` placeholder can be used to access the builder object and its
-fields. For example, the following template outputs the builder's and
-nodes' names with their respective endpoints:
+The `Builder` placeholder can be used to access the builder object and its fields. For example, the following template outputs the builder's and nodes' names with their respective endpoints:
 
 ```console
 $ docker buildx ls --format "{{.Builder.Name}}: {{range .Builder.Nodes}}\n  {{.Name}}: {{.Endpoint}}{{end}}"

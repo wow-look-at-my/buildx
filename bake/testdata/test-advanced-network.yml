@@ -1,0 +1,18 @@
+
+services:
+  db:
+    networks:
+      - example.com
+    build:
+      context: ./db
+      target: db
+
+networks:
+  example.com:
+    name: example.com
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/24
+          ip_range: 10.5.0.0/24
+          gateway: 10.5.0.254

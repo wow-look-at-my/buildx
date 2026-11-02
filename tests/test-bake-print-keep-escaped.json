@@ -1,0 +1,25 @@
+{
+	"group": {
+		"default": {
+			"targets": [
+				"default"
+			]
+		}
+	},
+	"target": {
+		"default": {
+			"annotations": [
+				"org.opencontainers.image.authors=$${user}"
+			],
+			"context": ".",
+			"dockerfile": "Dockerfile",
+			"dockerfile-inline": "ARG VERSION=latest\nFROM alpine:$${VERSION}\n",
+			"args": {
+				"VERSION": "3.21"
+			},
+			"labels": {
+				"foo": "hello %%{bar}"
+			}
+		}
+	}
+}

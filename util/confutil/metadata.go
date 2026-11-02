@@ -5,8 +5,7 @@ import (
 	"strconv"
 )
 
-// MetadataProvenanceMode is the type for setting provenance in the metadata
-// file
+// MetadataProvenanceMode is the type for setting provenance in the metadata file
 type MetadataProvenanceMode string
 
 const (

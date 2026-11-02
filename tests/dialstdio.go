@@ -1,3 +1,5 @@
+// dialstdio.go holds the dialstdio code.
+
 package tests
 
 import (

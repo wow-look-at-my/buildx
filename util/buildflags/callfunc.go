@@ -1,3 +1,5 @@
+// callfunc.go holds the callfunc code.
+
 package buildflags
 
 import (
@@ -64,9 +66,8 @@ func ParseCallFunc(str string) (*CallFunc, error) {
 		}
 	}
 
-	// "check" has been added as an alias for "lint",
-	// in order to maintain backwards compatibility
-	// we need to convert it.
+	// "check" has been added as an alias for "lint", to maintain backwards
+	// compatibility we need to convert it.
 	if f.Name == "check" {
 		f.Name = "lint"
 	}

@@ -1,3 +1,5 @@
+// bake.go holds the bake code.
+
 package commands
 
 import (
@@ -216,8 +218,7 @@ func runBake(ctx context.Context, dockerCli command.Cli, targets []string, in ba
 	}
 
 	defaults := map[string]string{
-		// don't forget to update documentation if you add a new
-		// built-in variable: docs/bake-reference.md#built-in-variables
+		// don't forget to update documentation if you add a new built-in variable: docs/bake-reference.md#built-in-variables
 		"BAKE_CMD_CONTEXT":    cmdContext,
 		"BAKE_LOCAL_PLATFORM": platforms.Format(platforms.DefaultSpec()),
 	}
@@ -274,7 +275,6 @@ func runBake(ctx context.Context, dockerCli command.Cli, targets []string, in ba
 		}
 	}
 
-	// this function can update target context string from the input so call before printOnly check
 	bo, err := bake.TargetsToBuildOpt(tgts, inp)
 	if err != nil {
 		return err
@@ -921,8 +921,7 @@ func (o *bakeOptionsHash) String() string {
 			cmdContext = osutil.GetWd()
 		}
 
-		// Sort the inputs for files and targets since the ordering
-		// doesn't matter, but avoid modifying the original slice.
+		// Sort the inputs for files and targets since the ordering doesn't matter, but avoid modifying the original slice.
 		files := immutableSort(o.files)
 		targets := immutableSort(o.targets)
 

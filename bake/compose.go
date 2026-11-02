@@ -1,3 +1,5 @@
+// compose.go holds the compose code.
+
 package bake
 
 import (
@@ -266,9 +268,7 @@ func loadComposeFiles(cfgs []composetypes.ConfigFile, envs map[string]string, op
 		return nil, errors.New("empty compose file")
 	}
 
-	// compose-go schema validation does a JSON round trip that converts nil slices
-	// from YAML [] values into null, so keep empty lists as arrays before validation.
-	// buildx#3849
+	// compose-go schema validation does a JSON round trip.
 	normalizeEmptyLists(filtered)
 	if err := composeschema.Validate(filtered); err != nil {
 		return nil, err
@@ -318,8 +318,7 @@ func validateComposeFile(dt []byte, fn string, envOverrides map[string]string) (
 
 func validateCompose(dt []byte, envs map[string]string) error {
 	_, err := loadComposeFiles([]composetypes.ConfigFile{{Content: dt}}, envs, func(options *loader.Options) {
-		// consistency is checked later in ParseCompose to ensure multiple
-		// compose files can be merged together
+		// consistency is checked later in ParseCompose to ensure multiple compose files can be merged together
 		options.SkipConsistencyCheck = true
 	})
 	return err
@@ -411,8 +410,7 @@ type xbake struct {
 	NoCache       *bool       `yaml:"no-cache,omitempty"`
 	NoCacheFilter stringArray `yaml:"no-cache-filter,omitempty"`
 	Contexts      stringMap   `yaml:"contexts,omitempty"`
-	// don't forget to update documentation if you add a new field:
-	// https://github.com/docker/docs/blob/main/content/build/bake/compose-file.md#extension-field-with-x-bake
+	// do not forget to update documentation.
 }
 
 type (

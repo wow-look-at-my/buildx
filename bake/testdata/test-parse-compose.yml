@@ -1,0 +1,42 @@
+
+services:
+  db:
+    build: ./db
+    command: ./entrypoint.sh
+    image: docker.io/tonistiigi/db
+  webapp:
+    build:
+      context: ./dir
+      additional_contexts:
+        foo: ./bar
+      dockerfile: Dockerfile-alternate
+      network:
+        none
+      args:
+        buildno: 123
+      cache_from:
+        - type=local,src=path/to/cache
+      cache_to:
+        - type=local,dest=path/to/cache
+      extra_hosts:
+        - "somehost:162.242.195.82"
+        - "somehost:162.242.195.83"
+        - "myhostv6:::1"
+      ssh:
+        - key=/path/to/key
+        - default
+      secrets:
+        - token
+        - aws
+  webapp2:
+    profiles:
+      - test
+    build:
+      context: ./dir
+      dockerfile_inline: |
+        FROM alpine
+secrets:
+  token:
+    environment: ENV_TOKEN
+  aws:
+    file: /root/.aws/credentials

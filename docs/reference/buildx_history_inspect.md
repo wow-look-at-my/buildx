@@ -27,9 +27,7 @@ Inspect a build record
 
 ## Description
 
-Inspect a build record to view metadata such as duration, status, build inputs,
-platforms, outputs, and attached artifacts. You can also use flags to extract
-provenance, SBOMs, or other detailed information.
+Inspect a build record to view metadata such as duration, status, build inputs, platforms, outputs, and attached artifacts. You can also use flags to extract provenance, SBOMs, or other detailed information.
 
 ## Examples
 
@@ -75,8 +73,7 @@ docker buildx history inspect ^1
 
 ### <a name="format"></a> Format the output (--format)
 
-The formatting options (`--format`) pretty-prints the output to `pretty` (default),
-`json` or using a Go template.
+The formatting options (`--format`) pretty-prints the output to `pretty` (default), `json` or using a Go template.
 
 #### Pretty output
 

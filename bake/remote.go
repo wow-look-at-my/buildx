@@ -21,7 +21,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-const maxBakeDefinitionSize = 2 * 1024 * 1024 // 2 MB
+const maxBakeDefinitionSize = 2 * 1024 * 1024
 
 type Input struct {
 	State *llb.State

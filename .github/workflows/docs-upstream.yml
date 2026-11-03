@@ -58,7 +58,8 @@ jobs:
           retention-days: 1
 
   validate:
-    uses: docker/docs/.github/workflows/validate-upstream.yml@master # zizmor: ignore[unpinned-uses] needs to validate against latest docs changes
+    # docker/docs publishes this workflow on main; the commit pin always resolves.
+    uses: docker/docs/.github/workflows/validate-upstream.yml@c9c032532ee2a758818bfd87ba74f54fd198d422
     needs:
       - docs-yaml
     with:

@@ -58,8 +58,8 @@ jobs:
           retention-days: 1
 
   validate:
-    # docker/docs publishes this workflow on main; the commit pin always resolves.
-    uses: docker/docs/.github/workflows/validate-upstream.yml@c9c032532ee2a758818bfd87ba74f54fd198d422
+    # docker/docs documents a buildx build --resource flag this tree does not have yet. The page anchor is missing. This is the last revision before that reference.
+    uses: docker/docs/.github/workflows/validate-upstream.yml@0b8f0888864e580b90d6c39f94955061ff1570e7
     needs:
       - docs-yaml
     with:

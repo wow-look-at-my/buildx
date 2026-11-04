@@ -28,6 +28,15 @@ target "webDEP" {
 	no-cache = true
 	shm-size = "128m"
 	ulimits = ["nofile=1024:1024"]
+	resources = {
+		memory = "2g"
+		memory-swap = "4g"
+		cpu-shares = 1024
+		cpu-period = 100000
+		cpu-quota = 50000
+		cpuset-cpus = "0-3"
+		cpuset-mems = "0,1"
+	}
 	extra-hosts = {
 		my_hostname = "8.8.8.8"
 	}
@@ -68,6 +77,14 @@ target "webapp" {
 		require.Equal(t, true, *m["webapp"].NoCache)
 		require.Equal(t, "128m", *m["webapp"].ShmSize)
 		require.Equal(t, []string{"nofile=1024:1024"}, m["webapp"].Ulimits)
+		require.NotNil(t, m["webapp"].Resources)
+		require.Equal(t, ptrstr("2g"), m["webapp"].Resources.Memory)
+		require.Equal(t, ptrstr("4g"), m["webapp"].Resources.MemorySwap)
+		require.Equal(t, int64(1024), *m["webapp"].Resources.CPUShares)
+		require.Equal(t, int64(100000), *m["webapp"].Resources.CPUPeriod)
+		require.Equal(t, int64(50000), *m["webapp"].Resources.CPUQuota)
+		require.Equal(t, ptrstr("0-3"), m["webapp"].Resources.CPUSetCPUs)
+		require.Equal(t, ptrstr("0,1"), m["webapp"].Resources.CPUSetMems)
 		require.Equal(t, map[string]*string{"my_hostname": ptrstr("8.8.8.8")}, m["webapp"].ExtraHosts)
 		require.Nil(t, m["webapp"].Pull)
 

@@ -1,3 +1,5 @@
+// trace.go holds the trace code.
+
 package bundle
 
 import (
@@ -31,7 +33,7 @@ func sanitizeCommand(value string) string {
 	})
 
 	value = reAttrs.ReplaceAllString(value, "${1}=xxxxx")
-	// reGhs/reGhpat is just double proofing. Not really needed.
+	// reGhs/reGhpat is double proofing. Not needed.
 	value = reGhs.ReplaceAllString(value, "xxxxx")
 	value = reGhpat.ReplaceAllString(value, "xxxxx")
 	return value

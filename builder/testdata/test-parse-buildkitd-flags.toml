@@ -1,0 +1,8 @@
+
+# debug enables additional debug logging
+debug = true
+# insecure-entitlements allows insecure entitlements, disabled by default.
+insecure-entitlements = [ "network.host", "security.insecure" ]
+[log]
+  # log formatter: json or text
+  format = "text"

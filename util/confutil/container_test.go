@@ -1,6 +1,7 @@
 package confutil
 
 import (
+	_ "embed"
 	"os"
 	"path/filepath"
 	"testing"
@@ -48,15 +49,11 @@ cert='` + certPath + `'
 	require.NoError(t, err)
 
 	got := string(m["buildkitd.toml"])
-	require.Equal(t, `[registry]
-[registry.'myregistry.io']
-ca = ['/etc/buildkit/certs/myregistry.io/myca.pem']
-
-[[registry.'myregistry.io'.keypair]]
-cert = '/etc/buildkit/certs/myregistry.io/mycert.pem'
-key = '/etc/buildkit/certs/myregistry.io/mykey.pem'
-`, got)
+	require.Equal(t, testLoadConfigFilesRewritesRegistryCertPathsToml, got)
 	require.Equal(t, []byte("ca"), m["certs/myregistry.io/myca.pem"])
 	require.Equal(t, []byte("key"), m["certs/myregistry.io/mykey.pem"])
 	require.Equal(t, []byte("cert"), m["certs/myregistry.io/mycert.pem"])
 }
+
+//go:embed testdata/test-load-config-files-rewrites-registry-cert-paths.toml
+var testLoadConfigFilesRewritesRegistryCertPathsToml string

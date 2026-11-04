@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"context"
+	_ "embed"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -198,7 +199,7 @@ func testBuildPolicyImageName(t *testing.T, sb integration.Sandbox) {
 	baseRef := registry + "/buildx/policy-base:" + identity.NewID()
 	baseDir := tmpdir(
 		t,
-		fstest.CreateFile("Dockerfile", []byte("FROM busybox:latest\nLABEL com.example.policy=label\nENV POLICY_ENV=envval\n"), 0600),
+		fstest.CreateFile("Dockerfile", []byte(testBuildPolicyImageNameDockerfile), 0600),
 	)
 	baseCmd := buildxCmd(sb, withDir(baseDir), withArgs(
 		"build",
@@ -577,7 +578,7 @@ allow if input.env.target == "final"
 decision := {"allow": allow}
 `,
 			dockerfileName:  "Dockerfile",
-			dockerfileBody:  "FROM busybox:latest AS build\nRUN echo stage-build\n\nFROM busybox:latest AS final\nRUN echo stage-final\n",
+			dockerfileBody:  testBuildPolicyEnvDockerfile,
 			buildArgs:       []string{"--target", "build"},
 			wantErrContains: "not allowed by policy",
 		},
@@ -1564,3 +1565,9 @@ decision := {"allow": allow}
 		require.Contains(t, string(out), "loading policies Dockerfile.rego")
 	})
 }
+
+//go:embed test-build-policy-image-name.dockerfile
+var testBuildPolicyImageNameDockerfile string
+
+//go:embed test-build-policy-env.dockerfile
+var testBuildPolicyEnvDockerfile string

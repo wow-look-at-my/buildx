@@ -33,8 +33,7 @@ Commands to work on build records
 
 ### Build references
 
-Most `buildx history` subcommands accept a build reference to identify which
-build to act on. You can specify the build in two ways:
+Most `buildx history` subcommands accept a build reference to identify which build to act on. You can specify the build in multiple ways:
 
 - By build ID, fetched by `docker buildx history ls`:
 
@@ -50,7 +49,7 @@ build to act on. You can specify the build in two ways:
 
     - `^0` or no reference targets the most recent build
     - `^1` refers to the build before the most recent
-    - `^2` refers to two builds back, and so on
+    - `^2` refers to multiple builds back, and so on
 
 Offset references are supported in the following `buildx history` commands:
 

@@ -1,3 +1,5 @@
+// public.go holds the public code.
+
 package userfunc
 
 import (
@@ -6,18 +8,7 @@ import (
 	"github.com/zclconf/go-cty/cty/function"
 )
 
-// A ContextFunc is a callback used to produce the base EvalContext for
-// running a particular set of functions.
-//
-// This is a function rather than an EvalContext directly to allow functions
-// to be decoded before their context is complete. This will be true, for
-// example, for applications that wish to allow functions to refer to themselves.
-//
-// The simplest use of a ContextFunc is to give user functions access to the
-// same global variables and functions available elsewhere in an application's
-// configuration language, but more complex applications may use different
-// contexts to support lexical scoping depending on where in a configuration
-// structure a function declaration is found, etc.
+// A ContextFunc is a callback used to produce the base EvalContext for running a particular set of functions.
 type ContextFunc func() *hcl.EvalContext
 
 // NewFunction creates a new function instance from preparsed HCL expressions.
@@ -84,10 +75,7 @@ func NewFunction(paramsExpr, varParamExpr, resultExpr hcl.Expression, getBaseCtx
 
 		result, diags := resultExpr.Value(ctx)
 		if diags.HasErrors() {
-			// Smuggle the diagnostics out via the error channel, since
-			// a diagnostics sequence implements error. Caller can
-			// type-assert this to recover the individual diagnostics
-			// if desired.
+			// Smuggle the diagnostics out via the error channel, since a diagnostics sequence implements error.
 			return cty.DynamicVal, diags
 		}
 		return result, nil

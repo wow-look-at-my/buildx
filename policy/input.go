@@ -1,3 +1,5 @@
+// input.go holds the input code.
+
 package policy
 
 import (

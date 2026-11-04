@@ -1,3 +1,5 @@
+// driver.go holds the driver code.
+
 package kubernetes
 
 import (
@@ -42,8 +44,7 @@ type Driver struct {
 	factory      driver.Factory
 	clientConfig ClientConfig
 
-	// if you add fields, remember to update docs:
-	// https://github.com/docker/docs/blob/main/content/build/drivers/kubernetes.md
+	// if you add fields, remember to update docs.
 	minReplicas       int
 	deployment        *appsv1.Deployment
 	statefulSet       *appsv1.StatefulSet
@@ -296,8 +297,7 @@ func (d *Driver) Dial(ctx context.Context) (net.Conn, error) {
 	containerName := pod.Spec.Containers[0].Name
 	cmd := []string{"buildctl", "dial-stdio"}
 
-	// Retry connection with exponential backoff for transient errors
-	// See https://github.com/docker/buildx/issues/2668
+	// Retry connection with exponential backoff for transient errors. See https://github.com/docker/buildx/issues/2668
 	var conn net.Conn
 	err = tryWithBackoff(ctx, pod.Name, func() error {
 		var err error

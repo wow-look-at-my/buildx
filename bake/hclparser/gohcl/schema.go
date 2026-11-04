@@ -1,5 +1,6 @@
-// Copyright (c) HashiCorp, Inc.
-// SPDX-License-Identifier: MPL-2.0
+// Copyright (c) HashiCorp, Inc. SPDX-License-Identifier: MPL-2.0
+
+// schema.go holds the schema code.
 
 package gohcl
 
@@ -52,9 +53,7 @@ func ImpliedBodySchema(val any) (schema *hcl.BodySchema, partial bool) {
 
 		switch {
 		case field.Type.AssignableTo(exprType):
-			// If we're decoding to hcl.Expression then absence can be
-			// indicated via a null value, so we don't specify that
-			// the field is required during decoding.
+			// So we don't specify that the field is required during decoding.
 			required = false
 		case field.Type.Kind() != reflect.Ptr && !optional:
 			required = true

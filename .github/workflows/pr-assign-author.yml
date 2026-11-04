@@ -9,9 +9,14 @@ on:
       - opened
       - reopened
 
+concurrency:
+  group: gha_${{ github.repository }}_${{ github.workflow }}_${{ github.ref != 'refs/heads/master' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
 jobs:
   run:
     uses: crazy-max/.github/.github/workflows/pr-assign-author.yml@9ba6e6f9450baf3b1237f8035c1fdc45932510bd # v1.8.0
     permissions:
+      id-token: write
       contents: read # same as global permission
       pull-requests: write # required to assign author

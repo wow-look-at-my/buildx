@@ -1,0 +1,7 @@
+
+services:
+  test:
+    build:
+      args:
+        TEST_VALUE:
+        FOO_VALUE:

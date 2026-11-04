@@ -1,9 +1,12 @@
+// build.go holds the build code.
+
 package tests
 
 import (
 	"archive/tar"
 	"bytes"
 	"context"
+	_ "embed"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -107,14 +110,7 @@ func testBuildAlias(t *testing.T, sb integration.Sandbox) {
 }
 
 func testBuildStdin(t *testing.T, sb integration.Sandbox) {
-	dockerfile := []byte(`
-FROM busybox:latest AS base
-COPY foo /etc/foo
-RUN cp /etc/foo /etc/bar
-
-FROM scratch
-COPY --from=base /etc/bar /bar
-`)
+	dockerfile := []byte(testBuildStdinDockerfile)
 	dir := tmpdir(
 		t,
 		fstest.CreateFile("foo", []byte("foo"), 0o600),
@@ -212,11 +208,7 @@ COPY foo /foo
 	})
 
 	t.Run("tag ref with query string frontend 1.17", func(t *testing.T) {
-		dockerfile := []byte(`
-# syntax=docker/dockerfile:1.17
-FROM busybox:latest
-COPY foo /foo
-`)
+		dockerfile := []byte(testBuildRemoteDockerfile)
 		dir := tmpdir(
 			t,
 			fstest.CreateFile("Dockerfile", dockerfile, 0o600),
@@ -245,11 +237,7 @@ COPY foo /foo
 	})
 
 	t.Run("tag ref with query string frontend 1.18.0", func(t *testing.T) {
-		dockerfile := []byte(`
-# syntax=docker/dockerfile-upstream:1.18.0
-FROM busybox:latest
-COPY foo /foo
-`)
+		dockerfile := []byte(testBuildRemoteDockerfile2)
 		dir := tmpdir(
 			t,
 			fstest.CreateFile("Dockerfile", dockerfile, 0o600),
@@ -343,14 +331,7 @@ COPY --from=proxy /foo /foo
 }
 
 func testBuildLocalState(t *testing.T, sb integration.Sandbox) {
-	dockerfile := []byte(`
-FROM busybox:latest AS base
-COPY foo /etc/foo
-RUN cp /etc/foo /etc/bar
-
-FROM scratch
-COPY --from=base /etc/bar /bar
-`)
+	dockerfile := []byte(testBuildLocalStateDockerfile)
 	dir := tmpdir(
 		t,
 		fstest.CreateFile("build.Dockerfile", dockerfile, 0o600),
@@ -388,14 +369,7 @@ COPY --from=base /etc/bar /bar
 }
 
 func testBuildLocalStateStdin(t *testing.T, sb integration.Sandbox) {
-	dockerfile := []byte(`
-FROM busybox:latest AS base
-COPY foo /etc/foo
-RUN cp /etc/foo /etc/bar
-
-FROM scratch
-COPY --from=base /etc/bar /bar
-`)
+	dockerfile := []byte(testBuildLocalStateStdinDockerfile)
 	dir := tmpdir(
 		t,
 		fstest.CreateFile("foo", []byte("foo"), 0o600),
@@ -621,8 +595,7 @@ func testImageIDOutput(t *testing.T, sb integration.Sandbox) {
 	require.NotEmpty(t, md.ConfigDigest)
 	require.NotEmpty(t, md.Digest)
 
-	// verify the image ID output is correct
-	// XXX: improve this by checking that it's one of the two expected digests depending on the scenario.
+	// verify the image ID output is correct.
 	require.Contains(t, []digest.Digest{digest.Digest(md.ConfigDigest), digest.Digest(md.Digest)}, dgst)
 }
 
@@ -918,12 +891,7 @@ func testBuildNetworkModeBridge(t *testing.T, sb integration.Sandbox) {
 	require.NoError(t, err, out)
 	builderName = strings.TrimSpace(out)
 
-	dockerfile := []byte(`
-FROM busybox AS build
-RUN ip a show eth0 | awk '/inet / {split($2, a, "/"); print a[1]}' > /ip-bridge.txt
-RUN --network=host ip a show eth0 | awk '/inet / {split($2, a, "/"); print a[1]}' > /ip-host.txt
-FROM scratch
-COPY --from=build /ip*.txt /`)
+	dockerfile := []byte(testBuildNetworkModeBridgeDockerfile)
 	dir := tmpdir(t, fstest.CreateFile("Dockerfile", dockerfile, 0o600))
 
 	cmd := buildxCmd(sb, withArgs("build", "--allow=network.host", fmt.Sprintf("--output=type=local,dest=%s", dir), dir))
@@ -951,12 +919,7 @@ COPY --from=build /ip*.txt /`)
 }
 
 func testBuildShmSize(t *testing.T, sb integration.Sandbox) {
-	dockerfile := []byte(`
-FROM busybox AS build
-RUN mount | grep /dev/shm > /shmsize
-FROM scratch
-COPY --from=build /shmsize /
-	`)
+	dockerfile := []byte(testBuildShmSizeDockerfile)
 	dir := tmpdir(
 		t,
 		fstest.CreateFile("Dockerfile", dockerfile, 0o600),
@@ -972,12 +935,7 @@ COPY --from=build /shmsize /
 }
 
 func testBuildUlimit(t *testing.T, sb integration.Sandbox) {
-	dockerfile := []byte(`
-FROM busybox AS build
-RUN ulimit -n > first > /ulimit
-FROM scratch
-COPY --from=build /ulimit /
-	`)
+	dockerfile := []byte(testBuildUlimitDockerfile)
 	dir := tmpdir(
 		t,
 		fstest.CreateFile("Dockerfile", dockerfile, 0o600),
@@ -1297,12 +1255,7 @@ func testBuildLoadPush(t *testing.T, sb integration.Sandbox) {
 
 func testBuildSecret(t *testing.T, sb integration.Sandbox) {
 	token := "abcd1234"
-	dockerfile := []byte(`
-FROM busybox AS build
-RUN --mount=type=secret,id=token cat /run/secrets/token | tee /token
-FROM scratch
-COPY --from=build /token /
-	`)
+	dockerfile := []byte(testBuildSecretDockerfile)
 	dir := tmpdir(
 		t,
 		fstest.CreateFile("Dockerfile", dockerfile, 0o600),
@@ -1410,23 +1363,7 @@ COPy --from=base \
 	})
 
 	t.Run("outline", func(t *testing.T) {
-		dockerfile := []byte(`
-FROM busybox AS first
-RUN --mount=type=secret,target=/etc/passwd,required=true --mount=type=ssh true
-
-FROM alpine AS second
-RUN --mount=type=secret,id=unused --mount=type=ssh,id=ssh2 true
-
-FROM scratch AS third
-ARG BAR
-RUN --mount=type=secret,id=second${BAR} true
-
-FROM third AS target
-COPY --from=first /foo /
-RUN --mount=type=ssh,id=ssh3,required true
-
-FROM second
-	`)
+		dockerfile := []byte(testBuildCallDockerfile)
 		dir := tmpdir(
 			t,
 			fstest.CreateFile("Dockerfile", dockerfile, 0o600),
@@ -1462,7 +1399,6 @@ FROM second
 		require.Equal(t, 1, len(res.Sources))
 	})
 
-	// docker/buildx#3651
 	t.Run("outline-quiet-output", func(t *testing.T) {
 		dockerfile := []byte(`
 FROM busybox
@@ -1490,20 +1426,7 @@ ARG FOO=bar
 	})
 
 	t.Run("targets", func(t *testing.T) {
-		dockerfile := []byte(`
-# build defines stage for compiling the binary
-FROM alpine AS build
-RUN true
-
-FROM busybox as second
-RUN false
-
-FROM alpine
-RUN false
-
-# binary returns the compiled binary
-FROM second AS binary
-	`)
+		dockerfile := []byte(testBuildCallDockerfile2)
 		dir := tmpdir(
 			t,
 			fstest.CreateFile("Dockerfile", dockerfile, 0o600),
@@ -1659,12 +1582,7 @@ cOpy Dockerfile .
 }
 
 func testBuildExtraHosts(t *testing.T, sb integration.Sandbox) {
-	dockerfile := []byte(`
-FROM busybox
-RUN cat /etc/hosts | grep myhost | grep 1.2.3.4
-RUN cat /etc/hosts | grep myhostmulti | grep 162.242.195.81
-RUN cat /etc/hosts | grep myhostmulti | grep 162.242.195.82
-`)
+	dockerfile := []byte(testBuildExtraHostsDockerfile)
 	dir := tmpdir(t, fstest.CreateFile("Dockerfile", dockerfile, 0o600))
 	cmd := buildxCmd(sb, withArgs("build",
 		"--add-host=myhost=1.2.3.4",
@@ -1688,14 +1606,7 @@ func testBuildIndexAnnotationsLoadDocker(t *testing.T, sb integration.Sandbox) {
 }
 
 func createTestProject(t *testing.T) string {
-	dockerfile := []byte(`
-FROM busybox:latest AS base
-COPY foo /etc/foo
-RUN cp /etc/foo /etc/bar
-
-FROM scratch
-COPY --from=base /etc/bar /bar
-`)
+	dockerfile := []byte(createTestProjectDockerfile)
 	dir := tmpdir(t,
 		fstest.CreateFile("Dockerfile", dockerfile, 0o600),
 		fstest.CreateFile("foo", []byte("foo"), 0o600),
@@ -1775,3 +1686,42 @@ func createOCILayoutImage(t *testing.T, layoutPath, fileName string, fileContent
 
 	return manifestDesc.Digest
 }
+
+//go:embed test-build-stdin.dockerfile
+var testBuildStdinDockerfile string
+
+//go:embed test-build-remote.dockerfile
+var testBuildRemoteDockerfile string
+
+//go:embed test-build-remote-2.dockerfile
+var testBuildRemoteDockerfile2 string
+
+//go:embed test-build-local-state.dockerfile
+var testBuildLocalStateDockerfile string
+
+//go:embed test-build-local-state-stdin.dockerfile
+var testBuildLocalStateStdinDockerfile string
+
+//go:embed test-build-network-mode-bridge.dockerfile
+var testBuildNetworkModeBridgeDockerfile string
+
+//go:embed test-build-shm-size.dockerfile
+var testBuildShmSizeDockerfile string
+
+//go:embed test-build-ulimit.dockerfile
+var testBuildUlimitDockerfile string
+
+//go:embed test-build-secret.dockerfile
+var testBuildSecretDockerfile string
+
+//go:embed test-build-call.dockerfile
+var testBuildCallDockerfile string
+
+//go:embed test-build-call-2.dockerfile
+var testBuildCallDockerfile2 string
+
+//go:embed test-build-extra-hosts.dockerfile
+var testBuildExtraHostsDockerfile string
+
+//go:embed create-test-project.dockerfile
+var createTestProjectDockerfile string

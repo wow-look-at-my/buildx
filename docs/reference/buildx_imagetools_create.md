@@ -28,25 +28,17 @@ Create a new image based on source images
 
 ## Description
 
-Create a new manifest list based on source manifests. The source manifests can
-be manifest lists or single platform distribution manifests and must already
-exist in the registry where the new manifest is created.
+Create a new manifest list based on source manifests. The source manifests can be manifest lists or single platform distribution manifests and must already exist in the registry where the new manifest is created.
 
-If only one source is specified and that source is a manifest list or image index,
-create performs a carbon copy. If one source is specified and that source is *not*
-a list or index, the output will be a manifest list, however you can disable this
-behavior with `--prefer-index=false` which attempts to preserve the source manifest
-format in the output.
+If only one source is specified and that source is a manifest list or image index, create performs a carbon copy. The output will be a manifest list, however you can disable this behavior with `--prefer-index=false` which attempts to preserve the source manifest format. That format is in the output. This holds if one source is specified and that source is *not* a list or index.
 
 ## Examples
 
 ### <a name="annotation"></a> Add annotations to an image (--annotation)
 
-The `--annotation` flag lets you add annotations the image index, manifest,
-and descriptors when creating a new image.
+The `--annotation` flag lets you add annotations the image index, manifest, and descriptors when creating a new image.
 
-The following command creates a `foo/bar:latest` image with the
-`org.opencontainers.image.authors` annotation on the image index.
+The following command creates a `foo/bar:latest` image with the `org.opencontainers.image.authors` annotation on the image index.
 
 ```console
 $ docker buildx imagetools create \
@@ -64,13 +56,11 @@ $ docker buildx imagetools create \
 >
 > It doesn't support annotating manifests or OCI layouts.
 
-For more information about annotations, see
-[Annotations](https://docs.docker.com/build/building/annotations/).
+For more information about annotations, see [Annotations](https://docs.docker.com/build/building/annotations/).
 
 ### <a name="append"></a> Append new sources to an existing manifest list (--append)
 
-Use the `--append` flag to append the new sources to an existing manifest list
-in the destination.
+Use the `--append` flag to append the new sources to an existing manifest list in the destination.
 
 ### <a name="builder"></a> Override the configured builder instance (--builder)
 
@@ -86,11 +76,9 @@ Use the `--dry-run` flag to not push the image, just show it.
 -f FILE or --file FILE
 ```
 
-Reads source from files. A source can be a manifest digest, manifest reference,
-or a JSON of OCI descriptor object.
+Reads source from files. A source can be a manifest digest, manifest reference, or a JSON of OCI descriptor object.
 
-In order to define annotations or additional platform properties like `os.version` and
-`os.features` you need to add them in the OCI descriptor object encoded in JSON.
+In order to define annotations or more platform properties like `os.version`. `os.features` you need to add them in the OCI descriptor object encoded in JSON.
 
 ```console
 $ docker buildx imagetools inspect --raw alpine | jq '.manifests[0] | .platform."os.version"="10.1"' > descr.json
@@ -99,13 +87,11 @@ $ docker buildx imagetools create -f descr.json myuser/image
 
 The descriptor in the file is merged with existing descriptor in the registry if it exists.
 
-The supported fields for the descriptor are defined in [OCI spec](https://github.com/opencontainers/image-spec/blob/master/descriptor.md#properties) .
+The supported fields for the descriptor are defined in [OCI spec](https://github.com/opencontainers/image-spec/blob/master/descriptor.md#properties).
 
 ### <a name="metadata-file"></a> Write create result metadata to a file (--metadata-file)
 
-To output metadata such as the image digest, pass the `--metadata-file` flag.
-The metadata will be written as a JSON object to the specified file. The
-directory of the specified file must already exist and be writable.
+To output metadata such as the image digest, pass the `--metadata-file` flag. The metadata will be written as a JSON object to the specified file. The directory of the specified file must already exist and be writable.
 
 ```console
 $ docker buildx imagetools create -t user/app:latest -f image1 -f image2 --metadata-file metadata.json

@@ -1,3 +1,5 @@
+// client.go holds the client code.
+
 package daptest
 
 import (
@@ -51,7 +53,7 @@ func NewClient(conn common.Conn) *Client {
 
 			switch m := m.(type) {
 			case dap.RequestMessage:
-				// TODO: no reverse requests are currently supported
+				// TODO: no reverse requests are supported
 				conn.SendMsg(&dap.Response{
 					ProtocolMessage: dap.ProtocolMessage{
 						Seq:  c.nextSeq(),
@@ -86,9 +88,7 @@ func (c *Client) Do(t *testing.T, req dap.RequestMessage) <-chan dap.ResponseMes
 
 	ch := make(chan dap.ResponseMessage, 1)
 
-	// We need to set the channel before we send the message
-	// because it's otherwise possible for us to receive the response
-	// before we've registered the original request.
+	// We need to set the channel before we send the message.
 	c.requestsMu.Lock()
 	c.requests[req.GetSeq()] = ch
 	c.requestsMu.Unlock()

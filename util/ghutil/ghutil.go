@@ -1,3 +1,5 @@
+// ghutil.go holds the ghutil code.
+
 package ghutil
 
 import (
@@ -11,8 +13,7 @@ import (
 func GithubActionsContext() ([]byte, error) {
 	m := make(map[string]any)
 
-	// Detect if running in GitHub Actions
-	// "GITHUB_ACTIONS": "true"
+	// Detect if running in GitHub Actions "GITHUB_ACTIONS": "true"
 	if gha, ok := os.LookupEnv("GITHUB_ACTIONS"); !ok {
 		return nil, nil
 	} else if v, _ := strconv.ParseBool(gha); !v {
@@ -26,9 +27,7 @@ func GithubActionsContext() ([]byte, error) {
 		return nil, nil
 	}
 
-	// GitHub event
-	// "GITHUB_EVENT_NAME": "push"
-	// "GITHUB_EVENT_PATH": "/home/runner/work/_temp/_github_workflow/event.json"
+	// GitHub event "GITHUB_EVENT_NAME": "push" "GITHUB_EVENT_PATH": "/home/runner/work/_temp/_github_workflow/event.json"
 	m["github_event_name"] = githubEventName
 	dt, err := os.ReadFile(githubEventPath)
 	if err != nil {
@@ -40,10 +39,7 @@ func GithubActionsContext() ([]byte, error) {
 	}
 	m["github_event_payload"] = evt
 
-	// GitHub actor
-	// "GITHUB_ACTOR": "crazy-max"
-	// "GITHUB_ACTOR_ID": "1951866"
-	// "GITHUB_TRIGGERING_ACTOR": "crazy-max"
+	// GitHub actor "GITHUB_ACTOR": "crazy-max" "GITHUB_ACTOR_ID": "1951866" "GITHUB_TRIGGERING_ACTOR": "crazy-max"
 	githubActor := os.Getenv("GITHUB_ACTOR")
 	githubActorID := os.Getenv("GITHUB_ACTOR_ID")
 	githubTriggeringActor := os.Getenv("GITHUB_TRIGGERING_ACTOR")
@@ -53,11 +49,7 @@ func GithubActionsContext() ([]byte, error) {
 		m["github_triggering_actor"] = githubTriggeringActor
 	}
 
-	// GitHub ref
-	// "GITHUB_REF": "refs/heads/master"
-	// "GITHUB_REF_NAME": "master"
-	// "GITHUB_REF_PROTECTED": "true"
-	// "GITHUB_REF_TYPE": "branch"
+	// GitHub ref "GITHUB_REF": "refs/heads/master" "GITHUB_REF_NAME": "master" "GITHUB_REF_PROTECTED": "true" "GITHUB_REF_TYPE".
 	githubRef := os.Getenv("GITHUB_REF")
 	githubRefName := os.Getenv("GITHUB_REF_NAME")
 	githubRefProtected := os.Getenv("GITHUB_REF_PROTECTED")
@@ -69,11 +61,7 @@ func GithubActionsContext() ([]byte, error) {
 		m["github_ref_type"] = githubRefType
 	}
 
-	// GitHub repository
-	// "GITHUB_REPOSITORY": "crazy-max/ghaction-dump-context"
-	// "GITHUB_REPOSITORY_ID": "286865579"
-	// "GITHUB_REPOSITORY_OWNER": "crazy-max"
-	// "GITHUB_REPOSITORY_OWNER_ID": "1951866"
+	// GitHub repository "GITHUB_REPOSITORY": "crazy-max/ghaction-dump-context" "GITHUB_REPOSITORY_ID": "286865579" "GITHUB_REPOSITORY_OWNER": "crazy-max" "GITHUB_REPOSITORY_OWNER_ID".
 	githubRepository := os.Getenv("GITHUB_REPOSITORY")
 	githubRepositoryID := os.Getenv("GITHUB_REPOSITORY_ID")
 	githubRepositoryOwner := os.Getenv("GITHUB_REPOSITORY_OWNER")
@@ -85,15 +73,7 @@ func GithubActionsContext() ([]byte, error) {
 		m["github_repository_owner_id"] = githubRepositoryOwnerID
 	}
 
-	// GitHub workflow
-	// "GITHUB_JOB": "dump"
-	// "GITHUB_RUN_ATTEMPT": "1"
-	// "GITHUB_RUN_ID": "18715517508"
-	// "GITHUB_RUN_NUMBER": "617"
-	// "GITHUB_SERVER_URL": "https://github.com"
-	// "GITHUB_WORKFLOW": "ci"
-	// "GITHUB_WORKFLOW_REF": "crazy-max/ghaction-dump-context/.github/workflows/ci.yml@refs/heads/master"
-	// "GITHUB_WORKFLOW_SHA": "391d493f5fb04040f2a2770b33f86f3f62518392"
+	// GitHub workflow "GITHUB_JOB": "dump" "GITHUB_RUN_ATTEMPT": "1" "GITHUB_RUN_ID": "18715517508" "GITHUB_RUN_NUMBER": "617" "GITHUB_SERVER_URL": "https://github.com" "GITHUB_WORKFLOW".
 	githubJob := os.Getenv("GITHUB_JOB")
 	githubRunAttempt := os.Getenv("GITHUB_RUN_ATTEMPT")
 	githubRunID := os.Getenv("GITHUB_RUN_ID")
@@ -113,17 +93,7 @@ func GithubActionsContext() ([]byte, error) {
 		m["github_workflow_sha"] = githubWorkflowSHA
 	}
 
-	// GitHub runner information
-	// "ImageOS": "ubuntu24"
-	// "ImageVersion": "20250929.60.1"
-	// "RUNNER_ARCH": "X64"
-	// "RUNNER_ENVIRONMENT": "github-hosted"
-	// "RUNNER_NAME": "GitHub Actions 1000091440"
-	// "RUNNER_OS": "Linux"
-	// "RUNNER_TEMP": "/home/runner/work/_temp"
-	// "RUNNER_TOOL_CACHE": "/opt/hostedtoolcache"
-	// "RUNNER_TRACKING_ID": "github_7bd1d852-eaeb-423f-8fa4-4ddb797c652f"
-	// "RUNNER_WORKSPACE": "/home/runner/work/ghaction-dump-context"
+	// GitHub runner information "ImageOS": "ubuntu24" "ImageVersion": "20250929.60.1" "RUNNER_ARCH": "X64" "RUNNER_ENVIRONMENT": "github-hosted" "RUNNER_NAME": "GitHub Actions 1000091440" "RUNNER_OS": "Linux" "RUNNER_TEMP".
 	githubRunnerImageOS := os.Getenv("ImageOS")
 	githubRunnerImageVersion := os.Getenv("ImageVersion")
 	githubRunnerOS := os.Getenv("RUNNER_OS")

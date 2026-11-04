@@ -1,0 +1,12 @@
+
+version: "3.8"
+services:
+  example:
+    image: example
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        FOO:
+        BAR: $ZZZ_BAR
+        BRB: FOO

@@ -1,11 +1,12 @@
 name: validate
 
 permissions:
+  id-token: write # zizmor: ignore[excessive-permissions] the org workflow template keeps it at workflow level
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: gha_${{ github.repository }}_${{ github.workflow }}_${{ github.ref != 'refs/heads/master' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
 on:
   workflow_dispatch:
@@ -23,7 +24,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ github.event.repository.visibility == 'public' && 'ubuntu-24.04' || vars.CI_RUNNER_DIND || 'ubuntu-24.04' }}
     outputs:
       includes: ${{ steps.generate.outputs.matrix }}
     steps:
@@ -41,7 +42,7 @@ jobs:
           GOLANGCI_LINT_MULTIPLATFORM: ${{ github.repository == 'docker/buildx' && '1' || '' }}
 
   validate:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ github.event.repository.visibility == 'public' && 'ubuntu-24.04' || vars.CI_RUNNER_DIND || 'ubuntu-24.04' }}
     needs:
       - prepare
     strategy:

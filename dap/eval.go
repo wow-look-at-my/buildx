@@ -1,3 +1,5 @@
+// eval.go holds the eval code.
+
 package dap
 
 import (
@@ -28,9 +30,7 @@ func (d *Adapter[C]) Evaluate(ctx Context, req *dap.EvaluateRequest, resp *dap.E
 	cmd.SetArgs(args)
 	cmd.SetErr(d.Out())
 	if err := cmd.Execute(); err != nil {
-		// This error should only happen if there was something command
-		// related that malfunctioned as it will also print usage.
-		// Normal errors should set retErr from replCommands.
+		// This error should only happen if there was something command related that malfunctioned as it will also print usage.
 		return err
 	}
 	return retErr
@@ -54,7 +54,7 @@ func (d *Adapter[C]) execCmd(ctx Context, _ []string, _ execOptions) (string, er
 	}
 
 	// Initialize the shell if it hasn't been done before. This will allow any
-	// containers that are attempting to attach to actually attach.
+	// containers that are attempting to attach to attach.
 	if err := d.sh.Init(); err != nil {
 		return "", err
 	}

@@ -1,0 +1,7 @@
+
+services:
+  scratch:
+    build:
+     context: ./webapp
+     args:
+       PROJECT_NAME: ${COMPOSE_PROJECT_NAME}

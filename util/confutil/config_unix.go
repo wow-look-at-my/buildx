@@ -1,5 +1,7 @@
 //go:build !windows
 
+// config_unix.go holds the config unix code.
+
 package confutil
 
 import (
@@ -12,7 +14,7 @@ import (
 )
 
 // sudoer returns the user that invoked the current process with sudo only if
-// sudo HOME env matches the home directory of the user that ran sudo and is
+// sudo HOME. Env matches the home directory of the user that ran sudo and is
 // part of configDir.
 func sudoer(configDir string) *chowner {
 	if _, ok := os.LookupEnv("SUDO_COMMAND"); !ok {

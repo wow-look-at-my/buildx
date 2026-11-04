@@ -31,23 +31,17 @@ Create a new builder instance
 
 ## Description
 
-Create makes a new builder instance pointing to a Docker context or endpoint,
-where context is the name of a context from `docker context ls` and endpoint is
-the address for Docker socket (eg. `DOCKER_HOST` value).
+Create makes a new builder instance pointing to a Docker context or endpoint, where context is the name of a context from `docker context ls`. And endpoint is the address for Docker socket (eg. `DOCKER_HOST` value).
 
-By default, the current Docker configuration is used for determining the
-context/endpoint value.
+By default, the current Docker configuration is used for determining the context/endpoint value.
 
-Builder instances are isolated environments where builds can be invoked. All
-Docker contexts also get the default builder instance.
+Builder instances are isolated environments where builds can be invoked. All Docker contexts also get the default builder instance.
 
 ## Examples
 
 ### <a name="append"></a> Append a new node to an existing builder (--append)
 
-The `--append` flag changes the action of the command to append a new node to an
-existing builder specified by `--name`. Buildx will choose an appropriate node
-for a build based on the platforms it supports.
+The `--append` flag changes the action of the command to append a new node to an existing builder specified by `--name`. Buildx will choose an appropriate node for a build based on the platforms it supports.
 
 ```console
 $ docker buildx create mycontext1
@@ -63,20 +57,15 @@ eager_beaver
 --buildkitd-config FILE
 ```
 
-Specifies the configuration file for the BuildKit daemon to use. The
-configuration can be overridden by [`--buildkitd-flags`](#buildkitd-flags).
-See an [example BuildKit daemon configuration file](https://github.com/moby/buildkit/blob/master/docs/buildkitd.toml.md).
+Specifies the configuration file for the BuildKit daemon to use. The configuration can be overridden by [`--buildkitd-flags`](#buildkitd-flags). See an [configuration of the example BuildKit daemon file](https://github.com/moby/buildkit/blob/master/docs/buildkitd.toml.md).
 
-If you don't specify a configuration file, Buildx looks for one by default in:
+If you do not specify a configuration file, Buildx looks for one by default in:
 
 * `$BUILDX_CONFIG/buildkitd.default.toml`
 * `$DOCKER_CONFIG/buildx/buildkitd.default.toml`
 * `~/.docker/buildx/buildkitd.default.toml`
 
-Note that if you create a `docker-container` builder and have specified
-certificates for registries in the `buildkitd.toml` configuration, the files
-will be copied into the container under `/etc/buildkit/certs` and configuration
-will be updated to reflect that.
+Note that if you create a `docker-container` builder. specified certificates for registries in the `buildkitd.toml` configuration. The files will be copied into the container under `/etc/buildkit/certs` and configuration will be updated to reflect that.
 
 ### <a name="buildkitd-flags"></a> Specify options for the BuildKit daemon (--buildkitd-flags)
 
@@ -84,9 +73,7 @@ will be updated to reflect that.
 --buildkitd-flags FLAGS
 ```
 
-Adds flags when starting the BuildKit daemon. They take precedence over the
-configuration file specified by [`--buildkitd-config`](#buildkitd-config). See
-`buildkitd --help` for the available flags.
+Adds flags when starting the BuildKit daemon. They take precedence over the configuration file specified by [`--buildkitd-config`](#buildkitd-config). See `buildkitd --help` for the available flags.
 
 ```text
 --buildkitd-flags '--debug --debugaddr 0.0.0.0:6666'
@@ -94,10 +81,7 @@ configuration file specified by [`--buildkitd-config`](#buildkitd-config). See
 
 #### BuildKit daemon network mode
 
-You can specify the network mode for the BuildKit daemon with either the
-configuration file specified by [`--buildkitd-config`](#buildkitd-config) using the
-`worker.oci.networkMode` option or `--oci-worker-net` flag here. The default
-value is `auto` and can be one of `bridge`, `cni`, `host`:
+You can specify the network mode for the BuildKit daemon with either the configuration file specified by [`--buildkitd-config`](#buildkitd-config). That ](#buildkitd-config) uses the `worker.oci.networkMode` option or `--oci-worker-net` flag here. The default value is `auto` and can be one of `bridge`, `cni`, `host`:
 
 ```text
 --buildkitd-flags '--oci-worker-net bridge'
@@ -113,8 +97,7 @@ value is `auto` and can be one of `bridge`, `cni`, `host`:
 --driver DRIVER
 ```
 
-Sets the builder driver to be used. A driver is a configuration of a BuildKit
-backend. Buildx supports the following drivers:
+Sets the builder driver to be used. A driver is a configuration of a BuildKit backend. Buildx supports the following drivers:
 
 * `docker` (default)
 * `docker-container`
@@ -125,38 +108,25 @@ For more information about build drivers, see [here](https://docs.docker.com/bui
 
 #### `docker` driver
 
-Uses the builder that is built into the Docker daemon. With this driver,
-the [`--load`](buildx_build.md#load) flag is implied by default on
-`buildx build`. However, building multi-platform images or exporting cache is
-not currently supported.
+Uses the builder that is built into the Docker daemon. By default on `buildx build`, with this driver, the [`--load`](buildx_build.md#load) flag is implied. However, building multi-platform images or exporting cache is not currently supported.
 
 #### `docker-container` driver
 
-Uses a BuildKit container that will be spawned via Docker. With this driver,
-both building multi-platform images and exporting cache are supported.
+Uses a BuildKit container that will be spawned via Docker. With this driver, both building multi-platform images and exporting cache are supported.
 
-Unlike `docker` driver, built images will not automatically appear in
-`docker images` and [`build --load`](buildx_build.md#load) needs to be used
-to achieve that.
+Unlike `docker` driver, built images will not automatically appear in `docker images` and [`build --load`](buildx_build.md#load) needs to be used to achieve that.
 
 #### `kubernetes` driver
 
-Uses Kubernetes pods. With this driver, you can spin up pods with defined
-BuildKit container image to build your images.
+Uses Kubernetes pods. With this driver, you can spin up pods with defined BuildKit container image to build your images.
 
-Unlike `docker` driver, built images will not automatically appear in
-`docker images` and [`build --load`](buildx_build.md#load) needs to be used
-to achieve that.
+Unlike `docker` driver, built images will not automatically appear in `docker images` and [`build --load`](buildx_build.md#load) needs to be used to achieve that.
 
 #### `remote` driver
 
-Uses a remote instance of BuildKit daemon over an arbitrary connection. With
-this driver, you manually create and manage instances of buildkit yourself, and
-configure buildx to point at it.
+Uses a remote instance of BuildKit daemon over an arbitrary connection. With this driver, you manually create and manage instances of buildkit yourself, and configure buildx to point at it.
 
-Unlike `docker` driver, built images will not automatically appear in
-`docker images` and [`build --load`](buildx_build.md#load) needs to be used
-to achieve that.
+Unlike `docker` driver, built images will not automatically appear in `docker images` and [`build --load`](buildx_build.md#load) needs to be used to achieve that.
 
 ### <a name="driver-opt"></a> Set additional driver-specific options (--driver-opt)
 
@@ -164,9 +134,7 @@ to achieve that.
 --driver-opt OPTIONS
 ```
 
-Passes additional driver-specific options.
-For information about available driver options, refer to the detailed
-documentation for the specific driver:
+Passes more driver-specific options. For information about available driver options, refer to the detailed documentation for the specific driver:
 
 * [`docker` driver](https://docs.docker.com/build/builders/drivers/docker/)
 * [`docker-container` driver](https://docs.docker.com/build/builders/drivers/docker-container/)
@@ -175,9 +143,7 @@ documentation for the specific driver:
 
 ### <a name="leave"></a> Remove a node from a builder (--leave)
 
-The `--leave` flag changes the action of the command to remove a node from a
-builder. The builder needs to be specified with `--name` and node that is removed
-is set with `--node`.
+The `--leave` flag changes the action of the command to remove a node from a builder. The builder needs to be specified with `--name` and node that is removed is set with `--node`.
 
 ```console
 $ docker buildx create --name mybuilder --node mybuilder0 --leave
@@ -189,8 +155,7 @@ $ docker buildx create --name mybuilder --node mybuilder0 --leave
 --name NAME
 ```
 
-The `--name` flag specifies the name of the builder to be created or modified.
-If none is specified, one will be automatically generated.
+The `--name` flag specifies the name of the builder to be created or modified. If none is specified, one will be automatically generated.
 
 ### <a name="node"></a> Specify the name of the node (--node)
 
@@ -198,9 +163,7 @@ If none is specified, one will be automatically generated.
 --node NODE
 ```
 
-The `--node` flag specifies the name of the node to be created or modified. If
-you don't specify a name, the node name defaults to the name of the builder it
-belongs to, with an index number suffix.
+The `--node` flag specifies the name of the node to be created or modified. If you do not specify a name, the node name defaults to the name of the builder it belongs to, with an index number suffix.
 
 ### <a name="platform"></a> Set the platforms supported by the node (--platform)
 
@@ -208,11 +171,7 @@ belongs to, with an index number suffix.
 --platform PLATFORMS
 ```
 
-The `--platform` flag sets the platforms supported by the node. It expects a
-comma-separated list of platforms of the form OS/architecture/variant. The node
-will also automatically detect the platforms it supports, but manual values take
-priority over the detected ones and can be used when multiple nodes support
-building for the same platform.
+The `--platform` flag sets the platforms supported by the node. It expects a comma-separated list of platforms of the form OS/architecture/variant. The node will also automatically detect the platforms it supports, but manual values take priority over the detected ones. It can be used when multiple nodes support building for the same platform.
 
 ```console
 $ docker buildx create --platform linux/amd64
@@ -221,5 +180,4 @@ $ docker buildx create --platform linux/arm64,linux/arm/v7
 
 ### <a name="use"></a> Automatically switch to the newly created builder (--use)
 
-The `--use` flag automatically switches the current builder to the newly created
-one. Equivalent to running `docker buildx use $(docker buildx create ...)`.
+The `--use` flag automatically switches the current builder to the newly created one. Equivalent to running `docker buildx use $(docker buildx create ...)`.

@@ -1,3 +1,5 @@
+// model.go holds the model code.
+
 package jaeger
 
 // ReferenceType is the reference type of one span to another

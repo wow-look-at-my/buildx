@@ -124,8 +124,7 @@ Manifests:
 
 #### JSON output
 
-A `json` template function is also available if you want to render fields in
-JSON format:
+A `json` template function is also available if you want to render fields in JSON format:
 
 ```console
 $ docker buildx imagetools inspect crazymax/buildkit:attest --format "{{json .Manifest}}"
@@ -355,8 +354,7 @@ $ docker buildx imagetools inspect moby/buildkit:master --format "{{json .Manife
 }
 ```
 
-The following command provides [SLSA](https://github.com/moby/buildkit/blob/master/docs/attestations/slsa-provenance.md)
-JSON output:
+The following command provides [SLSA](https://github.com/moby/buildkit/blob/master/docs/attestations/slsa-provenance.md) JSON output:
 
 ```console
 $ docker buildx imagetools inspect crazymax/buildkit:attest --format "{{json .Provenance}}"
@@ -416,8 +414,7 @@ $ docker buildx imagetools inspect crazymax/buildkit:attest --format "{{json .Pr
 }
 ```
 
-The following command provides [SBOM](https://github.com/moby/buildkit/blob/master/docs/attestations/sbom.md)
-JSON output:
+The following command provides [SBOM](https://github.com/moby/buildkit/blob/master/docs/attestations/sbom.md) JSON output:
 
 ```console
 $ docker buildx imagetools inspect crazymax/buildkit:attest --format "{{json .SBOM}}"
@@ -522,9 +519,7 @@ $ docker buildx imagetools inspect crazymax/buildkit:attest --format "{{json .}}
 
 #### Multi-platform
 
-Multi-platform images are supported for `.Image`, `.SLSA` and `.SBOM` fields.
-If you want to pick up a specific platform, you can specify it using the `index`
-go template function:
+Multi-platform images are supported for `.Image`, `.SLSA` and `.SBOM` fields. If you want to pick up a specific platform, you can specify it using the `index` go template function:
 
 ```console
 $ docker buildx imagetools inspect --format '{{json (index .Image "linux/s390x")}}' moby/buildkit:master

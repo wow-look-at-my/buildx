@@ -1,3 +1,5 @@
+// create.go holds the create code.
+
 package commands
 
 import (
@@ -225,10 +227,7 @@ func runCreate(ctx context.Context, dockerCli command.Cli, in createOptions, arg
 			seed := repoTags[0]
 			return progress.Wrap(fmt.Sprintf("pushing %s", repo), pw.Write, func(sub progress.SubLogger) error {
 				ctx = withMediaTypeKeyPrefix(ctx)
-				// Create a single shared ingester for all concurrent
-				// copies to this repo. The pushingIngester's per-digest
-				// locking prevents concurrent pushes of the same blob
-				// from racing against each other on the registry.
+				// Create a single shared ingester for all concurrent copies to this repo.
 				ingester, err := r.IngesterForLocation(ctx, seed)
 				if err != nil {
 					return err

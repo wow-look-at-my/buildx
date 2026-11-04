@@ -1,3 +1,5 @@
+// type_implied_ext.go holds the type implied ext code.
+
 package hclparser
 
 import (
@@ -11,8 +13,7 @@ import (
 )
 
 type ToCtyValueConverter interface {
-	// ToCtyValue will convert this capsule value into a native
-	// cty.Value. This should not return a capsule type.
+	// ToCtyValue will convert this capsule value into a native cty.Value. This should not return a capsule type.
 	ToCtyValue() cty.Value
 }
 
@@ -93,8 +94,7 @@ func capsuleValueCapsuleType(rt reflect.Type) cty.Type {
 		},
 	}
 
-	// Attempt to store the new type. Use whichever was loaded first in the case
-	// of a race condition.
+	// Attempt to store the new type. Use whichever was loaded first in the case of a race condition.
 	ety := cty.CapsuleWithOps(elem.Name(), elem, ops)
 	val, _ := capsuleValueTypes.LoadOrStore(elem, ety)
 	return val.(cty.Type)

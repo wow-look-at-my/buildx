@@ -1,3 +1,5 @@
+// node.go holds the node code.
+
 package builder
 
 import (

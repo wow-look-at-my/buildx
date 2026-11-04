@@ -1,3 +1,5 @@
+// urlutil.go holds the urlutil code.
+
 package urlutil
 
 import (
@@ -7,8 +9,7 @@ import (
 )
 
 // IsHTTPURL returns true if the provided str is an HTTP(S) URL by checking if
-// it has a http:// or https:// scheme. No validation is performed to verify if
-// the URL is well-formed.
+// it has a http:// or https:// scheme.
 func IsHTTPURL(str string) bool {
 	return strings.HasPrefix(str, "https://") || strings.HasPrefix(str, "http://")
 }

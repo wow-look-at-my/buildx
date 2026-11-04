@@ -60,7 +60,7 @@ func PrintBuildDetails(w io.Writer, refs map[string]string, term bool) {
 }
 
 func ANSIHyperlink(url, text string) string {
-	// create an escape sequence using the OSC 8 format: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
+	// create an escape sequence using a later OSC format: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
 	return fmt.Sprintf("\033]8;;%s\033\\%s\033]8;;\033\\", url, text)
 }
 

@@ -1,0 +1,15 @@
+{
+	"group": {
+		"default": {
+			"targets": [
+				"default"
+			]
+		}
+	},
+	"target": {
+		"default": {
+			"context": ".",
+			"dockerfile": "Dockerfile"
+		}
+	}
+}

@@ -2,6 +2,7 @@ package imagetools
 
 import (
 	"context"
+	_ "embed"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -329,69 +330,8 @@ func getAttestationLayers(t attestationType) []ocispecs.Descriptor {
 	return layers
 }
 
-const attestationContent = `
-{
-    "_type": "https://in-toto.io/Statement/v0.1",
-    "predicateType": "https://spdx.dev/Document",
-    "predicate": {
-		"name": "sbom",
-		"spdxVersion": "SPDX-2.3",
-		"SPDXID": "SPDXRef-DOCUMENT",
-		"creationInfo": {
-			"created": "2024-01-31T16:09:05Z",
-			"creators": [
-				"Tool: buildkit-v0.11.0"
-			],
-			"licenseListVersion": "3.22"
-		},
-		"dataLicense": "CC0-1.0",
-		"documentNamespace": "https://example.com",
-		"packages": [
-			{
-				"name": "sbom",
-				"SPDXID": "SPDXRef-DocumentRoot-Directory-sbom",
-				"copyrightText": "",
-				"downloadLocation": "NOASSERTION",
-				"primaryPackagePurpose": "FILE",
-				"supplier": "NOASSERTION"
-			}
-		],
-		"relationships": [
-			{
-				"relatedSpdxElement": "SPDXRef-DocumentRoot-Directory-sbom",
-				"relationshipType": "DESCRIBES",
-				"spdxElementId": "SPDXRef-DOCUMENT"
-			}
-		]
-	}
-}
-`
+//go:embed testdata/attestation-content.json
+var attestationContent string
 
-const provenanceContent = `
-{
-	"_type": "https://in-toto.io/Statement/v0.1",
-	"predicateType": "https://slsa.dev/provenance/v0.2",
-	"predicate": {
-		"buildType": "https://example.com/Makefile",
-		"builder": { 
-			"id": "mailto:person@example.com"
-		},
-		"invocation": {
-			"configSource": {
-				"uri": "https://example.com/example-1.2.3.tar.gz",
-				"digest": {"sha256": ""},
-				"entryPoint": "src:foo"
-			},
-			"parameters": {
-				"CFLAGS": "-O3"
-			},
-			"materials": [
-				{
-					"uri": "https://example.com/example-1.2.3.tar.gz",
-					"digest": {"sha256": ""}
-				}
-			]
-		}
-	}
-}
-`
+//go:embed testdata/provenance-content.json
+var provenanceContent string

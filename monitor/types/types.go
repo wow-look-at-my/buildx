@@ -1,3 +1,5 @@
+// types.go holds the types code.
+
 package types
 
 import (
@@ -11,9 +13,6 @@ import (
 // Monitor provides APIs for attaching and controlling the buildx server.
 type Monitor interface {
 	// Invoke starts an IO session into the specified process.
-	// If pid doesn't match to any running processes, it starts a new process with the specified config.
-	// If there is no container running or InvokeConfig.Rollback is specified, the process will start in a newly created container.
-	// NOTE: If needed, in the future, we can split this API into three APIs (NewContainer, NewProcess and Attach).
 	Invoke(ctx context.Context, pid string, options *build.InvokeConfig, ioIn io.ReadCloser, ioOut io.WriteCloser, ioErr io.WriteCloser) error
 
 	ListProcesses(ctx context.Context) (infos []*processes.ProcessInfo, retErr error)

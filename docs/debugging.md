@@ -1,8 +1,6 @@
 # Debug monitor
 
-To assist with creating and debugging complex builds, Buildx provides a
-debugger to help you step through the build process and easily inspect the
-state of the build environment at any point.
+Buildx provides a debugger to help you step through the build process and easily inspect the state of the build environment at any point. This happens to help with creating and debugging complex builds.
 
 > [!NOTE]
 > The debug monitor is a new experimental feature in recent versions of Buildx.
@@ -11,15 +9,13 @@ state of the build environment at any point.
 
 ## Starting the debugger
 
-To start the debugger, first, ensure that `BUILDX_EXPERIMENTAL=1` is set in
-your environment.
+To start the debugger, first, ensure that `BUILDX_EXPERIMENTAL=1` is set in your environment.
 
 ```console
 $ export BUILDX_EXPERIMENTAL=1
 ```
 
-To start a debug session for a build, you can use the `buildx debug` command with `--invoke` flag to specify a command to launch in the resulting image.
-`buildx debug` command provides `buildx debug build` subcommand that provides the same features as the normal `buildx build` command but allows launching the debugger session after the build.
+You can use the `buildx debug` command with `--invoke` flag to specify a command to launch in the resulting image. This happens to start a debug session for a build. `buildx debug` command provides `buildx debug build` subcommand that provides the same features as the normal `buildx build` command but allows launching the debugger session after the build.
 
 Arguments available after `buildx debug build` are the same as the normal `buildx build`.
 
@@ -37,9 +33,7 @@ Switched IO
 / #
 ```
 
-This launches a `/bin/sh` process in the final stage of the image, and allows
-you to explore the contents of the image, without needing to export or load the
-image outside of the builder.
+This launches a `/bin/sh` process in the last stage of the image. This allows you to explore the contents of the image, without needing to export or load the image outside of the builder.
 
 For example, you can use `ls` to see the contents of the image:
 
@@ -49,9 +43,7 @@ bin    etc    lib    mnt    proc   run    srv    tmp    var
 dev    home   media  opt    root   sbin   sys    usr    work
 ```
 
-Optional long form allows you specifying detailed configurations of the process. 
-It must be CSV-styled comma-separated key-value pairs.
-Supported keys are `args` (can be JSON array format), `entrypoint` (can be JSON array format), `env` (can be JSON array format), `user`, `cwd` and `tty` (bool).
+Optional long form allows you specifying detailed configurations of the process. It must be CSV-styled comma-separated key-value pairs. Supported keys are `args` (can be JSON array format), `entrypoint` (can be JSON array format), `env` (can be JSON array format), `user`, `cwd` and `tty` (bool).
 
 Example:
 
@@ -61,8 +53,7 @@ $ docker buildx debug --invoke 'entrypoint=["sh"],"args=[""-c"", ""env | grep -e
 
 #### `on` flag
 
-If you want to start a debug session when a build fails, you can use
-`--on=error` to start a debug session when the build fails.
+If you want to start a debug session when a build fails, you can use `--on=error` to start a debug session when the build fails.
 
 ```console
 $ docker buildx debug --on=error build .
@@ -86,8 +77,7 @@ This allows you to explore the state of the image when the build failed.
 
 #### Launch the debug session directly with `buildx debug` subcommand
 
-If you want to drop into a debug session without first starting the build, you
-can use `buildx debug` command to start a debug session.
+If you want to drop into a debug session without first starting the build, you can use `buildx debug` command to start a debug session.
 
 ```
 $ docker buildx debug
@@ -95,17 +85,13 @@ $ docker buildx debug
 (buildx)
 ```
 
-You can then use the commands available in [monitor mode](#monitor-mode) to
-start and observe the build.
+You can then use the commands available in [monitor mode](#monitor-mode) to start and observe the build.
 
 ## Monitor mode
 
-By default, when debugging, you'll be dropped into a shell in the final stage.
+By default, when debugging, you will be dropped into a shell in the last stage.
 
-When you're in a debug shell, you can use the `Ctrl-a-c` key combination (press
-`Ctrl`+`a` together, lift, then press `c`) to toggle between the debug shell
-and the monitor mode. In monitor mode, you can run commands that control the
-debug environment.
+When you are in a debug shell, you can use the `Ctrl-a-c` key combination (press `Ctrl`+`a` together, lift, then press `c`) to toggle between the debug shell and the monitor mode. In monitor mode, you can run commands that control the debug environment.
 
 ```console
 (buildx) help

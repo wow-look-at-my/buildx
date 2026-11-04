@@ -1,3 +1,5 @@
+// server.go holds the server code.
+
 package dap
 
 import (

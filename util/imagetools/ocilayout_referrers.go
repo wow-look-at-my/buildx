@@ -1,3 +1,5 @@
+// ocilayout_referrers.go holds the ocilayout referrers code.
+
 package imagetools
 
 import (
@@ -55,7 +57,7 @@ func hasSubjectAnnotation(desc ocispecs.Descriptor) bool {
 
 // fetchOCILayoutReferrers resolves referrers for a subject from an OCI layout by
 // combining directly indexed subject entries with referrers reachable from the
-// regular named roots in index.json.
+// regular named roots. Those roots are in index.json.
 func fetchOCILayoutReferrers(ctx context.Context, getDescriptor func(context.Context, *Location, ocispecs.Descriptor) ([]byte, error), loc *Location, subject digest.Digest, opts ...remotes.FetchReferrersOpt) ([]ocispecs.Descriptor, error) {
 	idx, err := ociindex.NewStoreIndex(loc.OCILayout().Path).Read()
 	if err != nil {

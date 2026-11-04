@@ -1,3 +1,5 @@
+// cobrautil.go holds the cobrautil code.
+
 package cobrautil
 
 import (
@@ -9,9 +11,7 @@ import (
 // HideInheritedFlags hides inherited flags
 func HideInheritedFlags(cmd *cobra.Command, hidden ...string) {
 	for _, h := range hidden {
-		// we could use cmd.SetHelpFunc to override the helper
-		// but, it's not enough because we also want the generated
-		// docs to be updated, so we override the flag instead
+		// we can use cmd.SetHelpFunc to override the helper but, it is not enough.
 		cmd.Flags().String(h, "", "")
 		_ = cmd.Flags().MarkHidden(h)
 	}

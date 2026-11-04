@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
+	_ "embed"
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
@@ -110,14 +111,7 @@ target "build" {
 		{
 			"Compose",
 			"compose.yml",
-			[]byte(`
-services:
-  build:
-    build:
-      context: .
-      args:
-        HELLO: foo
-`),
+			[]byte(testBakePrintYml),
 		},
 	}
 
@@ -126,11 +120,7 @@ services:
 			dir := tmpdir(
 				t,
 				fstest.CreateFile(tc.f, tc.dt, 0600),
-				fstest.CreateFile("Dockerfile", []byte(`
-FROM busybox
-ARG HELLO
-RUN echo "Hello ${HELLO}"
-	`), 0600),
+				fstest.CreateFile("Dockerfile", []byte(testBakePrintDockerfile), 0600),
 			)
 
 			cmd := buildxCmd(sb, withDir(dir), withArgs("bake", "--print", "build"))
@@ -156,25 +146,7 @@ RUN echo "Hello ${HELLO}"
 			require.Equal(t, "Dockerfile", *def.Target["build"].Dockerfile)
 			require.Equal(t, map[string]*string{"HELLO": ptrstr("foo")}, def.Target["build"].Args)
 
-			require.JSONEq(t, `{
-  "group": {
-    "default": {
-      "targets": [
-        "build"
-      ]
-    }
-  },
-  "target": {
-    "build": {
-      "context": ".",
-      "dockerfile": "Dockerfile",
-      "args": {
-        "HELLO": "foo"
-      }
-    }
-  }
-}
-`, stdout.String())
+			require.JSONEq(t, testBakePrintJson, stdout.String())
 		})
 	}
 }
@@ -203,14 +175,7 @@ target "build" {
 		{
 			name: "Compose",
 			f:    "compose.yml",
-			dt: []byte(`
-services:
-  build:
-    build:
-      context: .
-      args:
-        HELLO: ${HELLO:-fallback}
-`),
+			dt:   []byte(testBakeDisableEnvLookupYml),
 		},
 	}
 
@@ -219,11 +184,7 @@ services:
 			dir := tmpdir(
 				t,
 				fstest.CreateFile(tc.f, tc.dt, 0600),
-				fstest.CreateFile("Dockerfile", []byte(`
-FROM busybox
-ARG HELLO
-RUN echo "Hello ${HELLO}"
-`), 0600),
+				fstest.CreateFile("Dockerfile", []byte(testBakeDisableEnvLookupDockerfile), 0600),
 			)
 
 			cmd := buildxCmd(
@@ -271,14 +232,7 @@ target "build" {
 		{
 			name: "Compose",
 			f:    "compose.yml",
-			dt: []byte(`
-services:
-  build:
-    build:
-      context: .
-      args:
-        HELLO: ${HELLO:-fallback}
-`),
+			dt:   []byte(testBakeVarOverrideYml),
 		},
 	}
 
@@ -287,11 +241,7 @@ services:
 			dir := tmpdir(
 				t,
 				fstest.CreateFile(tc.f, tc.dt, 0600),
-				fstest.CreateFile("Dockerfile", []byte(`
-FROM busybox
-ARG HELLO
-RUN echo "Hello ${HELLO}"
-`), 0600),
+				fstest.CreateFile("Dockerfile", []byte(testBakeVarOverrideDockerfile), 0600),
 			)
 
 			cmd := buildxCmd(
@@ -338,17 +288,7 @@ target "build" {
 		{
 			"Compose",
 			"compose.yml",
-			[]byte(`
-services:
-  build:
-    build:
-      context: .
-      args:
-        HELLO: foo
-      cache_from:
-        - type=gha,token=abc
-        - type=s3,region=us-west-2,bucket=my_bucket,name=my_image
-`),
+			[]byte(testBakePrintSensitiveYml),
 		},
 	}
 
@@ -357,11 +297,7 @@ services:
 			dir := tmpdir(
 				t,
 				fstest.CreateFile(tc.f, tc.dt, 0600),
-				fstest.CreateFile("Dockerfile", []byte(`
-FROM busybox
-ARG HELLO
-RUN echo "Hello ${HELLO}"
-	`), 0600),
+				fstest.CreateFile("Dockerfile", []byte(testBakePrintSensitiveDockerfile), 0600),
 			)
 
 			cmd := buildxCmd(sb, withDir(dir), withArgs("bake", "--print", "build"),
@@ -397,37 +333,7 @@ RUN echo "Hello ${HELLO}"
 			require.NotNil(t, def.Target["build"].CacheFrom)
 			require.Len(t, def.Target["build"].CacheFrom, 2)
 
-			require.JSONEq(t, `{
-  "group": {
-    "default": {
-      "targets": [
-        "build"
-      ]
-    }
-  },
-  "target": {
-    "build": {
-      "context": ".",
-      "dockerfile": "Dockerfile",
-      "args": {
-        "HELLO": "foo"
-      },
-      "cache-from": [
-        {
-          "type": "gha",
-          "token": "abc"
-        },
-        {
-          "type": "s3",
-          "region": "us-west-2",
-          "bucket": "my_bucket",
-          "name": "my_image"
-        }
-      ]
-    }
-  }
-}
-`, stdout.String())
+			require.JSONEq(t, testBakePrintSensitiveJson, stdout.String())
 		})
 	}
 }
@@ -456,21 +362,7 @@ target "default" {
 	cmd.Stderr = &stderr
 	require.NoError(t, cmd.Run(), stdout.String(), stderr.String())
 
-	require.JSONEq(t, `{
-	"group": {
-		"default": {
-			"targets": [
-				"default"
-			]
-		}
-	},
-	"target": {
-		"default": {
-			"context": ".",
-			"dockerfile": "Dockerfile"
-		}
-	}
-}`, stdout.String())
+	require.JSONEq(t, testBakePrintOverrideEmptyJson, stdout.String())
 }
 
 func testBakePrintKeepEscaped(t *testing.T, sb integration.Sandbox) {
@@ -500,31 +392,7 @@ EOT
 	cmd.Stderr = &stderr
 	require.NoError(t, cmd.Run(), stdout.String(), stderr.String())
 
-	require.JSONEq(t, `{
-	"group": {
-		"default": {
-			"targets": [
-				"default"
-			]
-		}
-	},
-	"target": {
-		"default": {
-			"annotations": [
-				"org.opencontainers.image.authors=$${user}"
-			],
-			"context": ".",
-			"dockerfile": "Dockerfile",
-			"dockerfile-inline": "ARG VERSION=latest\nFROM alpine:$${VERSION}\n",
-			"args": {
-				"VERSION": "3.21"
-			},
-			"labels": {
-				"foo": "hello %%{bar}"
-			}
-		}
-	}
-}`, stdout.String())
+	require.JSONEq(t, testBakePrintKeepEscapedJson, stdout.String())
 
 	// test build with definition from print output
 	dir = tmpdir(t, fstest.CreateFile("docker-bake.json", stdout.Bytes(), 0600))
@@ -641,11 +509,7 @@ COPY foo /foo
 target "default" {
 }
 `)
-	composefile := []byte(`
-services:
-  app:
-    build: {}
-`)
+	composefile := []byte(testBakeLocalMultiYml)
 
 	dir := tmpdir(
 		t,
@@ -1204,12 +1068,7 @@ func testBakeEmpty(t *testing.T, sb integration.Sandbox) {
 }
 
 func testBakeShmSize(t *testing.T, sb integration.Sandbox) {
-	dockerfile := []byte(`
-FROM busybox AS build
-RUN mount | grep /dev/shm > /shmsize
-FROM scratch
-COPY --from=build /shmsize /
-	`)
+	dockerfile := []byte(testBakeShmSizeDockerfile)
 	bakefile := []byte(`
 target "default" {
   shm-size = "128m"
@@ -1581,12 +1440,7 @@ target "default" {
 }
 
 func testBakeUlimits(t *testing.T, sb integration.Sandbox) {
-	dockerfile := []byte(`
-FROM busybox AS build
-RUN ulimit -n > first > /ulimit
-FROM scratch
-COPY --from=build /ulimit /
-	`)
+	dockerfile := []byte(testBakeUlimitsDockerfile)
 	bakefile := []byte(`
 target "default" {
   ulimits = ["nofile=1024:1024"]
@@ -2106,8 +1960,7 @@ target "default" {
 			"ghi\t\tnumber\t\t99\t\tsimple type w/ default\n"+
 			"jkl\t\tlist of string\t[\"hello\"]\tcollection with quoted strings\n"+
 			"mno\t\tlist of number\t<null>\t\tcollection, no default\n"+
-			// the implementation for tuple's 'friendly name' is very basic
-			// and marked as TODO, so this may change/break at some point
+			// the implementation for tuple's 'friendly name' is basic and marked as TODO, so this may change/break at some point
 			"pqr\t\ttuple\t\t[99,\"99\",true]\t\n"+
 			"stu\t\tmap of string\t{\"foo\":\"bar\"}\t\n"+
 			"vwx\t\tset of bool\t<null>\t\tcollection, null default\n"+
@@ -2338,13 +2191,7 @@ copy Dockerfile .
 		require.Contains(t, stdout.String(), "Check complete, 1 warning has been found!")
 	})
 	t.Run("check for warning count msg in check with multiple warnings", func(t *testing.T) {
-		dockerfile := []byte(`
-FROM busybox
-copy Dockerfile .
-
-FROM busybox as base
-COPY Dockerfile .
-		`)
+		dockerfile := []byte(testBakeCheckCallOutputDockerfile)
 		bakefile := []byte(`
 	target "default" {}
 	`)
@@ -2371,13 +2218,7 @@ COPY Dockerfile .
 FROM busybox
 copy Dockerfile .
 		`)
-		dockerfile2 := []byte(`
-FROM busybox
-copy Dockerfile .
-
-FROM busybox as base
-COPY Dockerfile .
-		`)
+		dockerfile2 := []byte(testBakeCheckCallOutputDockerfile2)
 		bakefile := []byte(`
 target "first" {
 	dockerfile = "Dockerfile.first"
@@ -2453,12 +2294,7 @@ target "third" {
 }
 
 func testBakeExtraHosts(t *testing.T, sb integration.Sandbox) {
-	dockerfile := []byte(`
-FROM busybox
-RUN cat /etc/hosts | grep myhost | grep 1.2.3.4
-RUN cat /etc/hosts | grep myhostmulti | grep 162.242.195.81
-RUN cat /etc/hosts | grep myhostmulti | grep 162.242.195.82
-	`)
+	dockerfile := []byte(testBakeExtraHostsDockerfile)
 	bakefile := []byte(`
 target "default" {
   extra-hosts = {
@@ -2666,3 +2502,57 @@ func writeTempPrivateKey(fp string) error {
 	})
 	return os.WriteFile(fp, privateKeyPEM, 0600)
 }
+
+//go:embed test-bake-print.yml
+var testBakePrintYml string
+
+//go:embed test-bake-print.dockerfile
+var testBakePrintDockerfile string
+
+//go:embed test-bake-print.json
+var testBakePrintJson string
+
+//go:embed test-bake-disable-env-lookup.yml
+var testBakeDisableEnvLookupYml string
+
+//go:embed test-bake-disable-env-lookup.dockerfile
+var testBakeDisableEnvLookupDockerfile string
+
+//go:embed test-bake-var-override.yml
+var testBakeVarOverrideYml string
+
+//go:embed test-bake-var-override.dockerfile
+var testBakeVarOverrideDockerfile string
+
+//go:embed test-bake-print-sensitive.yml
+var testBakePrintSensitiveYml string
+
+//go:embed test-bake-print-sensitive.dockerfile
+var testBakePrintSensitiveDockerfile string
+
+//go:embed test-bake-print-sensitive.json
+var testBakePrintSensitiveJson string
+
+//go:embed test-bake-print-override-empty.json
+var testBakePrintOverrideEmptyJson string
+
+//go:embed test-bake-print-keep-escaped.json
+var testBakePrintKeepEscapedJson string
+
+//go:embed test-bake-local-multi.yml
+var testBakeLocalMultiYml string
+
+//go:embed test-bake-shm-size.dockerfile
+var testBakeShmSizeDockerfile string
+
+//go:embed test-bake-ulimits.dockerfile
+var testBakeUlimitsDockerfile string
+
+//go:embed test-bake-check-call-output.dockerfile
+var testBakeCheckCallOutputDockerfile string
+
+//go:embed test-bake-check-call-output-2.dockerfile
+var testBakeCheckCallOutputDockerfile2 string
+
+//go:embed test-bake-extra-hosts.dockerfile
+var testBakeExtraHostsDockerfile string

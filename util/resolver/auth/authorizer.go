@@ -1,3 +1,5 @@
+// authorizer.go holds the authorizer code.
+
 package auth
 
 // based on containerd/core/remotes/docker/authorizer.go
@@ -57,8 +59,7 @@ func WithAuthProvider(provider authprovider.AuthConfigProvider) AuthorizerOpt {
 
 // WithAuthHeader provides HTTP headers for authorization
 //
-// We need to merge instead of replacing because header may be set by
-// a per-host hosts.toml or/AND by a global header config (e.g., cri.config.headers)
+// We need to merge instead of replacing. This is because header may be set by a per-host hosts.toml or/AND by a global header config (e.g., cri.config.headers)
 func WithAuthHeader(hdr http.Header) AuthorizerOpt {
 	return func(opt *authorizerConfig) {
 		if opt.header == nil {
@@ -132,12 +133,7 @@ func (a *dockerAuthorizer) AddResponses(ctx context.Context, responses []*http.R
 				delete(a.handlers, host)
 			}
 
-			// reuse existing handler
-			//
-			// assume that one registry will return the common
-			// challenge information, including realm and service.
-			// and the resource scope is only different part
-			// which can be provided by each request.
+			// reuse existing handler.
 			if _, ok := a.handlers[host]; ok {
 				return nil
 			}
@@ -210,8 +206,7 @@ type authHandler struct {
 	// common contains common challenge answer
 	common auth.TokenOptions
 
-	// scopedTokens caches token indexed by scopes, which used in
-	// bearer auth case
+	// scopedTokens caches token indexed by scopes, which used in bearer auth case
 	scopedTokens map[string]*authResult
 }
 
@@ -256,8 +251,7 @@ func (ah *authHandler) doBearerAuth(ctx context.Context) (token string, err erro
 	// Docs: https://distribution.github.io/distribution/spec/auth/scope/
 	scoped := strings.Join(to.Scopes, " ")
 
-	// Keep track of the expiration time of cached bearer tokens so they can be
-	// refreshed when they expire without a server roundtrip.
+	// Keep track of the expiration time of cached bearer tokens.
 	var expirationTime *time.Time
 
 	ah.Lock()
@@ -286,16 +280,11 @@ func (ah *authHandler) doBearerAuth(ctx context.Context) (token string, err erro
 				err = errors.Wrap(err, "failed to fetch oauth token")
 			}
 		}()
-		// credential information is provided, use oauth POST endpoint
-		// TODO: Allow setting client_id
+		// credential information is provided, use oauth POST endpoint. TODO: Allow setting client_id
 		resp, err := auth.FetchTokenWithOAuth(ctx, ah.client, ah.header, "containerd-client", to)
 		if err != nil {
 			var errStatus remoteerrors.ErrUnexpectedStatus
 			if errors.As(err, &errStatus) {
-				// Registries without support for POST may return 404 for POST /v2/token.
-				// As of September 2017, GCR is known to return 404.
-				// As of February 2018, JFrog Artifactory is known to return 401.
-				// As of January 2022, ACR is known to return 400.
 				if (errStatus.StatusCode == 405 && to.Username != "") || errStatus.StatusCode == 404 || errStatus.StatusCode == 401 || errStatus.StatusCode == 400 {
 					resp, err := auth.FetchToken(ctx, ah.client, ah.header, to)
 					if err != nil {

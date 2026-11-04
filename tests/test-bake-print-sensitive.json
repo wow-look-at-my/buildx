@@ -1,0 +1,30 @@
+{
+  "group": {
+    "default": {
+      "targets": [
+        "build"
+      ]
+    }
+  },
+  "target": {
+    "build": {
+      "context": ".",
+      "dockerfile": "Dockerfile",
+      "args": {
+        "HELLO": "foo"
+      },
+      "cache-from": [
+        {
+          "type": "gha",
+          "token": "abc"
+        },
+        {
+          "type": "s3",
+          "region": "us-west-2",
+          "bucket": "my_bucket",
+          "name": "my_image"
+        }
+      ]
+    }
+  }
+}

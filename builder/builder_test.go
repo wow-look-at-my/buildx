@@ -1,6 +1,7 @@
 package builder
 
 import (
+	_ "embed"
 	"os"
 	"path"
 	"testing"
@@ -32,15 +33,7 @@ func TestParseBuildkitdFlags(t *testing.T) {
 	dirConf := t.TempDir()
 
 	buildkitdConfPath := path.Join(dirConf, "buildkitd-conf.toml")
-	require.NoError(t, os.WriteFile(buildkitdConfPath, []byte(`
-# debug enables additional debug logging
-debug = true
-# insecure-entitlements allows insecure entitlements, disabled by default.
-insecure-entitlements = [ "network.host", "security.insecure" ]
-[log]
-  # log formatter: json or text
-  format = "text"
-`), 0644))
+	require.NoError(t, os.WriteFile(buildkitdConfPath, []byte(testParseBuildkitdFlagsToml), 0644))
 
 	buildkitdConfBrokenPath := path.Join(dirConf, "buildkitd-conf-broken.toml")
 	require.NoError(t, os.WriteFile(buildkitdConfBrokenPath, []byte(`
@@ -201,3 +194,6 @@ foo = "bar"
 		})
 	}
 }
+
+//go:embed testdata/test-parse-buildkitd-flags.toml
+var testParseBuildkitdFlagsToml string

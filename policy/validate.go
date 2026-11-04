@@ -1,3 +1,5 @@
+// validate.go holds the validate code.
+
 package policy
 
 import (
@@ -116,8 +118,7 @@ func (p *Policy) IsPolicyError(err error) bool {
 		return false
 	}
 	errText := err.Error()
-	// TODO: replace this string matching with a typed BuildKit error that is
-	// always attached for policy DENY decisions.
+	// TODO: replace this string matching with a typed BuildKit error that is always attached for policy DENY decisions.
 	p.denyMu.Lock()
 	defer p.denyMu.Unlock()
 	for id := range p.denyIdentifiers {
@@ -704,7 +705,6 @@ func sourceToInput(ctx context.Context, getVerifier PolicyVerifierProvider, src 
 			Name: refstr,
 		}
 	default:
-		// oci-layout not supported yet
 		return inp, nil, errors.Errorf("unsupported source scheme: %s", scheme)
 	}
 
@@ -742,7 +742,7 @@ func AddUnknownsWithLogger(logf func(logrus.Level, string), req *gwpb.ResolveSou
 	for _, u := range unk {
 		switch u {
 		case "image", "git", "http", "local":
-			// parents are returned as unknowns for some reason, ignore
+			// parents are returned as unknowns ignore
 			continue
 		default:
 			unk2 = append(unk2, u)

@@ -1,0 +1,9 @@
+
+services:
+  webapp:
+    bar: baz
+    build:
+     context: .
+
+foo:
+  - bar.baz

@@ -1,0 +1,11 @@
+
+{
+  "target": [{
+    "metadata-b": [{
+      "tags": [
+        "app/b:1.0.0",
+        "app/b:latest"
+      ]
+    }]
+  }]
+}

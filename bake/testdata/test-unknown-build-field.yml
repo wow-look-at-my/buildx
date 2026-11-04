@@ -1,0 +1,6 @@
+
+services:
+  webapp:
+    build:
+     context: .
+     foo: bar

@@ -1,0 +1,8 @@
+
+services:
+  scratch:
+    build:
+     context: .
+     args:
+        FOO: null
+        bar: "baz"

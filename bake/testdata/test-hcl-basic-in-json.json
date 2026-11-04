@@ -1,0 +1,34 @@
+
+		{
+			"group": {
+				"default": {
+					"targets": ["db", "webapp"]
+				}
+			},
+			"target": {
+				"db": {
+					"context": "./db",
+					"tags": ["docker.io/tonistiigi/db"]
+				},
+				"webapp": {
+					"context": "./dir",
+					"dockerfile": "Dockerfile-alternate",
+					"args": {
+						"buildno": "123"
+					}
+				},
+				"cross": {
+					"platforms": [
+						"linux/amd64",
+						"linux/arm64"
+					]
+				},
+				"webapp-plus": {
+					"inherits": ["webapp", "cross"],
+					"args": {
+						"IAMCROSS": "true"
+					}
+				}
+			}
+		}
+		

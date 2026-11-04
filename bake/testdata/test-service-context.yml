@@ -1,0 +1,11 @@
+
+services:
+  base:
+    build:
+      dockerfile: baseapp.Dockerfile
+    command: ./entrypoint.sh
+  webapp:
+    build:
+      context: ./dir
+      additional_contexts:
+        base: service:base

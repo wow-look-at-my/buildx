@@ -1,5 +1,7 @@
 //go:build !windows
 
+// path.go holds the path code.
+
 package gitutil
 
 import (
@@ -12,7 +14,7 @@ import (
 
 func gitPath(wd string) (string, error) {
 	// On WSL2 we need to check if the current working directory is mounted on
-	// a Windows drive and if so, we need to use the Windows git executable.
+	// a Windows. Drive and if so, we need to use the Windows git executable.
 	if os.Getenv("WSL_DISTRO_NAME") != "" && wd != "" {
 		// ensure any symlinks are resolved
 		wdPath, err := filepath.EvalSymlinks(wd)

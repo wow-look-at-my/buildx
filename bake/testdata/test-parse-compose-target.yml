@@ -1,0 +1,10 @@
+
+services:
+  db:
+    build:
+      context: ./db
+      target: db
+  webapp:
+    build:
+      context: .
+      target: webapp

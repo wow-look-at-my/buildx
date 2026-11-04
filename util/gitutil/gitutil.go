@@ -1,3 +1,5 @@
+// gitutil.go holds the gitutil code.
+
 package gitutil
 
 import (

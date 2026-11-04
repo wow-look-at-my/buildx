@@ -1,14 +1,13 @@
-# this workflow runs the remote validate bake target from docker/docker.github.io
-# to check if yaml reference docs and markdown files used in this repo are still valid
-# https://github.com/docker/docker.github.io/blob/98c7c9535063ae4cd2cd0a31478a21d16d2f07a3/docker-bake.hcl#L34-L36
+# this workflow runs the remote validate bake target. From docker/docker.github.io to check if yaml reference docs and markdown files used in this repo are still. Valid https://github.com/docker/docker.github.io/blob/98c7c9535063ae4cd2cd0a31478a21d16d2f07a3/docker-bake.hcl#L34-L36
 name: docs-upstream
 
 permissions:
+  id-token: write # zizmor: ignore[excessive-permissions] the org workflow template keeps it at workflow level
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: gha_${{ github.repository }}_${{ github.workflow }}_${{ github.ref != 'refs/heads/master' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
 on:
   push:
@@ -29,7 +28,7 @@ env:
 
 jobs:
   docs-yaml:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ github.event.repository.visibility == 'public' && 'ubuntu-24.04' || vars.CI_RUNNER_DIND || 'ubuntu-24.04' }}
     steps:
       -
         name: Set up Docker Buildx
@@ -59,7 +58,8 @@ jobs:
           retention-days: 1
 
   validate:
-    uses: docker/docs/.github/workflows/validate-upstream.yml@main # zizmor: ignore[unpinned-uses] needs to validate against latest docs changes
+    # docker/docs documents a buildx build --resource flag this tree does not have yet. The page anchor is missing. This is the last revision before that reference.
+    uses: docker/docs/.github/workflows/validate-upstream.yml@0b8f0888864e580b90d6c39f94955061ff1570e7
     needs:
       - docs-yaml
     with:

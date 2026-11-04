@@ -1,13 +1,8 @@
 # Buildx
 
-[![GitHub release](https://img.shields.io/github/release/docker/buildx.svg?style=flat-square)](https://github.com/docker/buildx/releases/latest)
-[![PkgGoDev](https://img.shields.io/badge/go.dev-docs-007d9c?style=flat-square&logo=go&logoColor=white)](https://pkg.go.dev/github.com/docker/buildx)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/docker/buildx/build.yml?branch=master&label=build&logo=github&style=flat-square)](https://github.com/docker/buildx/actions?query=workflow%3Abuild)
-[![Go Report Card](https://goreportcard.com/badge/github.com/docker/buildx?style=flat-square)](https://goreportcard.com/report/github.com/docker/buildx)
-[![codecov](https://img.shields.io/codecov/c/github/docker/buildx?logo=codecov&style=flat-square)](https://codecov.io/gh/docker/buildx)
+[![GitHub release](https://img.shields.io/github/release/docker/buildx.svg?style=flat-square)](https://github.com/docker/buildx/releases/latest) [![PkgGoDev](https://img.shields.io/badge/go.dev-docs-007d9c?style=flat-square&logo=go&logoColor=white)](https://pkg.go.dev/github.com/docker/buildx) [![Build Status](https://img.shields.io/github/actions/workflow/status/docker/buildx/build.yml?branch=master&label=build&logo=github&style=flat-square)](https://github.com/docker/buildx/actions?query=workflow%3Abuild) [![Go Report Card](https://goreportcard.com/badge/github.com/docker/buildx?style=flat-square)](https://goreportcard.com/report/github.com/docker/buildx) [![codecov](https://img.shields.io/codecov/c/github/docker/buildx?logo=codecov&style=flat-square)](https://codecov.io/gh/docker/buildx)
 
-Buildx is a Docker CLI plugin for extended build capabilities with
-[BuildKit](https://github.com/moby/buildkit).
+Buildx is a Docker CLI plugin for extended build capabilities with [BuildKit](https://github.com/moby/buildkit).
 
 > [!TIP]
 > **Key features**
@@ -45,14 +40,11 @@ Using Buildx with Docker requires Docker engine 19.03 or newer.
 
 ### Windows and macOS
 
-Docker Buildx is included in [Docker Desktop](https://docs.docker.com/desktop/)
-for Windows and macOS.
+Docker Buildx is included in [Docker Desktop](https://docs.docker.com/desktop/) for Windows and macOS.
 
 ### Linux packages
 
-Docker Engine package repositories contain Docker Buildx packages when installed according to the
-[Docker Engine install documentation](https://docs.docker.com/engine/install/). Install the
-`docker-buildx-plugin` package to install the Buildx plugin.
+Repositories of the Buildx of the Docker of the contain of the Docker Engine package packages when installed. According to the [Docker Engine install documentation](https://docs.docker.com/engine/install/). Install the `docker-buildx-plugin` package to install the Buildx plugin.
 
 ### Manual download
 
@@ -95,8 +87,7 @@ On Windows:
 
 ### Dockerfile
 
-Here is how to install and use Buildx inside a Dockerfile through the
-[`docker/buildx-bin`](https://hub.docker.com/r/docker/buildx-bin) image:
+Here is how to install and use Buildx inside a Dockerfile through the [`docker/buildx-bin`](https://hub.docker.com/r/docker/buildx-bin) image:
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -127,16 +118,9 @@ $ make install
 
 ### Building with Buildx
 
-Buildx is a Docker CLI plugin that extends the `docker build` command with the
-full support of the features provided by [Moby BuildKit](https://docs.docker.com/build/buildkit/)
-builder toolkit. It provides the same user experience as `docker build` with
-many new features like creating scoped builder instances and building against
-multiple nodes concurrently.
+Buildx is a Docker CLI plugin that extends the `docker build` command with the full support of the features provided by [Moby BuildKit](https://docs.docker.com/build/buildkit/) builder toolkit. It provides the same user experience as `docker build` with many new features like creating scoped builder instances and building against multiple nodes concurrently.
 
-After installation, Buildx can be accessed through the `docker buildx` command
-with Docker 19.03. `docker buildx build` is the command for starting a new
-build. With Docker versions older than 19.03 Buildx binary can be called
-directly to access the `docker buildx` subcommands.
+After installation, Buildx can be accessed through the `docker buildx` command with Docker 19.03. `docker buildx build` is the command for starting a new build. With Docker versions older than 19.03 Buildx binary can be called directly to access the `docker buildx` subcommands.
 
 ```console
 $ docker buildx build .
@@ -144,119 +128,65 @@ $ docker buildx build .
  => ...
 ```
 
-Buildx will always build using the BuildKit engine and does not require
-`DOCKER_BUILDKIT=1` environment variable for starting builds.
+Buildx will always build using the BuildKit engine and does not require `DOCKER_BUILDKIT=1` environment variable for starting builds.
 
-The `docker buildx build` command supports features available for `docker build`,
-including features such as outputs configuration, inline build caching, and
-specifying target platform. In addition, Buildx also supports new features that
-are not yet available for regular `docker build` like building manifest lists,
-distributed caching, and exporting build results to OCI image tarballs.
+The `docker buildx build` command supports features available for `docker build`, including features such as outputs configuration, inline build caching, and specifying target platform. In addition, Buildx also supports new features that are not yet available for regular `docker build` like building manifest lists, distributed caching. Exporting build results to OCI image tarballs.
 
-Buildx is flexible and can be run in different configurations that are exposed
-through various [drivers](https://docs.docker.com/build/builders/drivers/).
-Each driver defines how and where a build should run, and have different
-feature sets.
+Buildx is flexible and can be run in different configurations that are exposed through different [drivers](https://docs.docker.com/build/builders/drivers/). Each driver defines how and where a build must run, and have different feature sets.
 
-We currently support the following drivers:
+We support the following drivers:
 - The `docker` driver ([manual](https://docs.docker.com/build/builders/drivers/docker/))
 - The `docker-container` driver ([manual](https://docs.docker.com/build/builders/drivers/docker-container/))
 - The `kubernetes` driver ([manual](https://docs.docker.com/build/drivers/kubernetes/))
 - The `remote` driver ([manual](https://docs.docker.com/build/builders/drivers/remote/))
 
-For more information, see the [builders](https://docs.docker.com/build/builders/)
-and [drivers](https://docs.docker.com/build/builders/drivers/) guide.
+For more information, see the [builders](https://docs.docker.com/build/builders/) and [drivers](https://docs.docker.com/build/builders/drivers/) guide.
 
 > [!NOTE]
 > For more information, see [Docker Build docs](https://docs.docker.com/build/concepts/overview/).
 
 ### Working with builder instances
 
-By default, Buildx will initially use the `docker` driver if it is supported,
-providing a very similar user experience to the native `docker build`. Note that
-you must use a local shared daemon to build your applications.
+By default, Buildx will initially use the `docker` driver if it is supported, providing a very similar user experience to the native `docker build`. Note that you must use a local shared daemon to build your applications.
 
-Buildx allows you to create new instances of isolated builders. This can be
-used for getting a scoped environment for your CI builds that does not change
-the state of the shared daemon or for isolating the builds for different
-projects. You can create a new instance for a set of remote nodes, forming a
-build farm, and quickly switch between them.
+Buildx allows you to create new instances of isolated builders. This can be used for getting a scoped environment for your CI builds. Those builds does not change the state of the shared daemon or for isolating the builds for different projects. You can create a new instance for a set of remote nodes, forming a build farm, and quickly switch between them.
 
-You can create new instances using the [`docker buildx create`](docs/reference/buildx_create.md)
-command. This creates a new builder instance with a single node based on your
-current configuration.
+You can create new instances using the [`docker buildx create`](docs/reference/buildx_create.md) command. This creates a new builder instance with a single node based on your current configuration.
 
-To use a remote node you can specify the `DOCKER_HOST` or the remote context name
-while creating the new builder. After creating a new instance, you can manage its
-lifecycle using the [`docker buildx inspect`](docs/reference/buildx_inspect.md),
-[`docker buildx stop`](docs/reference/buildx_stop.md), and
-[`docker buildx rm`](docs/reference/buildx_rm.md) commands. To list all
-available builders, use [`docker buildx ls`](docs/reference/buildx_ls.md). After
-creating a new builder you can also append new nodes to it.
+To use a remote node you can specify the `DOCKER_HOST` or the remote context name while creating the new builder. After creating a new instance, you can manage its lifecycle using the [`docker buildx inspect`](docs/reference/buildx_inspect.md), [`docker buildx stop`](docs/reference/buildx_stop.md), and [`docker buildx rm`](docs/reference/buildx_rm.md) commands. To list all available builders, use [`docker buildx ls`](docs/reference/buildx_ls.md). After creating a new builder you can also append new nodes to it.
 
-To switch between different builders, use [`docker buildx use <name>`](docs/reference/buildx_use.md).
-After running this command, the build commands will automatically use this
-builder.
+To switch between different builders, use [`docker buildx use <name>`](docs/reference/buildx_use.md). After running this command, the build commands will automatically use this builder.
 
-Docker also features a [`docker context`](https://docs.docker.com/engine/reference/commandline/context/)
-command that can be used for giving names for remote Docker API endpoints.
-Buildx integrates with `docker context` so that all of your contexts
-automatically get a default builder instance. While creating a new builder
-instance or when adding a node to it, you can also set the context name as the
-target.
+Docker also features a [`docker context`](https://docs.docker.com/engine/reference/commandline/context/) command that can be used for giving names for endpoints of the remote Docker API. Buildx integrates with `docker context` so that all of your contexts automatically get a default builder instance. While creating a new builder instance or when adding a node to it, you can also set the context name as the target.
 
 > [!NOTE]
 > For more information, see [Builders docs](https://docs.docker.com/build/builders/).
 
 ### Building multi-platform images
 
-BuildKit is designed to work well for building for multiple platforms and not
-only for the architecture and operating system that the user invoking the build
-happens to run.
+BuildKit is designed to work well for building for multiple platforms and not only for the architecture and operating. System that the user invoking the build happens to run.
 
-When you invoke a build, you can set the `--platform` flag to specify the target
-platform for the build output, (for example, `linux/amd64`, `linux/arm64`, or
-`darwin/amd64`).
+When you invoke a build, you can set the `--platform` flag to specify the target platform for the build output, (for example, `linux/amd64`, `linux/arm64`, or `darwin/amd64`).
 
-When the current builder instance is backed by the `docker-container` or
-`kubernetes` driver, you can specify multiple platforms together. In this case,
-it builds a manifest list which contains images for all specified architectures.
-When you use this image in [`docker run`](https://docs.docker.com/reference/cli/docker/container/run/)
-or [`docker service`](https://docs.docker.com/reference/cli/docker/service/),
-Docker picks the correct image based on the node's platform.
+When the `docker-container` or `kubernetes` driver backs the current builder instance, you can specify multiple platforms together. In this case, it builds a manifest list which contains images for all specified architectures. When you use this image in [`docker run`](https://docs.docker.com/reference/cli/docker/container/run/) or [`docker service`](https://docs.docker.com/reference/cli/docker/service/), Docker picks the correct image based on the node's platform.
 
-You can build multi-platform images using three different strategies that are
-supported by Buildx and Dockerfiles:
+Buildx and Dockerfiles support you can build multi-platform images using different strategies that:
 
 1. Using the QEMU emulation support in the kernel
 2. Building on multiple native nodes using the same builder instance
 3. Using a stage in Dockerfile to cross-compile to different architectures
 
-QEMU is the easiest way to get started if your node already supports it (for
-example. if you are using Docker Desktop). It requires no changes to your
-Dockerfile and BuildKit automatically detects the secondary architectures that
-are available. When BuildKit needs to run a binary for a different architecture,
-it automatically loads it through a binary registered in the `binfmt_misc`
-handler.
+QEMU is the easiest way to get started if your node already supports it (for example. if you are using Docker Desktop). It requires no changes to your Dockerfile and BuildKit automatically detects the secondary architectures that are available. When BuildKit needs to run a binary for a different architecture, it automatically loads it through a binary registered in the `binfmt_misc` handler.
 
-For QEMU binaries registered with `binfmt_misc` on the host OS to work
-transparently inside containers they must be registered with the `fix_binary`
-flag. This requires a kernel >= 4.8 and binfmt-support >= 2.1.7. You can check
-for proper registration by checking if `F` is among the flags in
-`/proc/sys/fs/binfmt_misc/qemu-*`. While Docker Desktop comes preconfigured
-with `binfmt_misc` support for additional platforms, for other installations
-it likely needs to be installed using [`tonistiigi/binfmt`](https://github.com/tonistiigi/binfmt)
-image.
+For QEMU binaries registered with `binfmt_misc` on the host OS to work transparently inside containers they must be registered with the `fix_binary` flag. This requires a kernel >= 4.8 and binfmt-support >= 2.1.7. You can check for correct registration by checking if `F` is among the flags in `/proc/sys/fs/binfmt_misc/qemu-*`. While Docker Desktop comes preconfigured with `binfmt_misc` support for more platforms, for other installations it likely needs to be installed using [`tonistiigi/binfmt`](https://github.com/tonistiigi/binfmt) image.
 
 ```console
 $ docker run --privileged --rm tonistiigi/binfmt --install all
 ```
 
-Using multiple native nodes provide better support for more complicated cases
-that are not handled by QEMU and generally have better performance. You can
-add additional nodes to the builder instance using the `--append` flag.
+Using multiple native nodes give better support for more complicated cases that are not handled by QEMU and usually have better performance. You can add more nodes to the builder instance using the `--append` flag.
 
-Assuming contexts `node-amd64` and `node-arm64` exist in `docker context ls`;
+Assuming contexts `node-amd64` and `node-arm64` exist in `docker context ls`.
 
 ```console
 $ docker buildx create --use --name mybuild node-amd64
@@ -265,13 +195,7 @@ $ docker buildx create --append --name mybuild node-arm64
 $ docker buildx build --platform linux/amd64,linux/arm64 .
 ```
 
-Finally, depending on your project, the language that you use may have good
-support for cross-compilation. In that case, multi-stage builds in Dockerfiles
-can be effectively used to build binaries for the platform specified with
-`--platform` using the native architecture of the build node. A list of build
-arguments like `BUILDPLATFORM` and `TARGETPLATFORM` is available automatically
-inside your Dockerfile and can be leveraged by the processes running as part
-of your build.
+Finally, depending on your project, the language that you use may have good support for cross-compilation. In that case, multi-stage builds in Dockerfiles can be effectively used to build binaries for the platform specified with `--platform`. That `--platform` uses the native architecture of the build node. A list of build arguments like `BUILDPLATFORM` and `TARGETPLATFORM` is available automatically inside your Dockerfile. The processes running as part of your build can leverag it.
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -283,13 +207,11 @@ FROM alpine
 COPY --from=build /log /log
 ```
 
-You can also use [`tonistiigi/xx`](https://github.com/tonistiigi/xx) Dockerfile
-cross-compilation helpers for more advanced use-cases.
+You can also use [`tonistiigi/xx`](https://github.com/tonistiigi/xx) Dockerfile cross-compilation helpers for more advanced use-cases.
 
 > [!NOTE]
 > For more information, see [Multi-platform builds docs](https://docs.docker.com/build/building/multi-platform/).
 
 ## Contributing
 
-Want to contribute to Buildx? Awesome! You can find information about
-contributing to this project in the [CONTRIBUTING.md](/.github/CONTRIBUTING.md)
+Want to contribute to Buildx? Awesome! You can find information about contributing to this project in the [CONTRIBUTING.md](/.github/CONTRIBUTING.md)

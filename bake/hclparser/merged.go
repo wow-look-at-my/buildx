@@ -1,5 +1,6 @@
-// Copyright (c) HashiCorp, Inc.
-// SPDX-License-Identifier: MPL-2.0
+// Copyright (c) HashiCorp, Inc. SPDX-License-Identifier: MPL-2.0
+
+// merged.go holds the merged code.
 
 package hclparser
 
@@ -11,12 +12,6 @@ import (
 
 // MergeFiles combines the given files to produce a single body that contains
 // configuration from all of the given files.
-//
-// The ordering of the given files decides the order in which contained
-// elements will be returned. If any top-level attributes are defined with
-// the same name across multiple files, a diagnostic will be produced from
-// the Content and PartialContent methods describing this error in a
-// user-friendly way.
 func MergeFiles(files []*hcl.File) hcl.Body {
 	var bodies []hcl.Body
 	for _, file := range files {
@@ -29,15 +24,11 @@ func MergeFiles(files []*hcl.File) hcl.Body {
 // than with entire files.
 func MergeBodies(bodies []hcl.Body) hcl.Body {
 	if len(bodies) == 0 {
-		// Swap out for our singleton empty body, to reduce the number of
-		// empty slices we have hanging around.
+		// Swap out for our singleton empty body, to reduce the number of empty slices we have hanging around.
 		return emptyBody
 	}
 
-	// If any of the given bodies are already merged bodies, we'll unpack
-	// to flatten to a single mergedBodies, since that's conceptually simpler.
-	// This also, as a side-effect, eliminates any empty bodies, since
-	// empties are merged bodies with no inner bodies.
+	// If any of the given bodies are already merged bodies, we'll unpack to flatten to a single mergedBodies.
 	var newLen int
 	var flatten bool
 	for _, body := range bodies {
@@ -81,15 +72,8 @@ type mergedBodies []hcl.Body
 
 // Content returns the content produced by applying the given schema to all
 // of the merged bodies and merging the result.
-//
-// Although required attributes _are_ supported, they should be used sparingly
-// with merged bodies since in this case there is no contextual information
-// with which to return good diagnostics. Applications working with merged
-// bodies may wish to mark all attributes as optional and then check for
-// required attributes afterwards, to produce better diagnostics.
 func (mb mergedBodies) Content(schema *hcl.BodySchema) (*hcl.BodyContent, hcl.Diagnostics) {
-	// the returned body will always be empty in this case, because mergedContent
-	// will only ever call Content on the child bodies.
+	// the returned body will always be empty in this case.
 	content, _, diags := mb.mergedContent(schema, false)
 	return content, diags
 }
@@ -141,10 +125,7 @@ func (mb mergedBodies) MissingItemRange() hcl.Range {
 }
 
 func (mb mergedBodies) mergedContent(schema *hcl.BodySchema, partial bool) (*hcl.BodyContent, hcl.Body, hcl.Diagnostics) {
-	// We need to produce a new schema with none of the attributes marked as
-	// required, since _any one_ of our bodies can contribute an attribute value.
-	// We'll separately check that all required attributes are present at
-	// the end.
+	// We need to produce a new schema.
 	mergedSchema := &hcl.BodySchema{
 		Blocks: schema.Blocks,
 	}
@@ -207,8 +188,8 @@ func (mb mergedBodies) mergedContent(schema *hcl.BodySchema, partial bool) (*hcl
 		}
 
 		if content.Attributes[attrS.Name] == nil {
-			// We don't have any context here to produce a good diagnostic,
-			// which is why we warn in the Content docstring to minimize the
+			// We don't have any context here to produce a good diagnostic.
+			// This is why we warn in the Content docstring to minimize the
 			// use of required attributes on merged bodies.
 			diags = diags.Append(&hcl.Diagnostic{
 				Severity: hcl.DiagError,

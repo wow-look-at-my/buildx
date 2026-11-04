@@ -27,9 +27,7 @@ Commands to work on images in registry
 
 ## Description
 
-The `imagetools` commands contains subcommands for working with manifest lists
-in container registries. These commands are useful for inspecting manifests
-to check multi-platform configuration and attestations.
+The `imagetools` commands contains subcommands for working with manifest lists in container registries. These commands are useful for inspecting manifests to check multi-platform configuration and attestations.
 
 ## Examples
 

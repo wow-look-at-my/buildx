@@ -1,0 +1,12 @@
+
+services:
+  foo:
+    build:
+     context: .
+    ports:
+      - 3306:3306
+    depends_on:
+      - bar
+  bar:
+    build:
+     context: .

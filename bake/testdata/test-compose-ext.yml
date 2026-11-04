@@ -1,0 +1,56 @@
+
+services:
+  addon:
+    image: ct-addon:bar
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      cache_from:
+        - user/app:cache
+      cache_to:
+        - user/app:cache
+      tags:
+        - ct-addon:baz
+      ssh:
+        key: /path/to/key
+      args:
+        CT_ECR: foo
+        CT_TAG: bar
+      x-bake:
+        contexts:
+          alpine: docker-image://alpine:3.13
+        tags:
+          - ct-addon:foo
+          - ct-addon:alp
+        ssh:
+          - default
+          - other=path/to/otherkey
+        platforms:
+          - linux/amd64
+          - linux/arm64
+        cache-from:
+          - type=local,src=path/to/cache
+        cache-to:
+          - type=local,dest=path/to/cache
+        pull: true
+
+  aws:
+    image: ct-fake-aws:bar
+    build:
+      dockerfile: ./aws.Dockerfile
+      args:
+        CT_ECR: foo
+        CT_TAG: bar
+      shm_size: 128m
+      ulimits:
+        nofile:
+          soft: 1024
+          hard: 1024
+      x-bake:
+        secret:
+          - id=mysecret,src=/local/secret
+          - id=mysecret2,src=/local/secret2
+        ssh: default
+        platforms: linux/arm64
+        output: type=docker
+        no-cache: true

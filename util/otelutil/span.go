@@ -1,3 +1,5 @@
+// span.go holds the span code.
+
 package otelutil
 
 import (
@@ -25,7 +27,6 @@ type Span struct {
 	// SpanContext is the unique SpanContext that identifies the span
 	SpanContext trace.SpanContext
 	// Parten is the unique SpanContext that identifies the parent of the span.
-	// If the span has no parent, this span context will be invalid.
 	Parent trace.SpanContext
 	// SpanKind is the role the span plays in a Trace
 	SpanKind trace.SpanKind
@@ -41,24 +42,17 @@ type Span struct {
 	Links []tracesdk.Link
 	// Status is that span status
 	Status tracesdk.Status
-	// DroppedAttributes is the number of attributes dropped by the span due to
-	// a limit being reached
+	// DroppedAttributes is the number of attributes dropped by the span due to a limit being reached
 	DroppedAttributes int
-	// DroppedEvents is the number of attributes dropped by the span due to a
-	// limit being reached
+	// DroppedEvents is the number of attributes dropped by the span due to a limit being reached
 	DroppedEvents int
-	// DroppedLinks is the number of links dropped by the span due to a limit
-	// being reached
+	// DroppedLinks is the number of links dropped by the span due to a limit being reached
 	DroppedLinks int
-	// ChildSpanCount is the count of spans that consider the span a direct
-	// parent
+	// ChildSpanCount is the count of spans that consider the span a direct parent
 	ChildSpanCount int
-	// Resource is the information about the entity that produced the span
-	// We have to change this type from the otel type to make this struct
-	// marshallable
+	// Resource is the information about the entity that produced the span.
 	Resource []attribute.KeyValue
-	// InstrumentationLibrary is information about the library that produced
-	// the span
+	// InstrumentationLibrary is information about the library that produced the span
 	InstrumentationLibrary instrumentation.Scope
 }
 
@@ -280,8 +274,7 @@ func (kv *keyValue) asAttributeKeyValue() (attribute.KeyValue, error) {
 	case attribute.BOOL.String():
 		return attribute.Bool(kv.Key, kv.Value.Value.(bool)), nil
 	case attribute.INT64.String():
-		// value could be int64 or float64, so handle both cases (float64 comes
-		// from json unmarshal)
+		// value could be int64 or float64, so handle both cases (float64 comes from json unmarshal)
 		var v int64
 		switch i := kv.Value.Value.(type) {
 		case int64:
@@ -320,8 +313,7 @@ func (kv *keyValue) asAttributeKeyValue() (attribute.KeyValue, error) {
 		case []any:
 			for i := range sli {
 				var v string
-				// best case we have a string, otherwise, cast it using
-				// fmt.Sprintf
+				// best case we have a string, otherwise, cast it using fmt.Sprintf
 				if str, ok := sli[i].(string); ok {
 					v = str
 				} else {

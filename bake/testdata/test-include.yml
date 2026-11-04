@@ -1,0 +1,8 @@
+
+services:
+  foo:
+    build:
+     context: .
+     target: buildfoo
+    ports:
+      - 3306:3306

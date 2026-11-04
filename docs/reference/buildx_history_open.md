@@ -19,8 +19,7 @@ Open a build record in Docker Desktop
 
 ## Description
 
-Open a build record in Docker Desktop for visual inspection. This requires
-Docker Desktop to be installed and running on the host machine.
+Open a build record in Docker Desktop for visual inspection. This requires Docker Desktop to be installed and running on the host machine.
 
 ## Examples
 

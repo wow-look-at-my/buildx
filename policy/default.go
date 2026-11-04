@@ -1,11 +1,12 @@
+// default.go holds the default code.
+
 package policy
 
 import (
 	_ "embed"
 )
 
-// DefaultPolicyFilename is the synthetic filename used for the embedded
-// default policy when it is loaded as a regular policy file.
+// DefaultPolicyFilename is the synthetic filename used for the embedded default policy when it is loaded as a regular policy file.
 const DefaultPolicyFilename = "buildx_default_policy.rego"
 
 //go:embed default.rego

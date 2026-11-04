@@ -1,7 +1,7 @@
 # docker buildx dap
 
 <!---MARKER_GEN_START-->
-Start debug adapter protocol compatible debugger
+Protocol of the Start debug adapter compatible debugger
 
 ### Subcommands
 

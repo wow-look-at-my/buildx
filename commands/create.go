@@ -1,3 +1,5 @@
+// create.go holds the create code.
+
 package commands
 
 import (
@@ -29,7 +31,7 @@ type createOptions struct {
 	buildkitdConfigFile string
 	bootstrap           bool
 	timeout             time.Duration
-	// upgrade      bool // perform upgrade of the driver
+	// upgrade bool // perform upgrade of the driver
 }
 
 func runCreate(ctx context.Context, dockerCli command.Cli, in createOptions, args []string) error {
@@ -69,8 +71,7 @@ func runCreate(ctx context.Context, dockerCli command.Cli, in createOptions, arg
 		return err
 	}
 
-	// The store is no longer used from this point.
-	// Release it so we aren't holding the file lock during the boot.
+	// The store is no longer used from this point. Release it so we aren't holding the file lock during the boot.
 	release()
 
 	if in.bootstrap {

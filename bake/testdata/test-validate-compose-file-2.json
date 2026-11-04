@@ -1,0 +1,16 @@
+
+{
+  "group": [
+    {
+      "targets": [
+        "my-service"
+      ]
+    }
+  ],
+  "target": [
+    {
+      "context": ".",
+      "dockerfile": "Dockerfile"
+    }
+  ]
+}

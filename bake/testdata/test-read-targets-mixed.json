@@ -1,0 +1,18 @@
+{
+	 "group": {
+	   "default": {
+	     "targets": [
+	       "image"
+	     ]
+	   }
+	 },
+	 "target": {
+	   "image": {
+	     "context": ".",
+	     "dockerfile": "Dockerfile",
+	     "output": [
+	       "type=docker"
+	     ]
+	   }
+	 }
+	}

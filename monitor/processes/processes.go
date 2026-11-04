@@ -1,3 +1,5 @@
+// processes.go holds the processes code.
+
 package processes
 
 import (
@@ -20,9 +22,8 @@ type Process struct {
 	serveIOCancel func(error)
 }
 
-// ForwardIO forwards process's io to the specified reader/writer.
-// Optionally specify ioCancelCallback which will be called when
-// the process closes the specified IO. This will be useful for additional cleanup.
+// ForwardIO forwards process's io to the specified reader/writer. Optionally specify ioCancelCallback which will be called when the process closes the specified IO. This will be
+// useful for additional cleanup.
 func (p *Process) ForwardIO(in *ioset.In, ioCancelCallback func(error)) {
 	p.inEnd.SetIn(in)
 	if f := p.serveIOCancel; f != nil {
@@ -31,9 +32,8 @@ func (p *Process) ForwardIO(in *ioset.In, ioCancelCallback func(error)) {
 	p.serveIOCancel = ioCancelCallback
 }
 
-// Done returns a channel where error or nil will be sent
-// when the process exits.
-// TODO: change this to Wait()
+// Done returns a channel where error or nil will be sent when the process
+// exits. TODO: change this to Wait()
 func (p *Process) Done() <-chan error {
 	return p.errCh
 }
@@ -98,7 +98,7 @@ func (m *Manager) DeleteProcess(id string) error {
 // this method will start a new container and run the process in it. Otherwise, this method starts a new process in the
 // existing container.
 func (m *Manager) StartProcess(pid string, resultCtx *build.ResultHandle, cfg *build.InvokeConfig) (*Process, error) {
-	// Get the target result to invoke a container from
+	// Get the target result to invoke a container.
 	var ctr *build.Container
 	if a := m.container.Load(); a != nil {
 		ctr = a.(*build.Container)

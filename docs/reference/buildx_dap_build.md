@@ -36,6 +36,7 @@ Start a build
 | `--pull`            | `bool`        |           | Always attempt to pull all referenced images                                                                                                     |
 | `--push`            | `bool`        |           | Shorthand for `--output=type=registry,unpack=false`                                                                                              |
 | `-q`, `--quiet`     | `bool`        |           | Suppress the build output and print image ID on success                                                                                          |
+| `--resource`        | `stringArray` |           | Resource limits for build containers (format: `memory=2g`, `cpu-quota=50000`)                                                                    |
 | `--sbom`            | `string`      |           | Shorthand for `--attest=type=sbom`                                                                                                               |
 | `--secret`          | `stringArray` |           | Secret to expose to the build (format: `id=mysecret[,src=/local/secret]`)                                                                        |
 | `--shm-size`        | `bytes`       | `0`       | Shared memory size for build containers                                                                                                          |
@@ -62,7 +63,7 @@ Arguments are the same as the `build`
 
 ### <a name="launch-config"></a> Launch request arguments
 
-The following [launch request arguments](https://microsoft.github.io/debug-adapter-protocol/specification#Requests_Launch) are supported. These are sent as a JSON body as part of the launch request.
+These are sent as a JSON body as part of the launch request.
 
 | Name                | Type          | Default      | Description                                                                  |
 |:--------------------|:--------------|:-------------|:-----------------------------------------------------------------------------|
@@ -73,12 +74,9 @@ The following [launch request arguments](https://microsoft.github.io/debug-adapt
 
 ### <a name="additional-args"></a> Additional Arguments
 
-Command line arguments may be passed to the debug adapter the same way they would be passed to the normal build command and they will set the value.
-Launch request arguments that are set will override command line arguments if they are present.
+Command line arguments may be passed to the debug adapter the same way they will be passed to the normal build command. They will set the value. Launch request arguments that are set will override command line arguments if they are present.
 
-A debug extension should include an `args` and `builder` entry in the launch configuration. These will modify the arguments passed to the binary for the tool invocation.
-`builder` will add `--builder <arg>` directly after the executable and `args` will append to the end of the tool invocation.
-For example, a launch configuration in Visual Studio Code with the following:
+A debug extension must include an `args` and `builder` entry in the launch configuration. These will change the arguments passed to the binary for the tool invocation. `builder` will add `--builder <arg>` directly after the executable and `args` will append to the end of the tool invocation. For example, a launch configuration in Visual Studio Code with the following:
 
 ```json
 {
@@ -87,4 +85,4 @@ For example, a launch configuration in Visual Studio Code with the following:
 }
 ```
 
-This should cause the debug adapter to be invoked as `docker buildx --builder mybuilder dap build --build-arg FOO=AAA`.
+This must cause the debug adapter to be invoked as `docker buildx --builder mybuilder dap build --build-arg FOO=AAA`.

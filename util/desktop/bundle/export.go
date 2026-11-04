@@ -1,3 +1,5 @@
+// export.go holds the export code.
+
 package bundle
 
 import (
@@ -248,8 +250,7 @@ func loadResult(ctx context.Context, ip content.InfoProvider, in *controlapi.Bui
 			if desc.Annotations == nil {
 				desc.Annotations = make(map[string]string)
 			}
-			// Override media type to avoid containerd to walk children. Also
-			// keep original media type in annotations.
+			// Override media type to avoid containerd to walk children. Also keep original media type in annotations.
 			desc.Annotations[RefDescriptorMediaType] = desc.MediaType
 			desc.MediaType = "application/json"
 			out = append(out, *desc)

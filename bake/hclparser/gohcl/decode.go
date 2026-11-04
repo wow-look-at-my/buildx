@@ -1,5 +1,6 @@
-// Copyright (c) HashiCorp, Inc.
-// SPDX-License-Identifier: MPL-2.0
+// Copyright (c) HashiCorp, Inc. SPDX-License-Identifier: MPL-2.0
+
+// decode.go holds the decode code.
 
 package gohcl
 
@@ -31,21 +32,7 @@ func (o DecodeOptions) DecodeBody(body hcl.Body, ctx *hcl.EvalContext, val any) 
 }
 
 // DecodeBody extracts the configuration within the given body into the given
-// value. This value must be a non-nil pointer to either a struct or
-// a map, where in the former case the configuration will be decoded using
-// struct tags and in the latter case only attributes are allowed and their
-// values are decoded into the map.
-//
-// The given EvalContext is used to resolve any variables or functions in
-// expressions encountered while decoding. This may be nil to require only
-// constant values, for simple applications that do not support variables or
-// functions.
-//
-// The returned diagnostics should be inspected with its HasErrors method to
-// determine if the populated value is valid and complete. If error diagnostics
-// are returned then the given value may have been partially-populated but
-// may still be accessed by a careful caller for static analysis and editor
-// integration use-cases.
+// value.
 func DecodeBody(body hcl.Body, ctx *hcl.EvalContext, val any) hcl.Diagnostics {
 	return DecodeOptions{}.DecodeBody(body, ctx, val)
 }
@@ -120,10 +107,7 @@ func (o DecodeOptions) decodeBodyToStruct(body hcl.Body, ctx *hcl.EvalContext, v
 				continue
 			}
 
-			// As a special case, if the target is of type hcl.Expression then
-			// we'll assign an actual expression that evalues to a cty null,
-			// so the caller can deal with it within the cty realm rather
-			// than within the Go realm.
+			// As a special case, if the target is of type hcl.Expression then we will assign an actual expression that evalues to a cty null.
 			synthExpr := hcl.StaticExpr(cty.NullVal(cty.DynamicPseudoType), body.MissingItemRange())
 			fieldV.Set(reflect.ValueOf(synthExpr))
 			continue
@@ -319,19 +303,7 @@ func (o DecodeOptions) DecodeExpression(expr hcl.Expression, ctx *hcl.EvalContex
 }
 
 // DecodeExpression extracts the value of the given expression into the given
-// value. This value must be something that gocty is able to decode into,
-// since the final decoding is delegated to that package.
-//
-// The given EvalContext is used to resolve any variables or functions in
-// expressions encountered while decoding. This may be nil to require only
-// constant values, for simple applications that do not support variables or
-// functions.
-//
-// The returned diagnostics should be inspected with its HasErrors method to
-// determine if the populated value is valid and complete. If error diagnostics
-// are returned then the given value may have been partially-populated but
-// may still be accessed by a careful caller for static analysis and editor
-// integration use-cases.
+// value.
 func DecodeExpression(expr hcl.Expression, ctx *hcl.EvalContext, val any) hcl.Diagnostics {
 	return DecodeOptions{}.DecodeExpression(expr, ctx, val)
 }

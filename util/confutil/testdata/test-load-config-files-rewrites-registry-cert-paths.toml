@@ -1,0 +1,7 @@
+[registry]
+[registry.'myregistry.io']
+ca = ['/etc/buildkit/certs/myregistry.io/myca.pem']
+
+[[registry.'myregistry.io'.keypair]]
+cert = '/etc/buildkit/certs/myregistry.io/mycert.pem'
+key = '/etc/buildkit/certs/myregistry.io/mykey.pem'

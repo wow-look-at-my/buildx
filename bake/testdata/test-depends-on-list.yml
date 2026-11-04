@@ -1,0 +1,29 @@
+
+version: "3.8"
+
+services:
+  example-container:
+    image: example/fails:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      other-container:
+        condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - integration-tests
+
+  other-container:
+    image: example/other:latest
+    healthcheck:
+      test: ["CMD", "echo", "success"]
+      retries: 5
+      interval: 5s
+      timeout: 10s
+      start_period: 5s
+
+networks:
+  default:
+    name: test-net

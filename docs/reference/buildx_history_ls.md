@@ -23,11 +23,9 @@ List build records
 
 ## Description
 
-List completed builds recorded by the active builder. Each entry includes the
-build ID, name, status, timestamp, and duration.
+List completed builds recorded by the active builder. Each entry includes the build ID, name, status, timestamp, and duration.
 
-By default, only records for the current builder are shown. You can filter
-results using flags.
+By default, only records for the current builder are shown. You can filter results using flags.
 
 ## Examples
 

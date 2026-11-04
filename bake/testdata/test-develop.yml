@@ -1,0 +1,12 @@
+
+services:
+  scratch:
+    build:
+     context: ./webapp
+    develop:
+      watch: 
+        - path: ./webapp/html
+          action: sync
+          target: /var/www
+          ignore:
+            - node_modules/

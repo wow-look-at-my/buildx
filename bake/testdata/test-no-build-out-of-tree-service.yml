@@ -1,0 +1,6 @@
+
+services:
+    external:
+        image: "verycooldb:1337"
+    webapp:
+        build: ./db

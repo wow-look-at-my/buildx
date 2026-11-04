@@ -1,3 +1,5 @@
+// cache_cty.go holds the cache cty code.
+
 package buildflags
 
 import (

@@ -1,3 +1,5 @@
+// hclparser.go holds the hclparser code.
+
 package hclparser
 
 import (
@@ -276,8 +278,8 @@ func (p *parser) resolveValue(ectx *hcl.EvalContext, name string) (err error) {
 		}
 	}()
 
-	// built-in vars aren't intended to be overridden and are statically typed as strings;
-	// no sense sending them through type checks or waiting to return them
+	// built-in vars are not intended to be overridden and are statically typed
+	// as strings.
 	if val, ok := p.opt.Vars[name]; ok {
 		vv := cty.StringVal(val)
 		v = &vv
@@ -376,7 +378,7 @@ func (p *parser) resolveValue(ectx *hcl.EvalContext, name string) (err error) {
 // valueHasOverride returns a possible override value if one was specified, and whether it should
 // be treated as a JSON value.
 //
-// A plain/CSV override is the default; this consolidates the logic around how a JSON-specific override
+// A plain/CSV override is the default. This consolidates the logic around how a JSON-specific override
 // is specified and when it will be honored when there are naming conflicts or ambiguity.
 func (p *parser) valueHasOverride(name string, favorJSON bool) (string, bool, bool) {
 	jsonEnv := false
@@ -565,10 +567,7 @@ func (p *parser) resolveBlock(block *hcl.Block, target *hcl.BodySchema) (err err
 		}
 		m[name] = outputValue
 
-		// The logical contents of this structure is similar to a map,
-		// but it's possible for some attributes to be different in a way that's
-		// illegal for a map so we use an object here instead which is structurally
-		// equivalent but allows disparate types for different keys.
+		// The logical contents of this structure is similar to a map.
 		p.ectx.Variables[block.Type] = cty.ObjectVal(m)
 	}
 
@@ -1043,9 +1042,9 @@ func supportedCSVType(t cty.Type) bool {
 
 // valueFromCSV takes CSV value and converts it to cty.Type.
 //
-// This currently supports conversion to cty.List and cty.Set.
-// It also contains preliminary support for cty.Map (the other collection type).
-// While not considered a collection type, it also tentatively supports cty.Tuple.
+// This supports conversion to cty.List and cty.Set. It also contains
+// preliminary support for cty.Map (the other collection type). While not
+// considered a collection type, it also tentatively supports cty.Tuple.
 func valueFromCSV(name, value string, target cty.Type) (cty.Value, error) {
 	fields, err := csvvalue.Fields(value, nil)
 	if err != nil {
@@ -1193,9 +1192,8 @@ func removeAttributesDiags(diags hcl.Diagnostics, reserved map[string]struct{}, 
 				return true
 			}
 			for r := range reserved {
-				// JSON body objects don't handle repeated blocks like HCL but
-				// reserved name attributes should be allowed when multi bodies are merged.
-				// https://github.com/hashicorp/hcl/blob/main/json/spec.md#blocks
+				// JSON body objects don't handle repeated blocks like HCL but reserved
+				// name attributes should be allowed when multi bodies are merged.
 				if strings.HasPrefix(d.Detail, fmt.Sprintf(`Argument "%s" was already set at `, r)) {
 					return true
 				}

@@ -1,0 +1,21 @@
+
+services:
+  addon:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        CT_ECR: foo
+        CT_TAG: bar
+    image: ct-addon:bar
+    environment:
+      - NODE_ENV=test
+      - AWS_ACCESS_KEY_ID=dummy
+      - AWS_SECRET_ACCESS_KEY=dummy
+  aws:
+    build:
+      dockerfile: ./aws.Dockerfile
+      args:
+        CT_ECR: foo
+        CT_TAG: bar
+    image: ct-fake-aws:bar

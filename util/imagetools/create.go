@@ -1,3 +1,5 @@
+// create.go holds the create code.
+
 package imagetools
 
 import (
@@ -104,9 +106,8 @@ func (r *Resolver) combine(ctx context.Context, srcs []*Source, ann map[exptypes
 	// on single source, return original bytes
 	if len(srcs) == 1 && len(ann) == 0 {
 		switch srcs[0].Desc.MediaType {
-		// if the source is already an image index or manifest list, there is no need to consider the value
-		// of preferIndex since if set to true then the source is already in the preferred format, and if false
-		// it doesn't matter since we're not going to split it into separate manifests
+		// if the source is already an image index or manifest list, there is no
+		// need to consider the value of preferIndex since if set.
 		case images.MediaTypeDockerSchema2ManifestList, ocispecs.MediaTypeImageIndex:
 			srcMap := map[digest.Digest]*Source{
 				srcs[0].Desc.Digest: srcs[0],
@@ -261,9 +262,9 @@ func (r *Resolver) Copy(ctx context.Context, src *Source, dest *Location) error 
 
 // CopyWithIngester copies a source manifest and its referrers to the
 // destination using the provided ingester. Callers that issue multiple
-// concurrent copies to the same destination should share a single ingester
-// so that the underlying per-digest locking prevents duplicate blob pushes
-// from racing against each other.
+// concurrent copies to the same destination should share. A single
+// ingester so that the underlying per-digest locking prevents duplicate
+// blob pushes from racing against each other.
 func (r *Resolver) CopyWithIngester(ctx context.Context, src *Source, dest *Location, ingester content.Ingester) error {
 	ctx = remotes.WithMediaTypeKeyPrefix(ctx, "application/vnd.in-toto+json", "intoto")
 	ctx = remotes.WithMediaTypeKeyPrefix(ctx, "application/vnd.oci.empty.v1+json", "empty")

@@ -19,7 +19,7 @@ import (
 
 // makeDefaultPolicy returns a Policy instance backed by the embedded
 // default policy module, optionally wired to a mock signature verifier
-// returning the supplied SignatureInfo for image attestations.
+// returning the supplied SignatureInfo. For image attestations.
 func makeDefaultPolicy(t *testing.T, sigInfo *policytypes.SignatureInfo) *Policy {
 	t.Helper()
 

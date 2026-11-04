@@ -1,3 +1,5 @@
+// monitor.go holds the monitor code.
+
 package monitor
 
 import (

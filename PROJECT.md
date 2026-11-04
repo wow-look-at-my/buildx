@@ -51,7 +51,7 @@ Below are common groups, labels, and their intended usage to support issues, pul
 
 ### Global
 
-General attributes that can apply to nearly any issue or pull request.
+General attributes that can apply to almost any issue or pull request.
 
 | Label               | Applies to  | Description                                                               |
 | ------------------- | ----------- | ------------------------------------------------------------------------- |
@@ -66,7 +66,7 @@ General attributes that can apply to nearly any issue or pull request.
 
 ### `area/`
 
-Area or component of the project affected. Please note that the table below may not be inclusive of all current options.
+Area or component of the project affected. the table below may not be inclusive of all current options.
 
 | Label                          | Applies to | Description                |
 | ------------------------------ | ---------- | -------------------------- |
@@ -190,15 +190,15 @@ This project has feature releases, patch releases, and security releases.
 
 ### Feature releases
 
-Feature releases are made from the development branch, followed by cutting a release branch for future patch releases, which may also occur during the code freeze period.
+Cutting a release branch for future patch releases makes feature releases. This may also occur during the code freeze period.
 
 #### Release Candidates
 
-Users can expect 2-3 release candidate (RC) test releases prior to a feature release. The first RC is typically released about one to two weeks before the final release.
+Users can expect 2-3 release candidate (RC) test releases before a feature release. The first RC is typically released about one to a couple of weeks before the last release.
 
 #### Support Policy
 
-Once a new feature release is cut, support for the previous feature release is discontinued. An exception may be made for urgent security releases that occur shortly after a new feature release. Buildx does not offer LTS (Long-Term Support) releases.
+Once a new feature release is cut, support for the feature release is discontinued. An exception may be made for urgent security releases that occur shortly after a new feature release. Buildx does not offer LTS (Long-Term Support) releases.
 
 #### Contributing to Releases
 
@@ -206,9 +206,9 @@ Anyone can request that an issue or PR be included in the next feature or patch 
 
 ### Patch releases
 
-Patch releases should only include the most critical patches. Stability is vital, so everyone should always use the latest patch release.
+Patch releases must only include the most critical patches. Stability is vital, so everyone must always use the latest patch release.
 
-If a fix is needed but does not qualify for a patch release because of its code size or other criteria that make it too unpredictable, we will prioritize cutting a new feature release sooner rather than making an exception for backporting.
+We will prioritize cutting a new feature release sooner rather than making an exception for backporting. This happens if a fix is needed but does not qualify for a patch release. This is because of its code size or other criteria that make it too unpredictable.
 
 Following PRs are included in patch releases
 
@@ -226,21 +226,21 @@ New features do not qualify for patch release.
 
 ## Milestones
 
-Milestones are used to help identify what releases a contribution will be in. 
+Milestones are used to help identify what releases a contribution will be in.
 
 - The `v0.next` milestone collects unblocked items planned for the next 2-3 feature releases but not yet assigned to a specific version milestone.
-- The `v0.backlog` milestone gathers all triaged items considered for the long-term (beyond the next 3 feature releases) or currently unfit for a future release due to certain conditions. These items may be blocked and need to be unblocked before progressing.
+- The `v0.backlog` milestone gathers all triaged items considered for the long-term (beyond the next feature releases) or currently unfit for a future release due to certain conditions. These items may be blocked and need to be unblocked before progressing.
 
 ## Triage process
 
 Triage provides an important way to contribute to an open-source project. When submitted without an issue this process applies to Pull Requests as well. Triage helps ensure work items are resolved quickly by:
 
-- Ensuring the issue's intent and purpose are described precisely. This is necessary because it can be difficult for an issue to explain how an end user experiences a problem and what actions they took to arrive at the problem.
+- Ensuring the issue's intent and purpose are described accurately. This is necessary. This is because it can be difficult. For an issue to explain how an end user experiences a problem and what actions they took to arrive at the problem.
 - Giving a contributor the information they need before they commit to resolving an issue.
 - Lowering the issue count by preventing duplicate issues.
 - Streamlining the development process by preventing duplicate discussions.
 
-If you don't have time to code, consider helping with triage. The community will thank you for saving them time by spending some of yours. The same basic process should be applied upon receipt of a new issue.
+If you do not have time to code, consider helping with triage. The community will thank you for saving them time by spending some of yours. The same basic process must be applied upon receipt of a new issue.
 
 1. Verify essential information
 2. Classify the issue
@@ -248,24 +248,24 @@ If you don't have time to code, consider helping with triage. The community will
 
 ### Verify essential information
 
-Before advancing the triage process, ensure the issue contains all necessary information to be properly understood and assessed. The required information may vary by issue type, but typically includes the system environment, version numbers, reproduction steps, expected outcomes, and actual results.
+Before advancing the triage process, ensure the issue contains all necessary information to be correctly understood and assessed. The required information may vary by issue type, but typically includes the system environment, version numbers, reproduction steps, expected outcomes, and actual results.
 
 - **Exercising Judgment**: Use your best judgment to assess the issue description’s completeness.
-- **Communicating Needs**: If the information provided is insufficient, kindly request additional details from the author. Explain that this information is crucial for clarity and resolution of the issue, and apply the `needs/more-information` label to indicate a response from the author is required.
+- **Communicating Needs**: If the information provided is insufficient, kindly request more details from the author. Explain that this information is crucial for clarity and resolution of the issue. Apply the `needs/more-information` label to indicate a response from the author is required.
 
 ### Classify the issue
 
-An issue will typically have multiple labels. These are used to help communicate key information about context, requirements, and status. At a minimum, a properly classified issue should have:
+An issue will typically have multiple labels. These are used to help communicate key information about context, requirements, and status. At a minimum, a correctly classified issue must have:
 
 - (Required) One or more [`area/*`](#area) labels
 - (Required) One [`kind/*`](#kind) label  to indicate the type of issue
 - (Required if `kind/bug`) A [`priority/*`](#priority) label
 
-When assigning a decision the following labels should be present:
+When assigning a decision the following labels must be present:
 
 - (Required) One [`status/*`](#status) label  to indicate lifecycle status
 
-Additional labels can provide more clarity:
+More labels can give more clarity:
 
 - Zero or more [`needs/*`](#needs) labels to indicate missing items
 - Zero or more [`impact/*`](#impact) labels
@@ -273,7 +273,7 @@ Additional labels can provide more clarity:
 
 ## Prioritization guidelines for `kind/bug`
 
-When an issue or pull request of `kind/bug` is correctly categorized and attached to a milestone, the labels indicate the urgency with which it should be completed. 
+The labels indicate the urgency with which it must be completed. This happens when an issue or pull request of `kind/bug` is correctly categorized and attached to a milestone.
 
 **priority/P0**
 
@@ -288,7 +288,7 @@ Examples:
 
 **priority/P1**
 
-Items with this label should be fixed with high priority and almost always included in a patch release. Unless waiting for another issue, patch releases should happen within a week. This level is not used for features or enhancements.
+Items with this label must be fixed with high priority and almost always included in a patch release. Unless waiting for another issue, patch releases must happen within a week. This level is not used for features or enhancements.
 
 Examples:
 
@@ -299,7 +299,7 @@ Examples:
 
 **priority/P2**
 
-This is the default priority and is implied in the absence of a `priority/` label. Bugs with this priority should be included in the next feature release but may land in a patch release if they are ready and unlikely to impact other functionality adversely. Non-bug issues with this priority should also be included in the next feature release if they are available and ready.
+This is the default priority and is implied in the absence of a `priority/` label. Bugs with this priority must be included in the next feature release but may land in a patch release. This happens if they are ready and unlikely to impact other functionality adversely. Non-bug issues with this priority must also be included in the next feature release if they are available and ready.
 
 Examples:
 
@@ -327,7 +327,7 @@ flowchart LR
 
 #### Submitting a bug
 
-To help illustrate the issue life cycle let’s walk through submitting an issue as a potential bug in CI that enters a feedback loop and is eventually accepted as P2 priority and placed on the backlog.
+To help illustrate the issue life cycle let’s walk through submitting an issue as a potential bug in CI that enters a feedback loop. And is eventually accepted as P2 priority and placed on the backlog.
 
 ```mermaid
 flowchart LR
@@ -366,11 +366,11 @@ flowchart LR
 
 ## Pull request review process
 
-A thorough and timely review process for pull requests (PRs) is crucial for maintaining the integrity and quality of the project while fostering a collaborative environment.
+A thorough and timely review process for pull requests (PRs) is crucial. This holds for maintaining the integrity and quality of the project while fostering a collaborative environment.
 
-- **Labeling**: Most labels should be inherited from a linked issue. If no issue is linked an extended review process may be required.
+- **Labeling**: Most labels must be inherited from a linked issue. If no issue is linked an extended review process may be required.
 - **Continuous Integration**: With few exceptions, it is crucial that all Continuous Integration (CI) workflows pass successfully.
-- **Draft Status**: Incomplete or long-running PRs should be placed in "Draft" status. They may revert to "Draft" status upon initial review if significant rework is required.
+- **Draft Status**: Incomplete or long-running PRs must be placed in "Draft" status. They may revert to "Draft" status upon initial review if significant rework is required.
 
 ```mermaid
 flowchart LR
@@ -401,7 +401,7 @@ Unfortunately, some issues or pull requests can remain inactive for extended per
 **For Authors:**
 
 - **Closure of Inactive Items**: If your issue or PR becomes irrelevant or is no longer needed, please close it to help keep the project clean.
-- **Prompt Responses**: If additional information is requested, please respond promptly to facilitate progress.
+- **Prompt Responses**: If more information is requested, please respond promptly to help progress.
 
 **For Maintainers:**
 
@@ -410,8 +410,8 @@ Unfortunately, some issues or pull requests can remain inactive for extended per
 
 **Stale and Rotten Policy:**
 
-- An issue or PR will be labeled as **`stale`** after 14 calendar days of inactivity. If it remains inactive for another 30 days, it will be labeled as **`rotten`** and closed.
-- Authors whose issues or PRs have been closed are welcome to re-open them or create new ones and link to the original.
+- An issue or PR will be labeled as **`stale`** after several calendar days of inactivity. If it remains inactive for another days, it will be labeled as **`rotten`** and closed.
+- Authors whose issues or PRs was closed are welcome to re-open them or create new ones and link to the original.
 
 **Skipping Stale Processing:**
 
@@ -430,7 +430,7 @@ If you believe this conversion was made in error, please express your concerns i
 
 ## Workflow automation
 
-To help expedite common operations, avoid errors and reduce toil some workflow automation is used by the project. This can include:
+To help expedite common operations, the project uses avoid errors and reduce toil some workflow automation. This can include:
 
 - Stale issue or pull request processing
 - Auto-labeling actions
@@ -447,6 +447,6 @@ The stale item handling is configured in the [repository](link-to-config-file). 
 ## Updating dependencies
 
 - **Runtime Dependencies**: Use the latest stable release available when the first Release Candidate (RC) of a new feature release is cut. For patch releases, update to the latest corresponding patch release of the dependency.
-- **Other Dependencies**: Always permitted to update to the latest patch release in the development branch. Updates to a new feature release require justification, unless the dependency is outdated. Prefer tagged versions of dependencies unless a specific untagged commit is needed. Go modules should specify the lowest compatible version; there is no requirement to update all dependencies to their latest versions before cutting a new Buildx feature release.
-- **Patch Releases**: Vendored dependency updates are considered for patch releases, except in the rare cases specified previously.
+- **Other Dependencies**: Always permitted to update to the latest patch release in the development branch. Updates to a new feature release require justification, unless the dependency is outdated. Prefer tagged versions of dependencies unless a specific untagged commit is needed. Go modules must specify the lowest compatible version. There is no requirement to update all dependencies to their latest versions before cutting a new Buildx feature release.
+- **Patch Releases**: Vendored dependency updates are considered for patch releases, except in the rare cases specified.
 - **Security Considerations**: A security scanner report indicating a non-exploitable issue via Buildx does not justify backports.
